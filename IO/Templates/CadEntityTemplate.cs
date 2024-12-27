@@ -59,7 +59,14 @@ namespace ACadSharp.IO.Templates
 
 			if (this.ColorHandle.HasValue)
 			{
-				//TODO: Set the color by handle
+				var colorTemaplate = builder.GetObjectTemplate<DwgColorTemplate>(this.ColorHandle.Value);
+				if(colorTemaplate is not null && !string.IsNullOrEmpty((colorTemaplate.CadObject as DwgColorTemplate.DwgColor).BookName))
+				{
+					var clr = colorTemaplate.CadObject as DwgColorTemplate.DwgColor;
+
+					this.CadObject.BookColor = new Objects.BookColor(clr.BookName, clr.ColorName);
+					this.CadObject.Color = clr.Color;
+				}
 			}
 			else
 			{

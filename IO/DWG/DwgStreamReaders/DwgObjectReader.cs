@@ -213,7 +213,6 @@ namespace ACadSharp.IO.DWG
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 
-
 				//Create a handler section reader
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
@@ -236,7 +235,9 @@ namespace ACadSharp.IO.DWG
 				//set the initial posiltion and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
-			}
+				//if(type == ObjectType.UNLISTED || type == ObjectType.INVALID || type == ObjectType.UNDEFINED)
+    //            System.Diagnostics.Debug.WriteLine(type);
+            }
 
 			return type;
 		}
@@ -5784,8 +5785,6 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readDwgColor()
 		{
-			return null;
-
 			DwgColorTemplate.DwgColor dwgColor = new DwgColorTemplate.DwgColor();
 			DwgColorTemplate template = new DwgColorTemplate(dwgColor);
 
@@ -5795,21 +5794,23 @@ namespace ACadSharp.IO.DWG
 
 			if (this.R2004Plus && this._version < ACadVersion.AC1032)
 			{
-				short index = (short)this._objectReader.ReadBitLong();
+				uint trueColor = (uint)this._objectReader.ReadBitLong();
 				byte flags = this._objectReader.ReadByte();
 
 				if ((flags & 1U) > 0U)
-					template.Name = this._textReader.ReadVariableText();
+                    dwgColor.ColorName = this._textReader.ReadVariableText();
 
 				if ((flags & 2U) > 0U)
-					template.BookName = this._textReader.ReadVariableText();
+                    dwgColor.BookName = this._textReader.ReadVariableText();
 
-				dwgColor.Color = new Color(index);
+                byte[] arr = LittleEndianConverter.Instance.GetBytes(trueColor);
+				dwgColor.Color = new Color(arr);
 			}
 
-			dwgColor.Color = new Color(colorIndex);
+			else 
+				dwgColor.Color = new Color(colorIndex);
 
-			return null;
+			return template;
 		}
 	}
 }

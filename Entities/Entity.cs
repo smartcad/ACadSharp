@@ -42,8 +42,19 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(62, 420, 430)]
 		public Color Color { get; set; } = Color.ByLayer;
 
-		/// <inheritdoc/>
-		[DxfCodeValue(370)]
+
+        /// <summary>
+        /// Book color for this entity.
+        /// </summary> 
+        [DxfCodeValue(DxfReferenceType.Name, 430)]
+        public BookColor BookColor
+        {
+			get;
+			set;
+        }
+
+        /// <inheritdoc/>
+        [DxfCodeValue(370)]
 		public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
 
 		/// <inheritdoc/>

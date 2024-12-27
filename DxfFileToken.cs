@@ -111,7 +111,8 @@
 		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
 		public const string ObjectAcdbPlaceHolder = "ACDBPLACEHOLDER";
 		public const string ObjectDictionaryVar = "DICTIONARYVAR";
-		public const string ObjectPlotSettings = "PLOTSETTINGS";
+        public const string ObjectDBColor = "DBCOLOR";
+        public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
 		public const string ObjectLayout = "LAYOUT";
 		public const string ObjectMLeaderStyle = "MLEADERSTYLE";
