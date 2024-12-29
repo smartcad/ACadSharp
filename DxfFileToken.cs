@@ -115,6 +115,7 @@
         public const string ObjectPlotSettings = "PLOTSETTINGS";
 		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
 		public const string ObjectLayout = "LAYOUT";
+		public const string ObjectDimAssoc = "DIMASSOC";
 		public const string ObjectMLeaderStyle = "MLEADERSTYLE";
 		public const string ObjectImageDefinition = "IMAGEDEF";
 		public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";

@@ -126,10 +126,15 @@ namespace ACadSharp
 		/// </remarks>
 		public MLeaderStyleCollection MLeaderStyles { get; private set; }
 
-		/// <summary>
-		/// Root dictionary of the document
-		/// </summary>
-		public CadDictionary RootDictionary
+        /// <summary>
+        /// DIMASSOC objects in the drawing
+        /// </summary>
+		public DimensionAssociativity[] DimAssocs { get; internal set; } = Array.Empty<DimensionAssociativity>();
+
+        /// <summary>
+        /// Root dictionary of the document
+        /// </summary>
+        public CadDictionary RootDictionary
 		{
 			get { return this._rootDictionary; }
 			internal set
@@ -168,23 +173,6 @@ namespace ACadSharp
 			{
 				this.CreateDefaults();
 			}
-		}
-
-		/// <summary>
-		/// Creates a document with the default objects
-		/// </summary>
-		/// <remarks>
-		/// Default version <see cref="ACadVersion.AC1018"/>
-		/// </remarks>
-		public CadDocument() : this(ACadVersion.AC1018) { }
-
-		/// <summary>
-		/// Creates a document with the default objects and a specific version
-		/// </summary>
-		/// <param name="version">Version of the document</param>
-		public CadDocument(ACadVersion version) : this(true)
-		{
-			this.Header.Version = version;
 		}
 
 		/// <summary>

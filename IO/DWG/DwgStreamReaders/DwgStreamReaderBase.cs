@@ -596,7 +596,7 @@ namespace ACadSharp.IO.DWG
 			return initialPos;
 		}
 
-		private ulong readHandle(int length)
+		public ulong readHandle(int length)
 		{
 			byte[] raw = new byte[length];
 			byte[] arr = new byte[8];

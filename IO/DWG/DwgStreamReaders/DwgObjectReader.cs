@@ -1031,6 +1031,9 @@ namespace ACadSharp.IO.DWG
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
 					break;
+				case "DIMASSOC":
+					template = this.readDimAssoc();
+					break;
 				//case "VISUALSTYLE":
 				//	template = this.readVisualStyle();
 				//	break;
@@ -5627,6 +5630,86 @@ namespace ACadSharp.IO.DWG
 			scale.IsUnitScale = this._mergedReaders.ReadBit();
 
 			return template;
+		}
+		
+		private CadTemplate readDimAssoc()
+		{
+            DimensionAssociativity dimassoc = new DimensionAssociativity();
+            DimAssocTemplate template = new DimAssocTemplate(dimassoc);
+
+            this.readCommonNonEntityData(template);
+            template.DimensionHandle = this.handleReference();
+
+            //BS	90	Associativity flag
+            dimassoc.AssociativityFlag = this._objectReader.ReadBitShort();
+			//B		70	trans space flag
+			dimassoc.TransSpaceFlag = this._objectReader.ReadBit();
+			//BD	71	rotated dimesion type
+			dimassoc.RotatedDimensionFlag = this._objectReader.ReadByte() == 0 ? DimensionAssociativity.RotatedDimensionTypes.Parallel : DimensionAssociativity.RotatedDimensionTypes.Perpendicular;
+
+			var classname = this._textReader.ReadVariableText();
+			dimassoc.ObjectSnapFlag = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
+			template.MainGeometryHandle = this.handleReference();
+			this._objectReader.ReadBitLong(); // its needed, but don't know why
+
+			var SubentType = this._objectReader.ReadBitShort();
+			var GsMarker = this._objectReader.ReadBitLong();
+
+			var xref_handle = this.handleReference();
+			this._objectReader.Read2Bits(); // needed, still don't know why
+			dimassoc.NearOsnapGeometryParameter = this._objectReader.ReadBitDouble();
+			var osnap_point = this._objectReader.Read3BitDouble();
+			dimassoc.OsnapPoint = new System.Numerics.Vector3((float)osnap_point.X, (float)osnap_point.Y, (float)osnap_point.Z);
+
+			if(template.MainGeometryHandle != xref_handle)
+			{
+				template.OtherGeometryHandle = xref_handle;
+				return template;
+			}
+
+            if (this._handlesReader is DwgStreamReaderBase handleReader)
+			{
+				var flag = this._handlesReader.ReadByte();
+				var code = (uint)flag >> 4;
+
+                //COUNTER tells how many bytes of HANDLE follow.
+                int counter = flag & 0b00001111;
+
+                //Get the reference type reading the last 2 bits
+                var reference = (DwgReferenceType)((uint)code & 0b0011);
+
+                ulong initialPos;
+				ulong referenceHandle = 0;
+
+                //0x2, 0x3, 0x4, 0x5	none - just read offset and use it as the result
+                if (code <= 0x5)
+                    initialPos = handleReader.readHandle(counter);
+                //0x6	result is reference handle + 1 (length is 0 in this case)
+                else if (code == 0x6)
+                    initialPos = ++referenceHandle;
+                //0x8	result is reference handle – 1 (length is 0 in this case)
+                else if (code == 0x8)
+                    initialPos = --referenceHandle;
+                //0xA	result is reference handle plus offset
+                else if (code == 0xA)
+                {
+                    ulong offset = handleReader.readHandle(counter);
+                    initialPos = referenceHandle + offset;
+                }
+                //0xC	result is reference handle minus offset
+                else if (code == 0xC)
+                {
+                    ulong offset = handleReader.readHandle(counter);
+                    initialPos = referenceHandle - offset;
+                }
+                else
+                {
+					return template;
+                }
+
+                template.OtherGeometryHandle = initialPos;
+            }
+            return template;
 		}
 
 		private CadTemplate readLayout()

@@ -11,6 +11,7 @@ using System.Text;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamReaders;
+using ACadSharp.Objects;
 
 namespace ACadSharp.IO
 {

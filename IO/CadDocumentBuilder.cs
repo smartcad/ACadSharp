@@ -52,6 +52,8 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
 
+		private List<DimensionAssociativity> DimAssocs = new();
+
 		public CadDocumentBuilder(ACadVersion version, CadDocument document)
 		{
 			this.Version = version;
@@ -68,8 +70,14 @@ namespace ACadSharp.IO
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				template.Build(this);
+				if(template is DimAssocTemplate && template.CadObject is DimensionAssociativity da)
+				{
+					DimAssocs.Add(da);
+				}
 			}
-		}
+
+			DocumentToBuild.DimAssocs = DimAssocs.ToArray();
+        }
 
 		public void AddTemplate(CadTemplate template)
 		{
