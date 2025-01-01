@@ -70,13 +70,7 @@ namespace ACadSharp.IO
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
 				template.Build(this);
-				if(template is DimAssocTemplate && template.CadObject is DimensionAssociativity da)
-				{
-					DimAssocs.Add(da);
-				}
 			}
-
-			DocumentToBuild.DimAssocs = DimAssocs.ToArray();
         }
 
 		public void AddTemplate(CadTemplate template)

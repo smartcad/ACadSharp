@@ -260,9 +260,10 @@ namespace ACadSharp.IO.DWG
 		private ulong handleReference(ulong handle)
 		{
 			//Read the handle
-			ulong value = this._handlesReader.HandleReference(handle);
+			if(!this._handlesReader.HandleReference(handle, out _, out ulong value))
+                throw new Exceptions.DwgException($"[HandleReference] invalid reference code ");
 
-			if (value != 0 &&
+            if (value != 0 &&
 				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._readedObjects.ContainsKey(value))
 			{
@@ -1939,7 +1940,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readDimAligned()
 		{
-			DimensionLinear dimension = new DimensionLinear();
+			var dimension = new DimensionAligned();
 			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
 
 			this.readCommonDimensionData(template);
@@ -5650,12 +5651,20 @@ namespace ACadSharp.IO.DWG
 			var classname = this._textReader.ReadVariableText();
 			dimassoc.ObjectSnapFlag = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
 			template.MainGeometryHandle = this.handleReference();
-			this._objectReader.ReadBitLong(); // its needed, but don't know why
+			var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why
 
 			var SubentType = this._objectReader.ReadBitShort();
 			var GsMarker = this._objectReader.ReadBitLong();
 
-			var xref_handle = this.handleReference();
+			ulong xref_handle = default;
+			try
+			{
+                xref_handle = this.handleReference(0);
+            }
+			catch (Exception)
+			{
+				return template;
+			}
 			this._objectReader.Read2Bits(); // needed, still don't know why
 			dimassoc.NearOsnapGeometryParameter = this._objectReader.ReadBitDouble();
 			var osnap_point = this._objectReader.Read3BitDouble();
@@ -5667,48 +5676,15 @@ namespace ACadSharp.IO.DWG
 				return template;
 			}
 
-            if (this._handlesReader is DwgStreamReaderBase handleReader)
+			try
 			{
-				var flag = this._handlesReader.ReadByte();
-				var code = (uint)flag >> 4;
-
-                //COUNTER tells how many bytes of HANDLE follow.
-                int counter = flag & 0b00001111;
-
-                //Get the reference type reading the last 2 bits
-                var reference = (DwgReferenceType)((uint)code & 0b0011);
-
-                ulong initialPos;
-				ulong referenceHandle = 0;
-
-                //0x2, 0x3, 0x4, 0x5	none - just read offset and use it as the result
-                if (code <= 0x5)
-                    initialPos = handleReader.readHandle(counter);
-                //0x6	result is reference handle + 1 (length is 0 in this case)
-                else if (code == 0x6)
-                    initialPos = ++referenceHandle;
-                //0x8	result is reference handle – 1 (length is 0 in this case)
-                else if (code == 0x8)
-                    initialPos = --referenceHandle;
-                //0xA	result is reference handle plus offset
-                else if (code == 0xA)
-                {
-                    ulong offset = handleReader.readHandle(counter);
-                    initialPos = referenceHandle + offset;
-                }
-                //0xC	result is reference handle minus offset
-                else if (code == 0xC)
-                {
-                    ulong offset = handleReader.readHandle(counter);
-                    initialPos = referenceHandle - offset;
-                }
-                else
-                {
-					return template;
-                }
-
-                template.OtherGeometryHandle = initialPos;
+				template.OtherGeometryHandle = this.handleReference(0);
             }
+			catch (Exception)
+			{
+				return template;
+			}
+
             return template;
 		}
 

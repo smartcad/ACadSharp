@@ -542,17 +542,21 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public ulong HandleReference()
 		{
-			return this.HandleReference(0UL, out DwgReferenceType _);
-		}
+			if(this.HandleReference(0UL, out DwgReferenceType _, out ulong handle))
+				return handle;
+            throw new DwgException($"[HandleReference] invalid reference code ");
+        }
 
 		/// <inheritdoc/>
 		public ulong HandleReference(ulong referenceHandle)
 		{
-			return this.HandleReference(referenceHandle, out DwgReferenceType _);
-		}
+			if (this.HandleReference(referenceHandle, out DwgReferenceType _, out ulong handle))
+				return handle;
+            throw new DwgException($"[HandleReference] invalid reference code ");
+        }
 
 		/// <inheritdoc/>
-		public ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference)
+		public bool HandleReference(ulong referenceHandle, out DwgReferenceType reference, out ulong handle)
 		{
 			//|CODE (4 bits)|COUNTER (4 bits)|HANDLE or OFFSET|
 			byte form = this.ReadByte();
@@ -564,36 +568,36 @@ namespace ACadSharp.IO.DWG
 
 			//Get the reference type reading the last 2 bits
 			reference = (DwgReferenceType)((uint)code & 0b0011);
-
-			ulong initialPos;
+			handle = default;
 
 			//0x2, 0x3, 0x4, 0x5	none - just read offset and use it as the result
 			if (code <= 0x5)
-				initialPos = this.readHandle(counter);
+				handle = this.readHandle(counter);
 			//0x6	result is reference handle + 1 (length is 0 in this case)
 			else if (code == 0x6)
-				initialPos = ++referenceHandle;
+				handle = ++referenceHandle;
 			//0x8	result is reference handle – 1 (length is 0 in this case)
 			else if (code == 0x8)
-				initialPos = --referenceHandle;
+				handle = --referenceHandle;
 			//0xA	result is reference handle plus offset
 			else if (code == 0xA)
 			{
 				ulong offset = this.readHandle(counter);
-				initialPos = referenceHandle + offset;
+				handle = referenceHandle + offset;
 			}
 			//0xC	result is reference handle minus offset
 			else if (code == 0xC)
 			{
 				ulong offset = this.readHandle(counter);
-				initialPos = referenceHandle - offset;
+				handle = referenceHandle - offset;
 			}
 			else
 			{
-				throw new DwgException($"[HandleReference] invalid reference code with value: {code}");
+				return false;
+				//throw new DwgException($"[HandleReference] invalid reference code with value: {code}");
 			}
 
-			return initialPos;
+			return true;
 		}
 
 		public ulong readHandle(int length)

@@ -68,9 +68,9 @@ namespace ACadSharp.IO.DWG
 			return this._handleReader.HandleReference(referenceHandle);
 		}
 
-		public ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference)
+		public bool HandleReference(ulong referenceHandle, out DwgReferenceType reference, out ulong handle)
 		{
-			return this._handleReader.HandleReference(referenceHandle, out reference);
+			return this._handleReader.HandleReference(referenceHandle, out reference, out handle);
 		}
 
 		public long PositionInBits()

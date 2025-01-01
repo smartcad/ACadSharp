@@ -200,7 +200,7 @@ namespace ACadSharp.IO.DWG
 		/// <param name="referenceHandle"></param>
 		/// <param name="reference"></param>
 		/// <returns></returns>
-		ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference);
+		bool HandleReference(ulong referenceHandle, out DwgReferenceType reference, out ulong handle);
 		/// <summary>
 		/// T : text (bitshort length, followed by the string).
 		/// </summary>

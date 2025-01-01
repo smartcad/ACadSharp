@@ -127,11 +127,6 @@ namespace ACadSharp
 		public MLeaderStyleCollection MLeaderStyles { get; private set; }
 
         /// <summary>
-        /// DIMASSOC objects in the drawing
-        /// </summary>
-		public DimensionAssociativity[] DimAssocs { get; internal set; } = Array.Empty<DimensionAssociativity>();
-
-        /// <summary>
         /// Root dictionary of the document
         /// </summary>
         public CadDictionary RootDictionary
