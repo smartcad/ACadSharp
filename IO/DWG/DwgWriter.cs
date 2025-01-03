@@ -25,16 +25,6 @@ namespace ACadSharp.IO
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DwgWriter"/> class.
 		/// </summary>
-		/// <param name="filename"></param>
-		/// <param name="document"></param>
-		public DwgWriter(string filename, CadDocument document)
-			: this(File.Create(filename), document)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DwgWriter"/> class.
-		/// </summary>
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		public DwgWriter(Stream stream, CadDocument document) : base(stream, document)
@@ -91,9 +81,9 @@ namespace ACadSharp.IO
 		/// <param name="document"></param>
 		/// <param name="configuration"></param>
 		/// <param name="notification"></param>
-		public static void Write(string filename, CadDocument document, CadWriterConfiguration configuration = null, NotificationEventHandler notification = null)
+		public static void Write(Stream stream, CadDocument document, CadWriterConfiguration configuration = null, NotificationEventHandler notification = null)
 		{
-			using (DwgWriter writer = new DwgWriter(filename, document))
+			using (DwgWriter writer = new DwgWriter(stream, document))
 			{
 				if (configuration != null)
 				{

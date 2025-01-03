@@ -160,7 +160,7 @@ namespace ACadSharp
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
 
-		internal CadDocument(bool createDefaults)
+		public CadDocument(bool createDefaults)
 		{
 			this._cadObjects.Add(this.Handle, this);
 
