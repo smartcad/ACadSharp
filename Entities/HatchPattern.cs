@@ -14,19 +14,19 @@ namespace ACadSharp.Entities
 			/// Pattern line angle
 			/// </summary>
 			[DxfCodeValue(DxfReferenceType.IsAngle, 53)]
-			public double Angle { get; internal set; }
+			public double Angle { get; set; }
 
 			/// <summary>
 			/// Pattern line base point
 			/// </summary>
 			[DxfCodeValue(43, 44)]
-			public XY BasePoint { get; internal set; }
+			public XY BasePoint { get; set; }
 
 			/// <summary>
 			/// Pattern line offset
 			/// </summary>
 			[DxfCodeValue(45, 46)]
-			public XY Offset { get; internal set; }
+			public XY Offset { get; set; }
 
 			public List<double> DashLengths { get; set; } = new List<double>();
 

@@ -8,11 +8,11 @@
 		/// <summary>
 		/// Pattern fill.
 		/// </summary>
-		PatternFill = 0,
+		UserDefined = 0,
 		/// <summary>
 		/// Solid fill.
 		/// </summary>
-		SolidFill = 1,
+		PreDefined = 1,
 		/// <summary>
 		/// Custom hatch pattern from a pattern file.
 		/// </summary>
