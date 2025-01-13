@@ -1,4 +1,5 @@
-﻿using ACadSharp.Objects;
+﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -18,6 +19,22 @@ namespace ACadSharp.IO.DWG
 
 				this.writeObject(obj);
 			}
+
+			for (int i = 0; i < this._document.ModelSpace.Entities.Count; i++)
+			{
+				var ent = this._document.ModelSpace.Entities[i];
+				if(ent is not Dimension || ent.Reactors.Count != 1)
+				{
+					continue;
+				}
+
+				var reactor = ent.Reactors.FirstOrDefault();
+				if (reactor.Value is not DimensionAssociativity dimassoc)
+					continue;
+
+				this.writeObject(dimassoc.Owner as CadObject);
+				this.writeObject(dimassoc);
+            }
 		}
 
 		private void writeObject(CadObject obj)
@@ -43,6 +60,9 @@ namespace ACadSharp.IO.DWG
 
 			switch (obj)
 			{
+				case DimensionAssociativity dimassoc:
+					this.writeDimAssoc(dimassoc);
+					break;
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
 					break;
@@ -92,7 +112,30 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(obj);
 		}
 
-		private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
+        private void writeDimAssoc(DimensionAssociativity dimassoc)
+        {
+            this.writeCommonNonEntityData(dimassoc);
+
+            this._writer.HandleReference(dimassoc.DimensionObject);
+            this._writer.WriteBitShort(dimassoc.AssociativityFlag);
+            this._writer.WriteBit(dimassoc.TransSpaceFlag);
+            this._writer.WriteByte((byte)(dimassoc.RotatedDimensionFlag == DimensionAssociativity.RotatedDimensionTypes.Parallel ? 0 : 1));
+
+            this._writer.WriteVariableText("AcDbOsnapPointRef");
+            this._writer.WriteByte((byte)dimassoc.ObjectSnapFlag);
+            this._writer.HandleReference(dimassoc.MainObject);
+            this._writer.WriteBitLong(1);
+
+            this._writer.WriteBitShort(2); // subent type
+            this._writer.WriteBitLong(0); // gsmarker
+
+
+            this._writer.Write2Bits(0); // needed, still don't know why
+            this._writer.WriteBitDouble(0.0);
+            this._writer.Write3BitDouble(dimassoc.DimensionObject.DefinitionPoint);
+        }
+
+        private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 		{
 		}
 

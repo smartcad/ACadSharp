@@ -68,6 +68,11 @@ namespace ACadSharp.Blocks
 		{
 		}
 
+		internal Block(BlockRecord record, Layer lyr) : base(lyr)
+		{
+			this.Owner = record;
+		}
+		
 		public Block(BlockRecord record) : base()
 		{
 			this.Owner = record;

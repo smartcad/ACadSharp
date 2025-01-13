@@ -30,7 +30,7 @@ namespace ACadSharp.IO.DXF
 
 			if (this.ModelSpaceTemplate == null)
 			{
-				BlockRecord record = BlockRecord.ModelSpace;
+				BlockRecord record = BlockRecord.CreateModelSpace(this.DocumentToBuild?.Layers?.FirstOrDefault() ?? Layer.Default);
 				this.BlockRecords.Add(record);
 				this.ModelSpaceTemplate = new CadBlockRecordTemplate(record);
 				this.AddTemplate(this.ModelSpaceTemplate);

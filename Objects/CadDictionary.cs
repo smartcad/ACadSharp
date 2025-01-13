@@ -155,6 +155,16 @@ namespace ACadSharp.Objects
 			return root;
 		}
 
+		public static CadDictionary CreateForDimAssoc(DimensionAssociativity dimassoc)
+		{
+			var toret = new CadDictionary
+			{
+				Owner = dimassoc.DimensionObject
+			};
+			dimassoc.Owner = toret;
+			return toret;
+		}
+
 		/// <summary>
 		/// Create the default entries for the root dictionary.
 		/// </summary>

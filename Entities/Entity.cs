@@ -96,12 +96,19 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(DxfReferenceType.Handle, 347)]
 		public Material Material { get; set; }
 
-		private Layer _layer = Layer.Default;
+		private Layer _layer;
 
 		private LineType _lineType = LineType.ByLayer;
 
 		/// <inheritdoc/>
-		public Entity() : base() { }
+		internal Entity() : base() 
+		{
+		}
+
+		internal Entity(Layer lyr) : base()
+		{
+			this._layer = lyr;
+		}
 
 		/// <inheritdoc/>
 		public abstract BoundingBox GetBoundingBox();
@@ -148,7 +155,8 @@ namespace ACadSharp.Entities
 		{
 			base.AssignDocument(doc);
 
-			this._layer = this.updateTable(this.Layer, doc.Layers);
+			if(this._layer is not null)
+				this._layer = this.updateTable(this.Layer, doc.Layers);
 			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
 
 			doc.Layers.OnRemove += this.tableOnRemove;

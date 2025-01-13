@@ -52,8 +52,6 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
 
-		private List<DimensionAssociativity> DimAssocs = new();
-
 		public CadDocumentBuilder(ACadVersion version, CadDocument document)
 		{
 			this.Version = version;

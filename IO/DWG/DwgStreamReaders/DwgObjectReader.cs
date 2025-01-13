@@ -5665,7 +5665,7 @@ namespace ACadSharp.IO.DWG
 			{
 				return template;
 			}
-			this._objectReader.Read2Bits(); // needed, still don't know why
+			var b21 = this._objectReader.Read2Bits(); // needed, still don't know why
 			dimassoc.NearOsnapGeometryParameter = this._objectReader.ReadBitDouble();
 			var osnap_point = this._objectReader.Read3BitDouble();
 			dimassoc.OsnapPoint = new System.Numerics.Vector3((float)osnap_point.X, (float)osnap_point.Y, (float)osnap_point.Z);

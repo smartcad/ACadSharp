@@ -35,19 +35,16 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// It only can be one Model in each document.
 		/// </remarks>
-		public static BlockRecord ModelSpace
-		{
-			get
-			{
-				BlockRecord record = new BlockRecord(ModelSpaceName);
+		public static BlockRecord CreateModelSpace(Layer lyr)
+        {
+            BlockRecord record = new BlockRecord(ModelSpaceName, lyr);
 
-				Layout layout = new Layout();
-				layout.Name = Layout.ModelLayoutName;
-				layout.AssociatedBlock = record;
+            Layout layout = new Layout();
+            layout.Name = Layout.ModelLayoutName;
+            layout.AssociatedBlock = record;
 
-				return record;
-			}
-		}
+            return record;
+        }
 
 		/// <summary>
 		/// Create an instance of the *Paper_Space block.
@@ -55,18 +52,15 @@ namespace ACadSharp.Tables
 		/// <remarks>
 		/// This is the default paper space in the document.
 		/// </remarks>
-		public static BlockRecord PaperSpace
+		public static BlockRecord CreatePaperSpace(Layer lyr)
 		{
-			get
-			{
-				BlockRecord record = new BlockRecord(PaperSpaceName);
+			BlockRecord record = new BlockRecord(PaperSpaceName, lyr);
 
-				Layout layout = new Layout();
-				layout.Name = Layout.PaperLayoutName;
-				layout.AssociatedBlock = record;
+			Layout layout = new Layout();
+			layout.Name = Layout.PaperLayoutName;
+			layout.AssociatedBlock = record;
 
-				return record;
-			}
+			return record;
 		}
 
 		/// <inheritdoc/>
@@ -223,6 +217,13 @@ namespace ACadSharp.Tables
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 
+		private BlockRecord(string name, Layer lyr) : base(name)
+		{
+			this.BlockEntity = new Block(this, lyr);
+			this.BlockEnd = new BlockEnd(this);
+			this.Entities = new CadObjectCollection<Entity>(this);
+		}
+		
 		/// <summary>
 		/// Default constructor.
 		/// </summary>

@@ -102,7 +102,7 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument(false);
+			this._document = new CadDocument();
 
 			//Read the file header
 			this._fileHeader = this.readFileHeader();

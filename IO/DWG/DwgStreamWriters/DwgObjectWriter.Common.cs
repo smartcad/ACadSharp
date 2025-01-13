@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSUtilities.Converters;
 using System.IO;
+using System.Linq;
 
 namespace ACadSharp.IO.DWG
 {
@@ -336,11 +337,14 @@ namespace ACadSharp.IO.DWG
 			//TODO: Write reactors
 
 			//Numreactors S number of reactors in this object
-			this._writer.WriteBitLong(0);
+			this._writer.WriteBitLong(cadObject.Reactors.Count);
 
-			//for (int i = 0; i < 0; ++i)
-			//	//[Reactors (soft pointer)]
-			//	template.CadObject.Reactors.Add(this.handleReference(), null);
+			foreach (var item in cadObject.Reactors)
+			{
+				//[Reactors (soft pointer)]
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Key);
+                //cadObject.Reactors.Add(item.Key, item.Value);
+            }
 
 			bool noDictionary = cadObject.XDictionary == null;
 

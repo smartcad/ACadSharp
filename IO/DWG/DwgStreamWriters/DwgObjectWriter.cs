@@ -134,7 +134,7 @@ namespace ACadSharp.IO.DWG
 
 			this.writeEntries(this._document.BlockRecords);
 		}
-
+		
 		private void writeTable<T>(Table<T> table)
 			where T : TableEntry
 		{
@@ -213,9 +213,9 @@ namespace ACadSharp.IO.DWG
 				Entity[] arr = blkRecord.Entities.ToArray();
 				for (int i = 0; i < arr.Length; i++)
 				{
-					this._prev = arr.ElementAtOrDefault(i - 1);
+					this._prev = i > 0 ? arr[i - 1] : null;
 					Entity e = arr[i];
-					this._next = arr.ElementAtOrDefault(i + 1);
+					this._next = i < arr.Length - 1 ? arr[i + 1] : null;
 
 					this.writeEntity(e);
 				}

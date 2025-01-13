@@ -160,14 +160,9 @@ namespace ACadSharp
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
 
-		public CadDocument(bool createDefaults)
+		public CadDocument()
 		{
 			this._cadObjects.Add(this.Handle, this);
-
-			if (createDefaults)
-			{
-				this.CreateDefaults();
-			}
 		}
 
 		/// <summary>
@@ -224,13 +219,19 @@ namespace ACadSharp
 		/// <summary>
 		/// 
 		/// </summary>
-		public void CreateDefaults()
+		public void CreateDefaults(IEnumerable<string> layer_names)
 		{
 			DxfClassCollection.UpdateDxfClasses(this);
 
 			//Header and summary
-			this.Header = new CadHeader(this);
-			this.SummaryInfo = new CadSummaryInfo();
+			this.Header = new CadHeader(this)
+			{
+				DimensionAssociativity = DimensionAssociation.CreateAssociativeDimensions
+			};
+			this.SummaryInfo = new CadSummaryInfo
+			{
+				Author = "SmartCAD"
+			};
 
 			//The order of the elements is relevant for the handles assignation
 
@@ -260,24 +261,40 @@ namespace ACadSharp
 			//Default variables
 			this.AppIds.CreateDefaultEntries();
 			this.LineTypes.CreateDefaultEntries();
-			this.Layers.CreateDefaultEntries();
-			this.TextStyles.CreateDefaultEntries();
+
+			if (layer_names is not null)
+				this.Layers.AddRange(layer_names.Select(ln => new Layer(ln)));
+			var default_layer = this.Layers.FirstOrDefault() ?? Layer.Default;
+			this.Header.CurrentLayerName = default_layer.Name;
+
+
+            this.TextStyles.CreateDefaultEntries();
 			this.DimensionStyles.CreateDefaultEntries();
 			this.VPorts.CreateDefaultEntries();
 
 			//Blocks
 			if (!this.BlockRecords.Contains(BlockRecord.ModelSpaceName))
 			{
-				BlockRecord model = BlockRecord.ModelSpace;
+				BlockRecord model = BlockRecord.CreateModelSpace(this.Layers.FirstOrDefault() ?? Layer.Default);
 				this.Layouts.Add(model.Layout);
 			}
 
 			if (!this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
 			{
-				BlockRecord pspace = BlockRecord.PaperSpace;
-				this.Layouts.Add(pspace.Layout);
-			}
-		}
+				BlockRecord pspace = BlockRecord.CreatePaperSpace(this.Layers.FirstOrDefault() ?? Layer.Default);
+                this.Layouts.Add(pspace.Layout);
+            }
+
+			var dicvar =  new DictionaryVariable
+			{
+				ObjectSchemaNumber = 0,
+				Value = "2",
+				Name = "DIMASSOC"
+			};
+			var vardict = RootDictionary[CadDictionary.VariableDictionary] as CadDictionary;
+			dicvar.Reactors.Add(vardict.Handle, vardict);
+			vardict.Add("DIMASSOC", dicvar);
+        }
 
 		/// <summary>
 		/// Updates the collections in the document and link them to it's dictionary
@@ -340,7 +357,7 @@ namespace ACadSharp
 			return dictionary != null;
 		}
 
-		private void addCadObject(CadObject cadObject)
+		public void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
 			{

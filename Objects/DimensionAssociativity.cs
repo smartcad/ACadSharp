@@ -39,7 +39,7 @@ namespace ACadSharp.Objects
              StartPoint = 13,
         }
 
-        /// <inheritdoc/>
+
 
         /// <inheritdoc/>
         public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -83,5 +83,9 @@ namespace ACadSharp.Objects
         public Entity OtherObject { get; set; }
 
         public Dimension DimensionObject { get; set; }
+
+        public DimensionAssociativity() : base("ACAD_DIMASSOC") 
+        {
+        }
     }
 }
