@@ -17,6 +17,7 @@ using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using ACadSharp.Objects.Evaluations;
 
 namespace ACadSharp.IO.DWG
 {
@@ -1075,34 +1076,44 @@ namespace ACadSharp.IO.DWG
 
 		#region Evaluation Graph, Enhanced Block etc.
 
-		private CadTemplate readEvaluationGraph() {
+		private CadTemplate readEvaluationGraph() 
+		{
 			EvaluationGraph evaluationGraph = new EvaluationGraph();
 			EvaluationGraphTemplate template = new EvaluationGraphTemplate(evaluationGraph);
 
 			this.readCommonNonEntityData(template);
 
-			//	DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			var val1 = _objectReader.ReadBitLong();
-			var val2 = _objectReader.ReadBitLong();
-			var val3 = _objectReader.ReadBitLong();
-			int nodeCount = val3;
+            //DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+            evaluationGraph.Value96 = _objectReader.ReadBitLong();
+            evaluationGraph.Value97 = _objectReader.ReadBitLong();
+            int nodeCount = _objectReader.ReadBitLong();
 
-			for (int i = 0; i < nodeCount; i++) {
+            for (int i = 0; i < nodeCount; i++) {
 				var node = new EvaluationGraph.GraphNode();
 				evaluationGraph.Nodes.Add(node);
-				node.Index = _objectReader.ReadBitLong();
-				node.Flags = _objectReader.ReadBitLong();
-				node.NextNodeIndex = _objectReader.ReadBitLong();
-				template.NodeHandles.Add(node, this.handleReference());
-				node.Data1 = _objectReader.ReadBitLong();
+
+                //Code 91
+                node.Index = _objectReader.ReadBitLong();
+                //Code 93
+                node.Flags = _objectReader.ReadBitLong();
+                //Code 95
+                node.NextNodeIndex = _objectReader.ReadBitLong();
+
+                //Code 360
+                template.NodeHandles.Add(node, this.handleReference());
+
+                //Code 92
+                node.Data1 = _objectReader.ReadBitLong();
 				node.Data2 = _objectReader.ReadBitLong();
 				node.Data3 = _objectReader.ReadBitLong();
 				node.Data4 = _objectReader.ReadBitLong();
 			}
 
-			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes) {
+			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes) 
+			{
 				int nextNodeIndex = node.NextNodeIndex;
-				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount) {
+				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount) 
+				{
 					node.Next = evaluationGraph.Nodes[nextNodeIndex];
 				}
 			}
@@ -5651,39 +5662,51 @@ namespace ACadSharp.IO.DWG
 			var classname = this._textReader.ReadVariableText();
 			dimassoc.ObjectSnapFlag = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
 			template.MainGeometryHandle = this.handleReference();
-			var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why
+			var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why. usually = 1
 
 			var SubentType = this._objectReader.ReadBitShort();
 			var GsMarker = this._objectReader.ReadBitLong();
 
-			ulong xref_handle = default;
-			try
-			{
-                xref_handle = this.handleReference(0);
-            }
-			catch (Exception)
-			{
-				return template;
-			}
 			var b21 = this._objectReader.Read2Bits(); // needed, still don't know why
 			dimassoc.NearOsnapGeometryParameter = this._objectReader.ReadBitDouble();
 			var osnap_point = this._objectReader.Read3BitDouble();
 			dimassoc.OsnapPoint = new System.Numerics.Vector3((float)osnap_point.X, (float)osnap_point.Y, (float)osnap_point.Z);
+			var hasLastPointReference = this._objectReader.ReadBit();
 
-			if(template.MainGeometryHandle != xref_handle)
-			{
-				template.OtherGeometryHandle = xref_handle;
-				return template;
-			}
-
-			try
-			{
-				template.OtherGeometryHandle = this.handleReference(0);
+            ulong xref_handle = default;
+            try
+            {
+                xref_handle = this.handleReference(0);
             }
-			catch (Exception)
-			{
-				return template;
-			}
+            catch (Exception)
+            {
+                return template;
+            }
+            var textwhat = this._textReader.ReadVariableText();
+
+            var SubentType2 = this._objectReader.ReadByte();
+            var GsMarker2 = this._objectReader.ReadBitLong();
+			var hasLastPointRef = this._objectReader.ReadBit();
+            var hh = this._objectReader.ReadBitShort();
+			var tmp_dble = this._objectReader.Read3BitDouble();
+			var tmp_dble3 = this._objectReader.ReadBitDouble();
+			var tmp_dble4 = this._objectReader.ReadBitDouble();
+			var tmp_dble5 = this._objectReader.ReadBitDouble();
+
+            //if (template.MainGeometryHandle != xref_handle)
+            //{
+            //	template.OtherGeometryHandle = xref_handle;
+            //	return template;
+            //}
+
+            //try
+            //{
+            //	template.OtherGeometryHandle = this.handleReference(0);
+            //         }
+            //catch (Exception)
+            //{
+            //	return template;
+            //}
 
             return template;
 		}

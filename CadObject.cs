@@ -49,7 +49,7 @@ namespace ACadSharp
 		public CadDictionary XDictionary
 		{
 			get { return this._xdictionary; }
-			internal set
+			set
 			{
 				if (value == null)
 					return;

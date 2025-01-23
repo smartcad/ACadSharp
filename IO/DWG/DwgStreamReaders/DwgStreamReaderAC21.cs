@@ -39,7 +39,8 @@ namespace ACadSharp.IO.DWG
 				//Correct the text length by shifting 1 bit
 				short length = (short)(textLength << 1);
 				//Read the string and get rid of the empty bytes
-				value = this.ReadString(length, Encoding.Unicode).Replace("\0", "");
+				value = this.ReadString(length, this.Encoding);
+				value = value.Replace("\0", "");
 			}
 			return value;
 		}

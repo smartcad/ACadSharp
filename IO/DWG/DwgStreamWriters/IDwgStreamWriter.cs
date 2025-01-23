@@ -39,6 +39,7 @@ namespace ACadSharp.IO.DWG
 		void WriteBitLongLong(long value);
 
 		void WriteVariableText(string value);
+		void WriteVariableTextForDimassoc(string value);
 
 		void WriteTextUnicode(string value);
 

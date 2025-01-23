@@ -260,8 +260,13 @@ namespace ACadSharp.IO.DWG
 		{
 			this.TextWriter.WriteVariableText(value);
 		}
+        public void WriteVariableTextForDimassoc(string value)
+		{
+			this.TextWriter.WriteVariableTextForDimassoc(value);
+		}
 
-		public void WriteTextUnicode(string value)
+
+        public void WriteTextUnicode(string value)
 		{
 			this.TextWriter.WriteTextUnicode(value);
 		}

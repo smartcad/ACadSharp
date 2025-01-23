@@ -19,22 +19,6 @@ namespace ACadSharp.IO.DWG
 
 				this.writeObject(obj);
 			}
-
-			for (int i = 0; i < this._document.ModelSpace.Entities.Count; i++)
-			{
-				var ent = this._document.ModelSpace.Entities[i];
-				if(ent is not Dimension || ent.Reactors.Count != 1)
-				{
-					continue;
-				}
-
-				var reactor = ent.Reactors.FirstOrDefault();
-				if (reactor.Value is not DimensionAssociativity dimassoc)
-					continue;
-
-				this.writeObject(dimassoc.Owner as CadObject);
-				this.writeObject(dimassoc);
-            }
 		}
 
 		private void writeObject(CadObject obj)
@@ -121,7 +105,8 @@ namespace ACadSharp.IO.DWG
             this._writer.WriteBit(dimassoc.TransSpaceFlag);
             this._writer.WriteByte((byte)(dimassoc.RotatedDimensionFlag == DimensionAssociativity.RotatedDimensionTypes.Parallel ? 0 : 1));
 
-            this._writer.WriteVariableText("AcDbOsnapPointRef");
+            this._writer.WriteVariableTextForDimassoc("AcDbOsnapPointRef");
+            //this._writer.WriteVariableTextForDimassoc("AcDbOsnapPointRef");
             this._writer.WriteByte((byte)dimassoc.ObjectSnapFlag);
             this._writer.HandleReference(dimassoc.MainObject);
             this._writer.WriteBitLong(1);
@@ -130,10 +115,22 @@ namespace ACadSharp.IO.DWG
             this._writer.WriteBitLong(0); // gsmarker
 
 
-            this._writer.Write2Bits(0); // needed, still don't know why
-            this._writer.WriteBitDouble(0.0);
-            this._writer.Write3BitDouble(dimassoc.DimensionObject.DefinitionPoint);
-        }
+			this._writer.Write2Bits(0); // needed, still don't know why
+			this._writer.WriteBitDouble(0.0); // NearOsnapGeometryParameter
+			this._writer.Write3BitDouble(dimassoc.DimensionObject.DefinitionPoint);
+			this._writer.WriteBit(false);
+			//this._writer.HandleReference(dimassoc.MainObject); // xref handle
+			//this._writer.WriteByte(0);
+			//this._writer.WriteBitLong(0);
+			//this._writer.WriteBit(true);
+			//this._writer.WriteBitShort(517);
+			//this._writer.WriteBitDouble(0.0);
+			//this._writer.WriteBitDouble(0.0);
+			//this._writer.WriteBitDouble(1.0);
+			//this._writer.WriteBitDouble(0.0);
+			//this._writer.WriteBitDouble(0.0);
+			//this._writer.WriteBitDouble(0.0);
+		}
 
         private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 		{

@@ -271,6 +271,27 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitShort((short)bytes.Length);
 			this.WriteBytes(bytes);
 		}
+		
+		public virtual void WriteVariableTextForDimassoc(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				this.WriteBitShort(0);
+				return;
+			}
+
+			byte[] bytes = this.Encoding.GetBytes(value);
+			var arr = new byte[bytes.Length + 1];
+
+			for (int i = 0; i < bytes.Length; i++)
+			{
+				arr[i] = bytes[i];
+			}
+			arr[arr.Length - 1] = 0;
+
+			this.WriteBitShort((short)arr.Length);
+			this.WriteBytes(arr);
+		}
 
 		public virtual void WriteTextUnicode(string value)
 		{

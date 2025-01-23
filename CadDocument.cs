@@ -266,6 +266,7 @@ namespace ACadSharp
 				this.Layers.AddRange(layer_names.Select(ln => new Layer(ln)));
 			var default_layer = this.Layers.FirstOrDefault() ?? Layer.Default;
 			this.Header.CurrentLayerName = default_layer.Name;
+			this.Header.ShowModelSpace = true;
 
 
             this.TextStyles.CreateDefaultEntries();
@@ -357,7 +358,7 @@ namespace ACadSharp
 			return dictionary != null;
 		}
 
-		public void addCadObject(CadObject cadObject)
+		private void addCadObject(CadObject cadObject)
 		{
 			if (cadObject.Document != null)
 			{

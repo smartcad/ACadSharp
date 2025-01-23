@@ -7,7 +7,7 @@ using ACadSharp.Entities;
 using CSMath;
 
 
-namespace ACadSharp.Objects
+namespace ACadSharp.Objects.Evaluations
 {
 
 	/// <summary>

@@ -155,14 +155,14 @@ namespace ACadSharp.Objects
 			return root;
 		}
 
-		public static CadDictionary CreateForDimAssoc(DimensionAssociativity dimassoc)
+		public static CadDictionary Create(IHandledCadObject owned_by, CadObject child)
 		{
-			var toret = new CadDictionary
+			var dict = new CadDictionary
 			{
-				Owner = dimassoc.DimensionObject
+				Owner = owned_by
 			};
-			dimassoc.Owner = toret;
-			return toret;
+			child.Owner = dict;
+			return dict;
 		}
 
 		/// <summary>
