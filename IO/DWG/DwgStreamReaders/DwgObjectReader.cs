@@ -5653,60 +5653,46 @@ namespace ACadSharp.IO.DWG
             template.DimensionHandle = this.handleReference();
 
             //BS	90	Associativity flag
-            dimassoc.AssociativityFlag = this._objectReader.ReadBitShort();
+            dimassoc.AssociativityFlag = (DimensionAssociativity.DimassocAssociativityPoint) this._objectReader.ReadBitShort();
 			//B		70	trans space flag
 			dimassoc.TransSpaceFlag = this._objectReader.ReadBit();
 			//BD	71	rotated dimesion type
 			dimassoc.RotatedDimensionFlag = this._objectReader.ReadByte() == 0 ? DimensionAssociativity.RotatedDimensionTypes.Parallel : DimensionAssociativity.RotatedDimensionTypes.Perpendicular;
 
-			var classname = this._textReader.ReadVariableText();
-			dimassoc.ObjectSnapFlag = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
-			template.MainGeometryHandle = this.handleReference();
-			var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why. usually = 1
+			int n = 0;
+			if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.First))
+				n++;
+			if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.Second))
+				n++;
+			if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.Third))
+				n++;
+			if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.Fourth))
+				n++;
 
-			var SubentType = this._objectReader.ReadBitShort();
-			var GsMarker = this._objectReader.ReadBitLong();
+			if (n == 0)
+				return template;
 
-			var b21 = this._objectReader.Read2Bits(); // needed, still don't know why
-			dimassoc.NearOsnapGeometryParameter = this._objectReader.ReadBitDouble();
-			var osnap_point = this._objectReader.Read3BitDouble();
-			dimassoc.OsnapPoint = new System.Numerics.Vector3((float)osnap_point.X, (float)osnap_point.Y, (float)osnap_point.Z);
-			var hasLastPointReference = this._objectReader.ReadBit();
+            template.MainGeometryHandle = new ulong[n];
+			dimassoc.PointRefs = new DimensionAssociativity.ObjectSnapPointReference[n];
 
-            ulong xref_handle = default;
-            try
-            {
-                xref_handle = this.handleReference(0);
+			for (int i = 0; i < n; i++)
+			{
+                var classname = this._textReader.ReadVariableText();
+                var snap_type = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
+				template.MainGeometryHandle[i] = this.handleReference();
+                var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why. usually = 1
+
+                var SubentType = this._objectReader.ReadBitShort();
+                var GsMarker = this._objectReader.ReadBitLong();
+
+                var b21 = this._objectReader.Read2Bits(); // needed, still don't know why. usually 2
+                var param = this._objectReader.ReadBitDouble();
+                var osnap_point = this._objectReader.Read3BitDouble();
+                var hasLastPointReference = this._objectReader.ReadBit();
+				var pointref = new DimensionAssociativity.ObjectSnapPointReference(snap_type, SubentType, GsMarker, param, osnap_point, hasLastPointReference);
+
+				dimassoc.PointRefs[i] = pointref;
             }
-            catch (Exception)
-            {
-                return template;
-            }
-            var textwhat = this._textReader.ReadVariableText();
-
-            var SubentType2 = this._objectReader.ReadByte();
-            var GsMarker2 = this._objectReader.ReadBitLong();
-			var hasLastPointRef = this._objectReader.ReadBit();
-            var hh = this._objectReader.ReadBitShort();
-			var tmp_dble = this._objectReader.Read3BitDouble();
-			var tmp_dble3 = this._objectReader.ReadBitDouble();
-			var tmp_dble4 = this._objectReader.ReadBitDouble();
-			var tmp_dble5 = this._objectReader.ReadBitDouble();
-
-            //if (template.MainGeometryHandle != xref_handle)
-            //{
-            //	template.OtherGeometryHandle = xref_handle;
-            //	return template;
-            //}
-
-            //try
-            //{
-            //	template.OtherGeometryHandle = this.handleReference(0);
-            //         }
-            //catch (Exception)
-            //{
-            //	return template;
-            //}
 
             return template;
 		}

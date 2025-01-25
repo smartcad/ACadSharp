@@ -221,7 +221,7 @@ namespace ACadSharp
 		/// </summary>
 		public void CreateDefaults(IEnumerable<string> layer_names)
 		{
-			DxfClassCollection.UpdateDxfClasses(this);
+			//DxfClassCollection.UpdateDxfClasses(this);
 
 			//Header and summary
 			this.Header = new CadHeader(this)

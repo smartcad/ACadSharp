@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using ACadSharp.Attributes;
 using ACadSharp.Entities;
+using CSMath;
 
 namespace ACadSharp.Objects
 {
@@ -21,7 +22,7 @@ namespace ACadSharp.Objects
             Perpendicular,
         }
 
-        public enum ObjectOSnapTypes : short
+        public enum ObjectOSnapTypes : byte
         {
              None = 0,
              Endpoint = 1,
@@ -39,7 +40,35 @@ namespace ACadSharp.Objects
              StartPoint = 13,
         }
 
+        [Flags]
+        public enum DimassocAssociativityPoint : short
+        {
+            First = 1,
+            Second = 2,
+            Third = 4,
+            Fourth = 8
+        }
 
+        public struct ObjectSnapPointReference
+        {
+            public ObjectOSnapTypes SnapType { get; }
+            public Entity Geometry { get; set;  }
+            public short SubentType { get; }
+            public int GsMarker { get; }
+            public double Parameter { get; }
+            public XYZ Point { get; }
+            public bool HasLastPointReference { get; }
+
+            public ObjectSnapPointReference(ObjectOSnapTypes snapTyle, short subentType, int gsMarker, double parameter, XYZ point, bool hasLastPointReference)
+            {
+                SnapType = snapTyle;
+                SubentType = subentType;
+                GsMarker = gsMarker;
+                Parameter = parameter;
+                Point = point;
+                HasLastPointReference = hasLastPointReference;
+            }
+        }
 
         /// <inheritdoc/>
         public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -57,7 +86,7 @@ namespace ACadSharp.Objects
         /// 8 = Fourth point reference
         /// </summary>
         [DxfCodeValue(90)]
-        public short AssociativityFlag { get; set; }
+        public DimassocAssociativityPoint AssociativityFlag { get; set; }
 
         /// <summary>
         /// Allah e jane ki jinish
@@ -68,19 +97,7 @@ namespace ACadSharp.Objects
         [DxfCodeValue(71)]
         public RotatedDimensionTypes RotatedDimensionFlag { get; set; }
 
-
-        [DxfCodeValue(72)]
-        public ObjectOSnapTypes ObjectSnapFlag { get; set; }
-        [DxfCodeValue(40)]
-        public double NearOsnapGeometryParameter { get; set; }
-
-        [DxfCodeValue(DxfReferenceType.Count, 10, 20, 30)]
-        public Vector3 OsnapPoint { get; set; }
-
-        [DxfCodeValue(DxfReferenceType.Handle, 331)]
-        public Entity MainObject { get; set; }
-        [DxfCodeValue(DxfReferenceType.Handle, 332)]
-        public Entity OtherObject { get; set; }
+        public ObjectSnapPointReference[] PointRefs { get; set; }
 
         public Dimension DimensionObject { get; set; }
 

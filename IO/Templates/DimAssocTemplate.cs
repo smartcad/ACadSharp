@@ -11,8 +11,7 @@ namespace ACadSharp.IO.Templates
     internal sealed class DimAssocTemplate : Templates.CadTemplate<DimensionAssociativity>
     {
         public ulong? DimensionHandle { get; set; }
-        public ulong? MainGeometryHandle { get; set; }
-        public ulong? OtherGeometryHandle { get; set; }
+        public ulong[] MainGeometryHandle { get; set; }
 
         public DimAssocTemplate(DimensionAssociativity cadObject) : base(cadObject)
         {
@@ -27,14 +26,12 @@ namespace ACadSharp.IO.Templates
                 this.CadObject.DimensionObject = dim;
             }
             
-            if (builder.TryGetCadObject(this.MainGeometryHandle, out Entity record))
+            for (var i = 0; i < this.MainGeometryHandle.Length; i++)
             {
-                this.CadObject.MainObject = record;
-            }
-            
-            if (builder.TryGetCadObject(this.OtherGeometryHandle, out Entity other))
-            {
-                this.CadObject.OtherObject = other;
+                if (builder.TryGetCadObject(this.MainGeometryHandle[i], out Entity record))
+                {
+                    this.CadObject.PointRefs[i].Geometry = record;
+                }
             }
         }
     }

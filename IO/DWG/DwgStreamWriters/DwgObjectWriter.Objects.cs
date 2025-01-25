@@ -101,35 +101,40 @@ namespace ACadSharp.IO.DWG
             this.writeCommonNonEntityData(dimassoc);
 
             this._writer.HandleReference(dimassoc.DimensionObject);
-            this._writer.WriteBitShort(dimassoc.AssociativityFlag);
+            this._writer.WriteBitShort((short)dimassoc.AssociativityFlag);
             this._writer.WriteBit(dimassoc.TransSpaceFlag);
             this._writer.WriteByte((byte)(dimassoc.RotatedDimensionFlag == DimensionAssociativity.RotatedDimensionTypes.Parallel ? 0 : 1));
 
-            this._writer.WriteVariableTextForDimassoc("AcDbOsnapPointRef");
-            //this._writer.WriteVariableTextForDimassoc("AcDbOsnapPointRef");
-            this._writer.WriteByte((byte)dimassoc.ObjectSnapFlag);
-            this._writer.HandleReference(dimassoc.MainObject);
-            this._writer.WriteBitLong(1);
+            int n = 0;
+            if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.First))
+                n++;
+            if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.Second))
+                n++;
+            if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.Third))
+                n++;
+            if (dimassoc.AssociativityFlag.HasFlag(DimensionAssociativity.DimassocAssociativityPoint.Fourth))
+                n++;
 
-            this._writer.WriteBitShort(2); // subent type
-            this._writer.WriteBitLong(0); // gsmarker
+            if (n == 0)
+                return;
+
+			for (int i = 0; i < n; i++)
+			{
+				var point_ref = dimassoc.PointRefs[i];
+                this._writer.WriteVariableTextForDimassoc("AcDbOsnapPointRef");
+                this._writer.WriteByte((byte)point_ref.SnapType);
+                this._writer.HandleReference(point_ref.Geometry);
+                this._writer.WriteBitLong(1);
+
+                this._writer.WriteBitShort(point_ref.SubentType); // subent type
+                this._writer.WriteBitLong(point_ref.GsMarker); // gsmarker
 
 
-			this._writer.Write2Bits(0); // needed, still don't know why
-			this._writer.WriteBitDouble(0.0); // NearOsnapGeometryParameter
-			this._writer.Write3BitDouble(dimassoc.DimensionObject.DefinitionPoint);
-			this._writer.WriteBit(false);
-			//this._writer.HandleReference(dimassoc.MainObject); // xref handle
-			//this._writer.WriteByte(0);
-			//this._writer.WriteBitLong(0);
-			//this._writer.WriteBit(true);
-			//this._writer.WriteBitShort(517);
-			//this._writer.WriteBitDouble(0.0);
-			//this._writer.WriteBitDouble(0.0);
-			//this._writer.WriteBitDouble(1.0);
-			//this._writer.WriteBitDouble(0.0);
-			//this._writer.WriteBitDouble(0.0);
-			//this._writer.WriteBitDouble(0.0);
+                this._writer.Write2Bits(2); // needed, still don't know why
+                this._writer.WriteBitDouble(point_ref.Parameter); // NearOsnapGeometryParameter
+                this._writer.Write3BitDouble(point_ref.Point);
+                this._writer.WriteBit(point_ref.HasLastPointReference);
+            }
 		}
 
         private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)

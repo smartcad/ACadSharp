@@ -50,11 +50,12 @@ namespace ACadSharp.Classes
 			//AcDbLayout
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				CppClassName = "AcDbLayout",
+				CppClassName = DxfSubclassMarker.Layout,
 				ClassNumber = (short)(500 + doc.Classes.Count),
-				DwgVersion = (ACadVersion)0,
+				DwgVersion = ACadVersion.AC1018,
 				DxfName = "LAYOUT",
 				ItemClassId = 499,
+				InstanceCount = 2,
 				MaintenanceVersion = 0,
 				ProxyFlags = ProxyFlags.None,
 				WasZombie = false,
@@ -312,10 +313,10 @@ namespace ACadSharp.Classes
 			//AcDbDimAssoc
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
-				ApplicationName = "AcDbDimAssoc",
-				CppClassName = "AcDbDimAssoc",
+				ApplicationName = "\"AcDbDimAssoc|Product Desc:     SmartCAD 2D|Company:          SmartCAD Inc\"",
+				CppClassName = DxfSubclassMarker.DimAssoc,
 				ClassNumber = (short)(500 + doc.Classes.Count),
-				DwgVersion = 0,
+				DwgVersion = ACadVersion.AC1018,
 				DxfName = "DIMASSOC",
 				ItemClassId = 499,
 				MaintenanceVersion = 0,
