@@ -71,7 +71,8 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override void Dispose()
 		{
-			this._stream.Dispose();
+			if(this.Configuration.CloseStream)
+				this._stream.Dispose();
 		}
 
 		/// <summary>

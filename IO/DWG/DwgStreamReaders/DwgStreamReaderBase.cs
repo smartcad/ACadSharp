@@ -4,6 +4,7 @@ using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -12,6 +13,11 @@ namespace ACadSharp.IO.DWG
 {
 	internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 	{
+        internal static byte[] ByteArray16 = new byte[16];
+        internal static byte[] ByteArray8 = new byte[8];
+        internal static byte[] ByteArray4 = new byte[4];
+		internal static byte[] ByteArray2 = new byte[2];
+
 		/// <inheritdoc/>
 		public int BitShift { get; set; }
 
@@ -83,55 +89,6 @@ namespace ACadSharp.IO.DWG
 			return reader;
 		}
 
-#if TEST
-		public static Dictionary<string, object> Explore(IDwgStreamReader reader)
-		{
-			Dictionary<string, object> values = new Dictionary<string, object>();
-
-			tryGetValue(reader, values, reader.ReadBit);
-			tryGetValue(reader, values, reader.ReadByte);
-			tryGetValue(reader, values, reader.ReadShort);
-			tryGetValue(reader, values, reader.ReadInt);
-			tryGetValue(reader, values, reader.ReadUInt);
-			tryGetValue(reader, values, reader.ReadDouble);
-
-			tryGetValue(reader, values, reader.ReadBitShort);
-			tryGetValue(reader, values, reader.ReadBitLong);
-			tryGetValue(reader, values, reader.ReadBitLongLong);
-			tryGetValue(reader, values, reader.ReadBitDouble);
-			tryGetValue(reader, values, reader.Read2BitDouble);
-			tryGetValue(reader, values, reader.Read3BitDouble);
-
-			tryGetValue(reader, values, reader.ReadRawChar);
-			tryGetValue(reader, values, reader.ReadRawLong);
-			tryGetValue(reader, values, reader.Read2RawDouble);
-			
-			tryGetValue(reader, values, reader.HandleReference);
-
-			tryGetValue(reader, values, reader.ReadTextUnicode);
-			tryGetValue(reader, values, reader.ReadVariableText);
-
-			return values;
-		}
-
-		private static void tryGetValue<T>(IDwgStreamReader reader, Dictionary<string, object> values, Func<T> method)
-		{
-			var pos = reader.PositionInBits();
-
-			values.Add(method.Method.Name, null);
-
-			try
-			{
-				values[method.Method.Name] = method();
-			}
-			catch (Exception) { }
-			finally
-			{
-				reader.SetPositionInBits(pos);
-			}
-		}
-#endif
-
 		public override byte ReadByte()
 		{
 			if (this.BitShift == 0)
@@ -150,11 +107,9 @@ namespace ACadSharp.IO.DWG
 			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
 		}
 
-		public override byte[] ReadBytes(int length)
+		public override void ReadBytes(byte[] numArray, int length)
 		{
-			byte[] numArray = new byte[length];
 			this.applyShiftToArr(length, numArray);
-			return numArray;
 		}
 
 		public long SetPositionByFlag(long position)
@@ -602,11 +557,14 @@ namespace ACadSharp.IO.DWG
 
 		public ulong readHandle(int length)
 		{
-			byte[] raw = new byte[length];
-			byte[] arr = new byte[8];
+			var raw = ArrayPool<byte>.Shared.Rent(length);
+			var arr = ByteArray8;
 
 			if (this.Stream.Read(raw, 0, length) < length)
+			{
+				ArrayPool<byte>.Shared.Return(raw);
 				throw new EndOfStreamException();
+			}
 
 			if (this.BitShift == 0)
 			{
@@ -634,8 +592,9 @@ namespace ACadSharp.IO.DWG
 			for (int index = length; index < 8; ++index)
 				arr[index] = 0;
 
+            ArrayPool<byte>.Shared.Return(raw);
 			return LittleEndianConverter.Instance.ToUInt64(arr);
-		}
+        }
 
 		#endregion Handle reference
 
@@ -676,7 +635,8 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public byte[] ReadSentinel()
 		{
-			return this.ReadBytes(16);
+			this.ReadBytes(ByteArray16, 16);
+			return ByteArray16;
 		}
 
 		/// <inheritdoc/>

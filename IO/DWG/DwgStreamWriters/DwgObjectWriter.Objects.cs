@@ -632,7 +632,7 @@ namespace ACadSharp.IO.DWG
 		{
 			MemoryStream stream = new MemoryStream();
 			StreamIO ms = new StreamIO(stream);
-			ms.EndianConverter = new LittleEndianConverter();
+			ms.EndianConverter = LittleEndianConverter.Instance;
 
 			foreach (XRecord.Entry entry in xrecord.Entries)
 			{

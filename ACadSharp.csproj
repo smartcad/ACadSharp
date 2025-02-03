@@ -5,16 +5,6 @@
 		<Authors>Mozibur Rahman</Authors>
 		<LangVersion>11.0</LangVersion>
 		<PackageId>ACadSharp</PackageId>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<RepositoryType>git</RepositoryType>
-		<GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>1.0.2</Version>
-		<PackageOutputPath>../nupkg</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">

@@ -18,6 +18,7 @@ using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using ACadSharp.Objects.Evaluations;
+using System.Buffers;
 
 namespace ACadSharp.IO.DWG
 {
@@ -581,21 +582,25 @@ namespace ACadSharp.IO.DWG
 						//it's 8 bytes -- even if the leading ones are 0. It's not a string; read 
 						//it as hex, as usual for handles. (There's no length specifier this time.) 
 						//Even layer 0 is referred to by handle here.
-						byte[] arr = this._objectReader.ReadBytes(8);
-						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
+						this._objectReader.ReadBytes(DwgStreamReaderBase.ByteArray8, 8);
+						ulong handle = BigEndianConverter.Instance.ToUInt64(DwgStreamReaderBase.ByteArray8);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					case DxfCode.ExtendedDataBinaryChunk:
 						//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
-						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadBytes(this._objectReader.ReadByte()));
+						var len = (int)this._objectReader.ReadByte();
+						var arr = ArrayPool<byte>.Shared.Rent(len);
+						this._objectReader.ReadBytes(arr, len);
+                        record = new ExtendedDataRecord(dxfCode, arr);
+						ArrayPool<byte>.Shared.Return(arr);
 						break;
 					case DxfCode.ExtendedDataHandle:
 						//5 (1005) An entity handle reference.
 						//The value is given as 8 bytes -- even if the leading ones are 0.
 						//It's not a string; read it as hex, as usual for handles.
 						//(There's no length specifier this time.)
-						arr = this._objectReader.ReadBytes(8);
-						handle = BigEndianConverter.Instance.ToUInt64(arr);
+						this._objectReader.ReadBytes(DwgStreamReaderBase.ByteArray8, 8);
+						handle = BigEndianConverter.Instance.ToUInt64(DwgStreamReaderBase.ByteArray8);
 						record = new ExtendedDataRecord(dxfCode, handle);
 						break;
 					//10 - 13 (1010 - 1013)
@@ -635,7 +640,10 @@ namespace ACadSharp.IO.DWG
 						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadRawLong());
 						break;
 					default:
-						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
+                        len = (int)(endPos - this._objectReader.Position);
+						arr = ArrayPool<byte>.Shared.Rent(len);
+                        this._objectReader.ReadBytes(arr, len);
+						ArrayPool<byte>.Shared.Return(arr);
 						this._builder.Notify($"Unknown code for extended data: {dxfCode}", NotificationType.Warning);
 						return data;
 				}
@@ -1411,7 +1419,9 @@ namespace ACadSharp.IO.DWG
 					if (dataSize > 0)
 					{
 						//Annotative data bytes RC Byte array with length Annotative data size.
-						var data = this._objectReader.ReadBytes(dataSize);
+						var arr = ArrayPool<byte>.Shared.Rent(dataSize);
+						this._objectReader.ReadBytes(arr, dataSize);
+						ArrayPool<byte>.Shared.Rent(dataSize);
 						//Registered application H Hard pointer.
 						var appHanlde = this.handleReference(); //What to do??
 																//Unknown BS 72? Value 0.
@@ -4000,13 +4010,13 @@ namespace ACadSharp.IO.DWG
 			{
 				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
 				//(The 9 - group is undocumented.)
-				byte[] textarea = this._objectReader.ReadBytes(256);
+				this._objectReader.Advance(256);
 				//TODO: Read the line type text area
 			}
 			//R2007+:
 			if (this.R2007Plus && isText)
 			{
-				byte[] textarea = this._objectReader.ReadBytes(512);
+				this._objectReader.Advance(512);
 				//TODO: Read the line type text area
 			}
 
@@ -5480,7 +5490,12 @@ namespace ACadSharp.IO.DWG
 						break;
 					case GroupCodeValueType.Chunk:
 					case GroupCodeValueType.ExtendedDataChunk:
-						xRecord.CreateEntry(code, this._objectReader.ReadBytes(this._objectReader.ReadByte()));
+						var len = this._objectReader.ReadByte();
+						var arr = ArrayPool<byte>.Shared.Rent(len);
+						this._objectReader.ReadBytes(arr, len);
+
+						xRecord.CreateEntry(code, arr);
+						ArrayPool<byte>.Shared.Return(arr);
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:

@@ -12,6 +12,7 @@ using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.Objects;
+using System.Buffers;
 
 namespace ACadSharp.IO
 {
@@ -437,12 +438,16 @@ namespace ACadSharp.IO
 		{
 			//The next 7 starting at offset 0x06 are to be six bytes of 0 
 			//(in R14, 5 0’s and the ACADMAINTVER variable) and a byte of 1.
-			sreader.ReadBytes(7);
+
+			var arr = ArrayPool<byte>.Shared.Rent(7);
+			sreader.ReadBytes(arr, 7);
+			ArrayPool<byte>.Shared.Return(arr);
+
 			//At 0x0D is a seeker (4 byte long absolute address) for the beginning sentinel of the image data.
 			fileheader.PreviewAddress = sreader.ReadInt();
 
 			//Undocumented Bytes at 0x11 and 0x12
-			sreader.ReadBytes(2);
+			sreader.ReadBytes(DwgStreamReaderBase.ByteArray2, 2);
 
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 			fileheader.DrawingCodePage = CadUtils.GetCodePage(sreader.ReadShort());
@@ -492,15 +497,21 @@ namespace ACadSharp.IO
 			//20 9A 50 EE 40 78 36 FD 12 49 32 F6 9E 7D 49 DC
 			//AD 4F 14 F2 44 40 66 D0 6B C4 30 B7
 
-			StreamIO headerStream = new StreamIO(new CRC32StreamHandler(sreader.ReadBytes(0x6C), 0U)); //108
+			var arr = ArrayPool<byte>.Shared.Rent(0x6C);
+			sreader.ReadBytes(arr, 0x6C);
+            StreamIO headerStream = new StreamIO(new CRC32StreamHandler(arr, 0U)); //108
+			ArrayPool<byte>.Shared.Return(arr);
+
 			headerStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
-			sreader.ReadBytes(20);  //CHECK IF IS USEFUL
+            arr = ArrayPool<byte>.Shared.Rent(20);
+            sreader.ReadBytes(arr, 20);  //CHECK IF IS USEFUL
+            ArrayPool<byte>.Shared.Return(arr);
 
-			#region Read header encrypted data
+            #region Read header encrypted data
 
-			//0x00	12	“AcFssFcAJMB” file ID string
-			string fileId = headerStream.ReadString(12);
+            //0x00	12	“AcFssFcAJMB” file ID string
+            string fileId = headerStream.ReadString(12);
 			if (fileId != "AcFssFcAJMB\0")
 			{
 				this.triggerNotification($"File validation failed, id should be : AcFssFcAJMB\0, but is : {fileId}", NotificationType.Warning);
@@ -708,13 +719,16 @@ namespace ACadSharp.IO
 		{
 			this.readFileMetaData(fileheader, sreader);
 
-			//The last 0x28 bytes of this section consists of check data, 
-			//containing 5 Int64 values representing CRC’s and related numbers 
-			//(starting from 0x3D8 until the end). The first 0x3D8 bytes 
-			//should be decoded using Reed-Solomon (255, 239) decoding, with a factor of 3.
-			byte[] compressedData = sreader.ReadBytes(0x400);
+            //The last 0x28 bytes of this section consists of check data, 
+            //containing 5 Int64 values representing CRC’s and related numbers 
+            //(starting from 0x3D8 until the end). The first 0x3D8 bytes 
+            //should be decoded using Reed-Solomon (255, 239) decoding, with a factor of 3.
+
+            var compressedData = ArrayPool<byte>.Shared.Rent(0x400);
+            sreader.ReadBytes(compressedData, 0x400);
 			byte[] decodedData = new byte[3 * 239]; //factor * blockSize
 			this.reedSolomonDecoding(compressedData, decodedData, 3, 239);
+			ArrayPool<byte>.Shared.Return(compressedData);
 
 			//0x00	8	CRC
 			long crc = LittleEndianConverter.Instance.ToInt64(decodedData, 0);

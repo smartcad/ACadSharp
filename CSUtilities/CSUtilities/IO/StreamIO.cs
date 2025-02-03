@@ -1,5 +1,7 @@
-﻿using CSUtilities.Converters;
+﻿using ACadSharp.IO.DWG;
+using CSUtilities.Converters;
 using System;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -99,34 +101,6 @@ namespace CSUtilities.IO
 		/// </summary>
 		public StreamIO(byte[] arr) : this(new MemoryStream(arr)) { }
 
-		/// <summary>
-		/// Get an array of bytes given an offset, before the operation the position is set to 0.
-		/// </summary>
-		/// <param name="offset"></param>
-		/// <param name="length"></param>
-		/// <returns></returns>
-		/// <remarks>This operation don't advance the positon.</remarks>
-		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		public byte[] GetBytes(int offset, int length)
-		{
-			if (length < 0)
-				throw new ArgumentOutOfRangeException("Length cannot be negative.");
-
-			//Save the current position
-			long save = this.Position;
-			//Set the position to the begining
-			this.Position = offset;
-
-			byte[] buffer = this.ReadBytes(length);
-			//if (this.m_stream.Read(buffer, offset, length) < length)
-			//	throw new EndOfStreamException();
-
-			//Reset the position
-			this.Position = save;
-
-			return buffer;
-		}
-
 		public async Task<byte[]> GetBytesAsync(int offset, int length)
 		{
 			if (length < 0)
@@ -148,38 +122,16 @@ namespace CSUtilities.IO
 		}
 
 		/// <summary>
-		/// Look into a byte without moving the position of the stream.
-		/// </summary>
-		/// <returns></returns>
-		public byte LookByte()
-		{
-			byte b = LookBytes(1)[0];
-			return b;
-		}
-
-		/// <summary>
-		/// Look into an array of bytes without moving the position of the stream.
-		/// </summary>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public byte[] LookBytes(int count)
-		{
-			byte[] bs = this.ReadBytes(count);
-			this.Position -= count;
-			return bs;
-		}
-
-		/// <summary>
 		/// Read a single byte form the stream.
 		/// </summary>
 		/// <returns></returns>
 		public virtual byte ReadByte()
 		{
-			byte[] arr = new byte[1];
-			byte b = _stream.Read(arr, 0, 1) == 1 ?
-				arr[0] : throw new EndOfStreamException();
+			int b = _stream.ReadByte();
+			if(b == -1)
+				throw new EndOfStreamException();
 
-			return b;
+			return (byte)b;
 		}
 
 		public virtual async Task<byte> ReadByteAsync(CancellationToken cancellationToken = default)
@@ -208,19 +160,15 @@ namespace CSUtilities.IO
 		/// </remarks>
 		/// <param name="length"></param>
 		/// <returns></returns>
-		public virtual byte[] ReadBytes(int length)
+		public virtual void ReadBytes(byte[] buffer, int length)
 		{
 			if (length < 0)
 				throw new ArgumentOutOfRangeException("Length cannot be negative.");
 
-			byte[] buffer = new byte[length];
-
 			if (this._stream.Read(buffer, 0, length) < length)
 				throw new EndOfStreamException();
-
-			return buffer;
 		}
-
+		
 		public virtual async Task<byte[]> ReadBytesAsync(int length, CancellationToken cancellationToken = default)
 		{
 			if (length < 0)
@@ -272,7 +220,9 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(2);
+			byte[] buffer = DwgStreamReaderBase.ByteArray2;
+
+            this.ReadBytes(buffer, 2);
 			return converter.ToInt16(buffer);
 		}
 
@@ -294,7 +244,8 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(2);
+            byte[] buffer = DwgStreamReaderBase.ByteArray2;
+            this.ReadBytes(buffer, 2);
 			return converter.ToUInt16(buffer);
 		}
 
@@ -316,7 +267,9 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(4);
+            byte[] buffer = DwgStreamReaderBase.ByteArray4;
+
+            this.ReadBytes(buffer, 4);
 			return converter.ToInt32(buffer);
 		}
 
@@ -338,7 +291,8 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(4);
+            byte[] buffer = DwgStreamReaderBase.ByteArray4;
+            this.ReadBytes(buffer, 4);
 			return converter.ToUInt32(buffer);
 		}
 
@@ -360,7 +314,9 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(4);
+            byte[] buffer = DwgStreamReaderBase.ByteArray4;
+
+            this.ReadBytes(buffer, 4);
 			return converter.ToSingle(buffer);
 		}
 
@@ -382,7 +338,9 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(8);
+            byte[] buffer = DwgStreamReaderBase.ByteArray8;
+
+            this.ReadBytes(buffer, 8);
 			return converter.ToDouble(buffer);
 		}
 
@@ -404,7 +362,9 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(8);
+            byte[] buffer = DwgStreamReaderBase.ByteArray8;
+
+            this.ReadBytes(buffer, 8);
 			return converter.ToInt64(buffer);
 		}
 
@@ -426,7 +386,8 @@ namespace CSUtilities.IO
 		{
 			T converter = new T();
 
-			byte[] buffer = this.ReadBytes(8);
+            byte[] buffer = DwgStreamReaderBase.ByteArray8;
+            this.ReadBytes(buffer, 8);
 			return converter.ToUInt64(buffer);
 		}
 
@@ -451,8 +412,13 @@ namespace CSUtilities.IO
 			if (length == 0)
 				return string.Empty;
 
-			byte[] numArray = this.ReadBytes(length);
-			return encoding.GetString(numArray);
+            var numArray = ArrayPool<byte>.Shared.Rent(length);
+
+            this.ReadBytes(numArray, length);
+			var str = encoding.GetString(numArray, 0, length);
+			ArrayPool<byte>.Shared.Return(numArray);
+
+			return str;
 		}
 
 		/// <summary>

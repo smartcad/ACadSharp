@@ -29,11 +29,11 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			//UInt32	4	Unknown(ODA writes 3)
 			int unknown2 = this._reader.ReadInt();
 			//Byte[]	16	Version data(checksum, ODA writes zeroes)
-			byte[] bytes = this._reader.ReadBytes(16);
+			this._reader.ReadBytes(DwgStreamReaderBase.ByteArray16, 16);
 			//String	2 + 2 * n + 2	Version
 			string version = this._reader.ReadTextUnicode();
 			//Byte[]	16	Comment data(checksum, ODA writes zeroes)
-			byte[] comm = this._reader.ReadBytes(16);
+			this._reader.ReadBytes(DwgStreamReaderBase.ByteArray16, 16);
 
 			if (!this.R2010Plus)
 			{
@@ -43,7 +43,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			//String	2 + 2 * n + 2	Comment
 			string comment = this._reader.ReadTextUnicode();
 			//Byte[]	16	Product data(checksum, ODA writes zeroes)
-			byte[] product = this._reader.ReadBytes(16);
+			this._reader.ReadBytes(DwgStreamReaderBase.ByteArray16, 16);
 			//String	2 + 2 * n + 2	Product
 			string xml = this._reader.ReadTextUnicode();
 		}
