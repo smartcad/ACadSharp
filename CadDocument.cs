@@ -14,7 +14,7 @@ namespace ACadSharp
 	/// <summary>
 	/// A CAD drawing
 	/// </summary>
-	public class CadDocument : IHandledCadObject
+	public class CadDocument : IHandledCadObject, IDisposable
 	{
 		/// <summary>
 		/// The document handle is always 0, this field makes sure that no object overrides this value
@@ -34,7 +34,7 @@ namespace ACadSharp
 		/// <summary>
 		/// Dxf classes defined in this document
 		/// </summary>
-		public DxfClassCollection Classes { get; set; } = new DxfClassCollection();
+		public DxfClassCollection Classes { get; set; }
 
 		/// <summary>
 		/// The collection of all registered applications in the drawing
@@ -221,8 +221,6 @@ namespace ACadSharp
 		/// </summary>
 		public void CreateDefaults(IEnumerable<string> layer_names)
 		{
-			//DxfClassCollection.UpdateDxfClasses(this);
-
 			//Header and summary
 			this.Header = new CadHeader(this)
 			{
@@ -547,5 +545,33 @@ namespace ACadSharp
 				}
 			}
 		}
-	}
+
+		public void Dispose()
+		{
+            Classes.Clear();
+			this.RootDictionary.Dispose();
+			this.ModelSpace.Entities.Clear();
+			this.PaperSpace.Entities.Clear();
+
+            this.BlockRecords?.Dispose();
+            this.Layers?.Dispose();
+            this.DimensionStyles?.Dispose();
+            this.TextStyles?.Dispose();
+            this.LineTypes?.Dispose();
+            this.Views?.Dispose();
+            this.UCSs?.Dispose();
+            this.VPorts?.Dispose();
+            this.AppIds?.Dispose();
+
+
+			this.Layouts?.Dispose();
+			this.Groups?.Dispose();
+			this.Scales?.Dispose();
+			this.MLineStyles?.Dispose();
+			this.MLeaderStyles?.Dispose();
+			this.ImageDefinitions?.Dispose();
+
+			this._cadObjects.Clear();
+        }
+    }
 }

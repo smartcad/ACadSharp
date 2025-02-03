@@ -1,4 +1,6 @@
-﻿namespace CSUtilities.Converters
+﻿using System;
+
+namespace CSUtilities.Converters
 {
 	/// <summary>
 	/// Represents a endian byte converter.
@@ -188,6 +190,6 @@
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		byte[] GetBytes<T>(T value) where T : struct;
+		ReadOnlySpan<byte> GetBytes<T>(T value) where T : struct;
 	}
 }

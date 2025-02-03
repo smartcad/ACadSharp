@@ -8,7 +8,7 @@ using System.Linq;
 namespace ACadSharp.Tables.Collections
 {
 	[DxfSubClass(DxfSubclassMarker.Table)]
-	public abstract class Table<T> : CadObject, ITable, IObservableCadCollection<T>
+	public abstract class Table<T> : CadObject, ITable, IObservableCadCollection<T>, IDisposable
 		where T : TableEntry
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
@@ -188,6 +188,11 @@ namespace ACadSharp.Tables.Collections
 			}
 
 			return $"{name}_{i}";
+		}
+
+		public void Dispose()
+		{
+			this.entries.Clear();
 		}
 	}
 }

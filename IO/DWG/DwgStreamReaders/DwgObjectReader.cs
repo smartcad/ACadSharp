@@ -40,7 +40,7 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal partial class DwgObjectReader : DwgSectionIO
+	internal partial class DwgObjectReader : DwgSectionIO, IDisposable
 	{
 		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
 
@@ -238,8 +238,8 @@ namespace ACadSharp.IO.DWG
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 				//if(type == ObjectType.UNLISTED || type == ObjectType.INVALID || type == ObjectType.UNDEFINED)
-    //            System.Diagnostics.Debug.WriteLine(type);
-            }
+				//            System.Diagnostics.Debug.WriteLine(type);
+			}
 
 			return type;
 		}
@@ -262,10 +262,10 @@ namespace ACadSharp.IO.DWG
 		private ulong handleReference(ulong handle)
 		{
 			//Read the handle
-			if(!this._handlesReader.HandleReference(handle, out _, out ulong value))
-                throw new Exceptions.DwgException($"[HandleReference] invalid reference code ");
+			if (!this._handlesReader.HandleReference(handle, out _, out ulong value))
+				throw new Exceptions.DwgException($"[HandleReference] invalid reference code ");
 
-            if (value != 0 &&
+			if (value != 0 &&
 				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._readedObjects.ContainsKey(value))
 			{
@@ -591,7 +591,7 @@ namespace ACadSharp.IO.DWG
 						var len = (int)this._objectReader.ReadByte();
 						var arr = ArrayPool<byte>.Shared.Rent(len);
 						this._objectReader.ReadBytes(arr, len);
-                        record = new ExtendedDataRecord(dxfCode, arr);
+						record = new ExtendedDataRecord(dxfCode, arr);
 						ArrayPool<byte>.Shared.Return(arr);
 						break;
 					case DxfCode.ExtendedDataHandle:
@@ -640,9 +640,9 @@ namespace ACadSharp.IO.DWG
 						record = new ExtendedDataRecord(dxfCode, this._objectReader.ReadRawLong());
 						break;
 					default:
-                        len = (int)(endPos - this._objectReader.Position);
+						len = (int)(endPos - this._objectReader.Position);
 						arr = ArrayPool<byte>.Shared.Rent(len);
-                        this._objectReader.ReadBytes(arr, len);
+						this._objectReader.ReadBytes(arr, len);
 						ArrayPool<byte>.Shared.Return(arr);
 						this._builder.Notify($"Unknown code for extended data: {dxfCode}", NotificationType.Warning);
 						return data;
@@ -1084,43 +1084,43 @@ namespace ACadSharp.IO.DWG
 
 		#region Evaluation Graph, Enhanced Block etc.
 
-		private CadTemplate readEvaluationGraph() 
+		private CadTemplate readEvaluationGraph()
 		{
 			EvaluationGraph evaluationGraph = new EvaluationGraph();
 			EvaluationGraphTemplate template = new EvaluationGraphTemplate(evaluationGraph);
 
 			this.readCommonNonEntityData(template);
 
-            //DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-            evaluationGraph.Value96 = _objectReader.ReadBitLong();
-            evaluationGraph.Value97 = _objectReader.ReadBitLong();
-            int nodeCount = _objectReader.ReadBitLong();
+			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+			evaluationGraph.Value96 = _objectReader.ReadBitLong();
+			evaluationGraph.Value97 = _objectReader.ReadBitLong();
+			int nodeCount = _objectReader.ReadBitLong();
 
-            for (int i = 0; i < nodeCount; i++) {
+			for (int i = 0; i < nodeCount; i++) {
 				var node = new EvaluationGraph.GraphNode();
 				evaluationGraph.Nodes.Add(node);
 
-                //Code 91
-                node.Index = _objectReader.ReadBitLong();
-                //Code 93
-                node.Flags = _objectReader.ReadBitLong();
-                //Code 95
-                node.NextNodeIndex = _objectReader.ReadBitLong();
+				//Code 91
+				node.Index = _objectReader.ReadBitLong();
+				//Code 93
+				node.Flags = _objectReader.ReadBitLong();
+				//Code 95
+				node.NextNodeIndex = _objectReader.ReadBitLong();
 
-                //Code 360
-                template.NodeHandles.Add(node, this.handleReference());
+				//Code 360
+				template.NodeHandles.Add(node, this.handleReference());
 
-                //Code 92
-                node.Data1 = _objectReader.ReadBitLong();
+				//Code 92
+				node.Data1 = _objectReader.ReadBitLong();
 				node.Data2 = _objectReader.ReadBitLong();
 				node.Data3 = _objectReader.ReadBitLong();
 				node.Data4 = _objectReader.ReadBitLong();
 			}
 
-			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes) 
+			foreach (EvaluationGraph.GraphNode node in evaluationGraph.Nodes)
 			{
 				int nextNodeIndex = node.NextNodeIndex;
-				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount) 
+				if (nextNodeIndex >= 0 && nextNodeIndex < nodeCount)
 				{
 					node.Next = evaluationGraph.Nodes[nextNodeIndex];
 				}
@@ -5658,17 +5658,17 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
-		
+
 		private CadTemplate readDimAssoc()
 		{
-            DimensionAssociativity dimassoc = new DimensionAssociativity();
-            DimAssocTemplate template = new DimAssocTemplate(dimassoc);
+			DimensionAssociativity dimassoc = new DimensionAssociativity();
+			DimAssocTemplate template = new DimAssocTemplate(dimassoc);
 
-            this.readCommonNonEntityData(template);
-            template.DimensionHandle = this.handleReference();
+			this.readCommonNonEntityData(template);
+			template.DimensionHandle = this.handleReference();
 
-            //BS	90	Associativity flag
-            dimassoc.AssociativityFlag = (DimensionAssociativity.DimassocAssociativityPoint) this._objectReader.ReadBitShort();
+			//BS	90	Associativity flag
+			dimassoc.AssociativityFlag = (DimensionAssociativity.DimassocAssociativityPoint)this._objectReader.ReadBitShort();
 			//B		70	trans space flag
 			dimassoc.TransSpaceFlag = this._objectReader.ReadBit();
 			//BD	71	rotated dimesion type
@@ -5687,29 +5687,29 @@ namespace ACadSharp.IO.DWG
 			if (n == 0)
 				return template;
 
-            template.MainGeometryHandle = new ulong[n];
+			template.MainGeometryHandle = new ulong[n];
 			dimassoc.PointRefs = new DimensionAssociativity.ObjectSnapPointReference[n];
 
 			for (int i = 0; i < n; i++)
 			{
-                var classname = this._textReader.ReadVariableText();
-                var snap_type = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
+				var classname = this._textReader.ReadVariableText();
+				var snap_type = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
 				template.MainGeometryHandle[i] = this.handleReference();
-                var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why. usually = 1
+				var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why. usually = 1
 
-                var SubentType = this._objectReader.ReadBitShort();
-                var GsMarker = this._objectReader.ReadBitLong();
+				var SubentType = this._objectReader.ReadBitShort();
+				var GsMarker = this._objectReader.ReadBitLong();
 
-                var b21 = this._objectReader.Read2Bits(); // needed, still don't know why. usually 2
-                var param = this._objectReader.ReadBitDouble();
-                var osnap_point = this._objectReader.Read3BitDouble();
-                var hasLastPointReference = this._objectReader.ReadBit();
+				var b21 = this._objectReader.Read2Bits(); // needed, still don't know why. usually 2
+				var param = this._objectReader.ReadBitDouble();
+				var osnap_point = this._objectReader.Read3BitDouble();
+				var hasLastPointReference = this._objectReader.ReadBit();
 				var pointref = new DimensionAssociativity.ObjectSnapPointReference(snap_type, SubentType, GsMarker, param, osnap_point, hasLastPointReference);
 
 				dimassoc.PointRefs[i] = pointref;
-            }
+			}
 
-            return template;
+			return template;
 		}
 
 		private CadTemplate readLayout()
@@ -5881,19 +5881,27 @@ namespace ACadSharp.IO.DWG
 				byte flags = this._objectReader.ReadByte();
 
 				if ((flags & 1U) > 0U)
-                    dwgColor.ColorName = this._textReader.ReadVariableText();
+					dwgColor.ColorName = this._textReader.ReadVariableText();
 
 				if ((flags & 2U) > 0U)
-                    dwgColor.BookName = this._textReader.ReadVariableText();
+					dwgColor.BookName = this._textReader.ReadVariableText();
 
-                byte[] arr = LittleEndianConverter.Instance.GetBytes(trueColor);
+				byte[] arr = LittleEndianConverter.Instance.GetBytes(trueColor);
 				dwgColor.Color = new Color(arr);
 			}
 
-			else 
+			else
 				dwgColor.Color = new Color(colorIndex);
 
 			return template;
+		}
+
+		public void Dispose()
+		{
+			_handles.Clear();
+			_readedObjects?.Clear();
+			_map?.Clear();
+			_classes?.Clear();
 		}
 	}
 }

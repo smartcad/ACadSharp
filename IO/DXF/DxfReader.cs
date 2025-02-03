@@ -115,12 +115,12 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument();
-			this._document.SummaryInfo = new CadSummaryInfo();
+			var _document = new CadDocument();
+			_document.SummaryInfo = new CadSummaryInfo();
 
 			this._reader = this._reader ?? this.getReader();
 
-			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder = new DxfDocumentBuilder(this._version, _document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 
 			while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
@@ -138,11 +138,11 @@ namespace ACadSharp.IO
 				switch (this._reader.ValueAsString)
 				{
 					case DxfFileToken.HeaderSection:
-						this._document.Header = this.ReadHeader();
-						this._builder.InitialHandSeed = this._document.Header.HandleSeed;
+						_document.Header = this.ReadHeader();
+						this._builder.InitialHandSeed = _document.Header.HandleSeed;
 						break;
 					case DxfFileToken.ClassesSection:
-						this._document.Classes = this.readClasses();
+						_document.Classes = this.readClasses();
 						break;
 					case DxfFileToken.TablesSection:
 						this.readTables();
@@ -164,14 +164,14 @@ namespace ACadSharp.IO
 				this._reader.ReadNext();
 			}
 
-			if(this._document.Header == null)
+			if(_document.Header == null)
 			{
-				this._document.Header = new CadHeader(this._document);
+				_document.Header = new CadHeader(_document);
 			}
 
 			this._builder.BuildDocument();
 
-			return this._document;
+			return _document;
 		}
 
 		/// <inheritdoc/>
@@ -262,22 +262,20 @@ namespace ACadSharp.IO
 		/// The <see cref="CadDocument"/> will not contain any entity, only the tables and it's records
 		/// </remarks>
 		/// <returns></returns>
-		public CadDocument ReadTables()
+		public void ReadTables(CadDocument _document)
 		{
 			this._reader = this._reader ?? this.getReader();
 
-			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder = new DxfDocumentBuilder(this._version, _document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 
 			this.readTables();
 
-			this._document.Header = new CadHeader(this._document);
+			_document.Header = new CadHeader(_document);
 
 			this._builder.RegisterTables();
 
 			this._builder.BuildTables();
-
-			return this._document;
 		}
 
 		/// <summary>
@@ -287,11 +285,11 @@ namespace ACadSharp.IO
 		/// The entities will be completely independent from each other and linetypes and layers will only have it's name set, all the other properties will be set as default
 		/// </remarks>
 		/// <returns></returns>
-		public List<Entity> ReadEntities()
+		public List<Entity> ReadEntities(CadDocument _document)
 		{
 			this._reader = this._reader ?? this.getReader();
 
-			this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
+			this._builder = new DxfDocumentBuilder(this._version, _document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 
 			this.readEntities();

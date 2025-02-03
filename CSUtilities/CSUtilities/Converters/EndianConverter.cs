@@ -40,7 +40,7 @@ namespace CSUtilities.Converters
 		public double ToDouble(byte[] bytes, int offset) => _converter.ToDouble(bytes, offset);
 		public float ToSingle(byte[] bytes, int offset) => _converter.ToSingle(bytes, offset);
 
-		public byte[] GetBytes<T>(T value) where T : struct
+		public ReadOnlySpan<byte> GetBytes<T>(T value) where T : struct
 		{
 			return _converter.GetBytes(value);
 		}

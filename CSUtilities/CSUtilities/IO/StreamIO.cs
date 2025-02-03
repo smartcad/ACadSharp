@@ -448,7 +448,7 @@ namespace CSUtilities.IO
 		public void Write<T>(T value, IEndianConverter converter)
 			where T : struct
 		{
-			byte[] arr = converter.GetBytes(value);
+			byte[] arr = converter.GetBytes(value).ToArray();
 			this._stream.Write(arr, 0, arr.Length);
 		}
 

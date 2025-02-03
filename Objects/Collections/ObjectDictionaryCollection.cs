@@ -9,7 +9,7 @@ namespace ACadSharp.Objects.Collections
 	/// Object collection linked to a dictionary
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class ObjectDictionaryCollection<T> : IHandledCadObject, IEnumerable<T>
+	public abstract class ObjectDictionaryCollection<T> : IHandledCadObject, IEnumerable<T>, IDisposable
 		where T : NonGraphicalObject
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd { add { this._dictionary.OnAdd += value; } remove { this._dictionary.OnAdd -= value; } }
@@ -98,6 +98,11 @@ namespace ACadSharp.Objects.Collections
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return this._dictionary.OfType<T>().GetEnumerator();
+		}
+
+		public void Dispose()
+		{
+			_dictionary?.Clear();
 		}
 	}
 }

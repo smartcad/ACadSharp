@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO
 {
-	internal abstract class CadDocumentBuilder
+	internal abstract class CadDocumentBuilder : IDisposable
 	{
 		public event NotificationEventHandler OnNotification;
 
@@ -296,5 +296,25 @@ namespace ACadSharp.IO
 			this.templatesMap.Add(template.CadObject.Handle, template);
 			this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
 		}
+
+		public void Dispose()
+		{
+			AppIds.Dispose();
+			BlockRecords.Dispose();
+            DimensionStyles.Dispose();
+			Layers.Dispose();
+			LineTypesTable.Dispose();
+			TextStyles.Dispose();
+			UCSs.Dispose();
+			Views.Dispose();
+			VPorts.Dispose();
+
+			cadObjects.Clear();
+			cadObjectsTemplates.Clear();
+			templatesMap.Clear();
+			tableTemplates.Clear();
+			tableEntryTemplates.Clear();
+            dictionaryTemplates.Clear();
+        }
 	}
 }

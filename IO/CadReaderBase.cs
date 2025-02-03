@@ -22,7 +22,7 @@ namespace ACadSharp.IO
 		/// </summary>
 		public T Configuration { get; set; } = new();
 
-		protected CadDocument _document = new CadDocument();
+		//protected CadDocument _document = new CadDocument();
 
 		protected Encoding _encoding = Encoding.Default;
 

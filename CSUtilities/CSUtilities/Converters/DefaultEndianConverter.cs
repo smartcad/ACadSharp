@@ -14,7 +14,7 @@ namespace CSUtilities.Converters
 		public byte[] GetBytes(double value) => BitConverter.GetBytes(value);
 		public byte[] GetBytes(float value) => BitConverter.GetBytes(value);
 
-		public byte[] GetBytes<T>(T value)
+		public ReadOnlySpan<byte> GetBytes<T>(T value)
 			where T : struct
 		{
 			switch (value)

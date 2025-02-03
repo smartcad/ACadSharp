@@ -87,11 +87,7 @@ namespace ACadSharp
 		/// </summary>
 		public void Clear()
 		{
-			Queue<T> q = new(this._entries.ToList());
-			while (q.TryDequeue(out T entry))
-			{
-				this.Remove(entry);
-			}
+			this._entries.Clear();
 		}
 
 		/// <summary>

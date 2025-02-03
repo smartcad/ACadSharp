@@ -19,7 +19,7 @@ namespace ACadSharp.IO
 	/// <summary>
 	/// Class for reading a DWG file into a <see cref="CadDocument"></see>.
 	/// </summary>
-	public class DwgReader : CadReaderBase<DwgReaderConfiguration>
+	public class DwgReader : CadReaderBase<DwgReaderConfiguration> , IDisposable
 	{
 		private DwgDocumentBuilder _builder;
 		private DwgFileHeader _fileHeader;
@@ -36,94 +36,66 @@ namespace ACadSharp.IO
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
-		public DwgReader(Stream stream, NotificationEventHandler notification = null) : base(stream, notification) { }
-
-		/// <summary>
-		/// Read a dwg document in a stream.
-		/// </summary>
-		/// <param name="stream"></param>
-		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
-		/// <returns></returns>
-		public static CadDocument Read(Stream stream, NotificationEventHandler notification = null)
+		public DwgReader(Stream stream, NotificationEventHandler notification = null) : base(stream, notification) 
 		{
-			return Read(stream, new DwgReaderConfiguration(), notification);
+			this.Configuration = new();
 		}
 
 		/// <summary>
 		/// Read a dwg document in a stream.
 		/// </summary>
 		/// <param name="stream"></param>
-		/// <param name="configuration"></param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
 		/// <returns></returns>
-		public static CadDocument Read(Stream stream, DwgReaderConfiguration configuration, NotificationEventHandler notification = null)
-		{
-			CadDocument doc = null;
+		//public static CadDocument Read(Stream stream, NotificationEventHandler notification = null)
+		//{
+		//	return Read(stream, new DwgReaderConfiguration(), notification);
+		//}
 
-			using (DwgReader reader = new DwgReader(stream, notification))
-			{
-				reader.Configuration = configuration;
-				doc = reader.Read();
-			}
+		///// <summary>
+		///// Read a dwg document in a stream.
+		///// </summary>
+		///// <param name="stream"></param>
+		///// <param name="configuration"></param>
+		///// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
+		///// <returns></returns>
+		//public static CadDocument Read(Stream stream, DwgReaderConfiguration configuration, NotificationEventHandler notification = null)
+		//{
+		//	CadDocument doc = null;
 
-			return doc;
-		}
+		//	using (DwgReader reader = new DwgReader(stream, notification))
+		//	{
+		//		reader.Configuration = configuration;
+		//		reader.Read();
+		//		doc = reader._document;
+		//	}
 
-		/// <summary>
-		/// Read a dwg document from a file.
-		/// </summary>
-		/// <param name="filename"></param>
-		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
-		/// <returns></returns>
-		public static CadDocument Read(string filename, NotificationEventHandler notification = null)
-		{
-			return Read(filename, new DwgReaderConfiguration(), notification);
-		}
-
-		/// <summary>
-		/// Read a dwg document from a file.
-		/// </summary>
-		/// <param name="filename"></param>
-		/// <param name="configuration"></param>
-		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
-		/// <returns></returns>
-		public static CadDocument Read(string filename, DwgReaderConfiguration configuration, NotificationEventHandler notification = null)
-		{
-			CadDocument doc = null;
-
-			using (DwgReader reader = new DwgReader(filename, notification))
-			{
-				reader.Configuration = configuration;
-				doc = reader.Read();
-			}
-
-			return doc;
-		}
+		//	return doc;
+		//}
 
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument();
+			var _document = new CadDocument();
 
 			//Read the file header
 			this._fileHeader = this.readFileHeader();
 
-			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, _document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 
-			this._document.SummaryInfo = this.ReadSummaryInfo();
-			this._document.Header = this.ReadHeader();
-			this._document.Classes = this.readClasses();
+			_document.SummaryInfo = this.ReadSummaryInfo();
+			_document.Header = this.ReadHeader();
 
 			this.readAppInfo();
 
 			//Read all the objects in the file
-			this.readObjects();
+			_document.Classes = this.readObjects();
 
 			//Build the document 
 			this._builder.BuildDocument();
 
-			return this._document;
+			return _document;
 		}
 
 		/// <summary>
@@ -395,10 +367,10 @@ namespace ACadSharp.IO
 		/// <remarks>
 		/// Refers to AcDb:AcDbObjects data section.
 		/// </remarks>
-		private void readObjects()
+		private DxfClassCollection readObjects()
 		{
 			Dictionary<ulong, long> handles = this.readHandles();
-			this._document.Classes = this.readClasses();
+			var classes = this.readClasses();
 
 			IDwgStreamReader sreader = null;
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
@@ -422,9 +394,10 @@ namespace ACadSharp.IO
 				sreader,
 				objectHandles,
 				handles,
-				this._document.Classes);
+				classes);
 
 			sectionReader.Read();
+			return classes;
 		}
 
 		#region File Header reading methods
@@ -1279,5 +1252,11 @@ namespace ACadSharp.IO
 
 			return decompressedData;
 		}
+
+		public override void Dispose()
+		{
+            base.Dispose();
+			this._builder?.Dispose();
+        }
 	}
 }

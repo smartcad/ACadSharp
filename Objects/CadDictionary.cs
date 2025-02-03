@@ -16,7 +16,7 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectDictionary)]
 	[DxfSubClass(DxfSubclassMarker.Dictionary)]
-	public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGraphicalObject>
+	public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGraphicalObject>, IDisposable
 	{
 		public event EventHandler<CollectionChangedEventArgs> OnAdd;
 		public event EventHandler<CollectionChangedEventArgs> OnRemove;
@@ -315,10 +315,7 @@ namespace ACadSharp.Objects
 		/// </summary>
 		public void Clear()
 		{
-			foreach (var item in this._entries)
-			{
-				this.Remove(item.Key, out _);
-			}
+			this._entries.Clear();
 		}
 
 		/// <summary>
@@ -386,6 +383,11 @@ namespace ACadSharp.Objects
 			var entry = this._entries[e.OldName];
 			this._entries.Add(e.NewName, entry);
 			this._entries.Remove(e.OldName);
+		}
+
+		public void Dispose()
+		{
+			this._entries.Clear();
 		}
 	}
 }
