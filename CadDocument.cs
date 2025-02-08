@@ -80,14 +80,15 @@ namespace ACadSharp
 		/// The collection of all vports in the drawing
 		/// </summary>
 		public VPortsTable VPorts { get; private set; }
+        public ColorCollection Colors { get; private set; }
 
-		/// <summary>
-		/// The collection of all layouts in the drawing.
-		/// </summary>
-		/// <remarks>
-		/// The collection is null if the <see cref="CadDictionary.AcadLayout"/> doesn't exist in the root dictionary.
-		/// </remarks>
-		public LayoutCollection Layouts { get; private set; }
+        /// <summary>
+        /// The collection of all layouts in the drawing.
+        /// </summary>
+        /// <remarks>
+        /// The collection is null if the <see cref="CadDictionary.AcadLayout"/> doesn't exist in the root dictionary.
+        /// </remarks>
+        public LayoutCollection Layouts { get; private set; }
 
 		/// <summary>
 		/// The collection of all groups in the drawing. 
@@ -293,13 +294,21 @@ namespace ACadSharp
 			var vardict = RootDictionary[CadDictionary.VariableDictionary] as CadDictionary;
 			dicvar.Reactors.Add(vardict.Handle, vardict);
 			vardict.Add("DIMASSOC", dicvar);
+
+
+            if (Classes is null)
+            {
+                Classes = new DxfClassCollection();
+                DxfClassCollection.UpdateDxfClasses(this);
+            }
+
         }
 
-		/// <summary>
-		/// Updates the collections in the document and link them to it's dictionary
-		/// </summary>
-		/// <param name="createDictionaries"></param>
-		public void UpdateCollections(bool createDictionaries)
+        /// <summary>
+        /// Updates the collections in the document and link them to it's dictionary
+        /// </summary>
+        /// <param name="createDictionaries"></param>
+        public void UpdateCollections(bool createDictionaries)
 		{
 			if (createDictionaries && this.RootDictionary == null)
 			{
@@ -338,8 +347,13 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
 			{
 				this.ImageDefinitions = new ImageDefinitionCollection(imageDefinitions);
-			}
-		}
+            }
+
+            if (this.updateCollection(CadDictionary.AcadColor, createDictionaries, out CadDictionary colors))
+            {
+                this.Colors = new ColorCollection(colors);
+            }
+        }
 
 		private bool updateCollection(string dictName, bool createDictionary, out CadDictionary dictionary)
 		{

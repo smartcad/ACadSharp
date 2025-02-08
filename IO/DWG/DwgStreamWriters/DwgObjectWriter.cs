@@ -455,7 +455,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Color CMC 62
-			this._writer.WriteCmColor(layer.Color);
+			this._writer.WriteCmColor(layer.Color, layer.BookColor);
 
 			//External reference block handle(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);
@@ -712,7 +712,7 @@ namespace ACadSharp.IO.DWG
 				//Contrast BD ? Default value is 0
 				this._writer.WriteBitDouble(0.0);
 				//Abient color CMC? Default value is indexed color 250
-				this._writer.WriteCmColor(new Color(250));
+				this._writer.WriteCmColor(new Color(250), null);
 			}
 
 			//Common:
@@ -893,11 +893,11 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteVariableText(dimStyle.DimArrow2?.Name);
 
 				//DIMCLRD BS 176
-				this._writer.WriteCmColor(dimStyle.DimensionLineColor);
+				this._writer.WriteCmColor(dimStyle.DimensionLineColor, null);
 				//DIMCLRE BS 177
-				this._writer.WriteCmColor(dimStyle.ExtensionLineColor);
+				this._writer.WriteCmColor(dimStyle.ExtensionLineColor, null);
 				//DIMCLRT BS 178
-				this._writer.WriteCmColor(dimStyle.TextColor);
+				this._writer.WriteCmColor(dimStyle.TextColor, null);
 			}
 
 			//R2000+:
@@ -937,7 +937,7 @@ namespace ACadSharp.IO.DWG
 				//DIMTFILL BS 69
 				this._writer.WriteBitShort((short)dimStyle.TextBackgroundFillMode);
 				//DIMTFILLCLR CMC 70
-				this._writer.WriteCmColor(dimStyle.TextBackgroundColor);
+				this._writer.WriteCmColor(dimStyle.TextBackgroundColor, null);
 			}
 
 			//R2000+:
@@ -1004,11 +1004,11 @@ namespace ACadSharp.IO.DWG
 				//DIMSOXD B 175																					  
 				this._writer.WriteBit(dimStyle.SuppressOutsideExtensions);
 				//DIMCLRD BS 176																				  
-				this._writer.WriteCmColor(dimStyle.DimensionLineColor);
+				this._writer.WriteCmColor(dimStyle.DimensionLineColor, null);
 				//DIMCLRE BS 177																				  
-				this._writer.WriteCmColor(dimStyle.ExtensionLineColor);
+				this._writer.WriteCmColor(dimStyle.ExtensionLineColor, null);
 				//DIMCLRT BS 178																				  
-				this._writer.WriteCmColor(dimStyle.TextColor);
+				this._writer.WriteCmColor(dimStyle.TextColor, null);
 				//DIMADEC BS 179																				  
 				this._writer.WriteBitShort(dimStyle.AngularDimensionDecimalPlaces);
 				//DIMDEC BS 271																					  
@@ -1183,7 +1183,7 @@ namespace ACadSharp.IO.DWG
 				//Constrast BD 142
 				this._writer.WriteBitDouble(vport.Contrast);
 				//Ambient Color CMC 63
-				this._writer.WriteCmColor(vport.AmbientColor);
+				this._writer.WriteCmColor(vport.AmbientColor, null);
 			}
 
 			//Common:

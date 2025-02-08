@@ -1,4 +1,5 @@
-﻿using CSMath;
+﻿using ACadSharp.Objects;
+using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
@@ -384,7 +385,7 @@ namespace ACadSharp.IO.DWG
 			this.WriteRawLong(miliseconds);
 		}
 
-		public virtual void WriteCmColor(Color value)
+		public virtual void WriteCmColor(Color value, BookColor bookColor)
 		{
 			//R15 and earlier: BS color index
 			short index = 0;
@@ -400,9 +401,9 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitShort(index);
 		}
 
-		public virtual void WriteEnColor(Color color, Transparency transparency)
+		public virtual void WriteEnColor(Color color, Transparency transparency, bool isbookcolor)
 		{
-			this.WriteCmColor(color);
+			this.WriteCmColor(color, null);
 		}
 
 		public void Write2BitDouble(XY value)

@@ -2464,7 +2464,7 @@ namespace ACadSharp.IO.DWG
 				//Contrast BD 142
 				viewport.Contrast = this._objectReader.ReadBitDouble();
 				//Ambient light color CMC 63
-				viewport.AmbientLightColor = this._objectReader.ReadCmColor();
+				viewport.AmbientLightColor = this._objectReader.ReadCmColor(out _, out _);
 			}
 
 			//R13 - R14 Only:
@@ -2843,7 +2843,7 @@ namespace ACadSharp.IO.DWG
 					//Background scale factor	BL 45 default = 1.5
 					mtext.BackgroundScale = this._objectReader.ReadBitDouble();
 					//Background color CMC 63
-					mtext.BackgroundColor = this._mergedReaders.ReadCmColor();
+					mtext.BackgroundColor = this._mergedReaders.ReadCmColor(out _, out _);
 					//Background transparency BL 441
 					mtext.BackgroundTransparency = new Transparency((short)this._objectReader.ReadBitLong());
 				}
@@ -3047,7 +3047,7 @@ namespace ACadSharp.IO.DWG
 			//BS	170 LeaderLineType (short)
 			mLeader.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//CMC	91  Leade LineColor (Color)
-			mLeader.LineColor = _mergedReaders.ReadCmColor();
+			mLeader.LineColor = _mergedReaders.ReadCmColor(out _, out _);
 			//H 	341 LeaderLineTypeID (handle/LineType)
 			template.LeaderLineTypeHandle = this.handleReference();
 
@@ -3079,13 +3079,13 @@ namespace ACadSharp.IO.DWG
 			//  175 Text Alignment Type
 			mLeader.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//  92  Text Color
-			mLeader.TextColor = this._mergedReaders.ReadCmColor();
+			mLeader.TextColor = this._mergedReaders.ReadCmColor(out _, out _);
 			//  292 Enable Frame Text
 			mLeader.TextFrame = this._objectReader.ReadBit();
 			//  344 Block Content ID
 			template.BlockContentHandle = this.handleReference();
 			//  93  Block Content Color
-			mLeader.BlockContentColor = this._mergedReaders.ReadCmColor();
+			mLeader.BlockContentColor = this._mergedReaders.ReadCmColor(out _, out _);
 			//  10  Block Content Scale
 			mLeader.BlockContentScale = this._objectReader.Read3BitDouble();
 			//  43  Block Content Rotation
@@ -3214,13 +3214,13 @@ namespace ACadSharp.IO.DWG
 				//	BS	170	Line spacing style (1 = at least, 2 = exactly)
 				annotContext.LineSpacing = (LineSpacingStyle)this._objectReader.ReadBitShort();
 				//	CMC	90	Text color
-				annotContext.TextColor = this._objectReader.ReadCmColor();
+				annotContext.TextColor = this._objectReader.ReadCmColor(out _, out _);
 				//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
 				annotContext.TextAttachmentPoint = (TextAttachmentPointType)this._objectReader.ReadBitShort();
 				//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
 				annotContext.FlowDirection = (FlowDirectionType)this._objectReader.ReadBitShort();
 				//	CMC	91	Background fill color
-				annotContext.BackgroundFillColor = this._objectReader.ReadCmColor();
+				annotContext.BackgroundFillColor = this._objectReader.ReadCmColor(out _, out _);
 				//	BD	141	Background scale factor
 				annotContext.BackgroundScaleFactor = this._objectReader.ReadBitDouble();
 				//	BL	92	Background transparency
@@ -3269,7 +3269,7 @@ namespace ACadSharp.IO.DWG
 				//	BD	46	Rotation (radians)
 				annotContext.BlockContentRotation = this._objectReader.ReadBitDouble();
 				//  CMC	93	Block color
-				annotContext.BlockContentColor = this._objectReader.ReadCmColor();
+				annotContext.BlockContentColor = this._objectReader.ReadCmColor(out _, out _);
 				//	BD (16)	47	16 doubles containing the complete transformation
 				//	matrix. Order of transformation is:
 				//	- Rotation,
@@ -3415,7 +3415,7 @@ namespace ACadSharp.IO.DWG
 				//	BS	170	Leader type(0 = invisible leader, 1 = straight leader, 2 = spline leader)
 				leaderLine.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 				//	CMC	92	Line color
-				leaderLine.LineColor = this._objectReader.ReadCmColor();
+				leaderLine.LineColor = this._objectReader.ReadCmColor(out _, out _);
 				//	H	340	Line type handle(hard pointer)
 				leaderLineSubTemplate.LineTypeHandle = this.handleReference();
 				//	BL	171	Line weight
@@ -3461,7 +3461,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	173	Leader type (see paragraph on LEADER for more details).
 			mLeaderStyle.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//	CMC	91	Leader line color
-			mLeaderStyle.LineColor = this._mergedReaders.ReadCmColor();
+			mLeaderStyle.LineColor = this._mergedReaders.ReadCmColor(out _, out _);
 			//	H	340	Leader line type handle (hard pointer)
 			template.LeaderLineTypeHandle = this.handleReference();
 			//	BL	92	Leader line weight
@@ -3497,7 +3497,7 @@ namespace ACadSharp.IO.DWG
 				//	BS	176	Text alignment type
 			mLeaderStyle.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	CMC	93	Text color
-			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor();
+			mLeaderStyle.TextColor = this._mergedReaders.ReadCmColor(out _, out _);
 			//	BD	45	Text height
 			mLeaderStyle.TextHeight = this._objectReader.ReadBitDouble();
 			//	B	292	Text frame enabled
@@ -3512,7 +3512,7 @@ namespace ACadSharp.IO.DWG
 			//	H	343	Block handle (hard pointer)
 			template.BlockContentHandle = this.handleReference();
 			//	CMC	94	Block color
-			mLeaderStyle.BlockContentColor = this._mergedReaders.ReadCmColor();
+			mLeaderStyle.BlockContentColor = this._mergedReaders.ReadCmColor(out _, out _);
 			//	3BD	47,49,140	Block scale vector
 			mLeaderStyle.BlockContentScale = this._objectReader.Read3BitDouble();
 			//	B	293	Is block scale enabled
@@ -3860,8 +3860,13 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Color CMC 62
-			layer.Color = this._mergedReaders.ReadCmColor();
+			layer.Color = this._mergedReaders.ReadCmColor(out var colorBook, out var colorName);
+			if(!string.IsNullOrEmpty(colorName) && !string.IsNullOrEmpty(colorBook))
+			{
+				layer.BookColor = new BookColor(colorBook, colorName);
+			}
 
+			//
 			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
 			//Handle refs H Layer control (soft pointer)
@@ -3888,10 +3893,10 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//H Unknown handle (hard pointer). Always seems to be NULL.
-				this.handleReference();
+				var tmp = this.handleReference();
 			}
-
-			return template;
+            //var colorbook_handle = this.handleReference();
+            return template;
 		}
 
 		private CadTemplate readTextStyle()
@@ -4102,7 +4107,7 @@ namespace ACadSharp.IO.DWG
 				//Contrast BD ? Default value is 0
 				this._mergedReaders.ReadBitDouble();
 				//Abient color CMC? Default value is indexed color 250
-				this._mergedReaders.ReadCmColor();
+				this._mergedReaders.ReadCmColor(out _, out _);
 			}
 
 			//Common:
@@ -4280,7 +4285,7 @@ namespace ACadSharp.IO.DWG
 				//Constrast BD 142
 				vport.Contrast = this._objectReader.ReadBitDouble();
 				//Ambient Color CMC 63
-				vport.AmbientColor = this._mergedReaders.ReadCmColor();
+				vport.AmbientColor = this._mergedReaders.ReadCmColor(out _, out _);
 			}
 
 			//Common:
@@ -4578,7 +4583,7 @@ namespace ACadSharp.IO.DWG
 				//DIMTFILL BS 69
 				dimStyle.TextBackgroundFillMode = (DimensionTextBackgroundFillMode)this._objectReader.ReadBitShort();
 				//DIMTFILLCLR CMC 70
-				dimStyle.TextBackgroundColor = this._mergedReaders.ReadCmColor();
+				dimStyle.TextBackgroundColor = this._mergedReaders.ReadCmColor(out _, out _);
 			}
 
 			//R2000+:
@@ -4643,11 +4648,11 @@ namespace ACadSharp.IO.DWG
 				//DIMSOXD B 175
 				dimStyle.SuppressOutsideExtensions = this._objectReader.ReadBit();
 				//DIMCLRD BS 176
-				dimStyle.DimensionLineColor = this._mergedReaders.ReadCmColor();
+				dimStyle.DimensionLineColor = this._mergedReaders.ReadCmColor(out _, out _);
 				//DIMCLRE BS 177
-				dimStyle.ExtensionLineColor = this._mergedReaders.ReadCmColor();
+				dimStyle.ExtensionLineColor = this._mergedReaders.ReadCmColor(out _, out _);
 				//DIMCLRT BS 178
-				dimStyle.TextColor = this._mergedReaders.ReadCmColor();
+				dimStyle.TextColor = this._mergedReaders.ReadCmColor(out _, out _);
 				//DIMADEC BS 179
 				dimStyle.AngularDimensionDecimalPlaces = this._objectReader.ReadBitShort();
 				//DIMDEC BS 271
@@ -4868,7 +4873,7 @@ namespace ACadSharp.IO.DWG
 				mlineStyle.Flags |= MLineStyleFlags.EndInnerArcsCap;
 
 			//fillcolor CMC Fill color for this style
-			mlineStyle.FillColor = this._mergedReaders.ReadCmColor();
+			mlineStyle.FillColor = this._mergedReaders.ReadCmColor(out _, out _);
 			//startang BD Start angle
 			mlineStyle.StartAngle = this._objectReader.ReadBitDouble();
 			//endang BD End angle
@@ -4884,7 +4889,7 @@ namespace ACadSharp.IO.DWG
 				//Offset BD Offset of this segment
 				element.Offset = this._objectReader.ReadBitDouble();
 				//Color CMC Color of this segment
-				element.Color = this._mergedReaders.ReadCmColor();
+				element.Color = this._mergedReaders.ReadCmColor(out _, out _);
 
 				//R2018+:
 				if (this.R2018Plus)
@@ -5045,7 +5050,7 @@ namespace ACadSharp.IO.DWG
 					//Gradient Value double BD 463
 					color.Value = this._objectReader.ReadBitDouble();
 					//RGB Color
-					color.Color = this._mergedReaders.ReadCmColor();
+					color.Color = this._mergedReaders.ReadCmColor(out _, out _);
 
 					hatch.GradientColor.Colors.Add(color);
 				}
@@ -5868,14 +5873,14 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readDwgColor()
 		{
-			DwgColorTemplate.DwgColor dwgColor = new DwgColorTemplate.DwgColor();
-			DwgColorTemplate template = new DwgColorTemplate(dwgColor);
+			BookColor dwgColor = new BookColor();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(dwgColor);
 
 			this.readCommonNonEntityData(template);
 
 			short colorIndex = this._objectReader.ReadBitShort();
 
-			if (this.R2004Plus && this._version < ACadVersion.AC1032)
+			if (this.R2004Plus)
 			{
 				uint trueColor = (uint)this._objectReader.ReadBitLong();
 				byte flags = this._objectReader.ReadByte();

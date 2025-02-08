@@ -39,18 +39,29 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		[DxfCodeValue(62, 420, 430)]
+		[DxfCodeValue(62, 420)]
 		public Color Color { get; set; } = Color.ByLayer;
 
 
+        private BookColor _bookColor = null;
         /// <summary>
         /// Book color for this entity.
         /// </summary> 
         [DxfCodeValue(DxfReferenceType.Name, 430)]
         public BookColor BookColor
         {
-			get;
-			set;
+			get { return _bookColor; }
+			set
+			{
+                if (this.Document is not null)
+                {
+                    this._bookColor = this.updateCollection(value, this.Document.Colors);
+                }
+                else
+                {
+                    this._bookColor = value;
+                }
+            }
         }
 
         /// <inheritdoc/>

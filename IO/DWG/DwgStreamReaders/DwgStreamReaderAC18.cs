@@ -9,7 +9,7 @@ namespace ACadSharp.IO.DWG
 		public DwgStreamReaderAC18(Stream stream, bool resetPosition) : base(stream, resetPosition) { }
 
 		/// <inheritdoc/>
-		public override Color ReadCmColor()
+		public override Color ReadCmColor(out string colorName, out string bookName)
 		{
 			Color color = default;
 
@@ -41,14 +41,14 @@ namespace ACadSharp.IO.DWG
 			//RC: Color Byte(&1 => color name follows(TV),
 			byte id = this.ReadByte();
 
-			string colorName = string.Empty;
+			colorName = string.Empty;
 			//RC: Color Byte(&1 => color name follows(TV),
 			if ((id & 1) == 1)
 			{
 				colorName = this.ReadVariableText();
 			}
 
-			string bookName = string.Empty;
+			bookName = string.Empty;
 			//&2 => book name follows(TV))
 			if ((id & 2) == 2)
 			{

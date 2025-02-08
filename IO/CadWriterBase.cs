@@ -46,7 +46,7 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public virtual void Write()
 		{
-			DxfClassCollection.UpdateDxfClasses(_document);
+			//DxfClassCollection.UpdateDxfClasses(_document);
 
 			this._encoding = this.getListedEncoding(this._document.Header.CodePage);
 		}

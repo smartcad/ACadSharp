@@ -352,7 +352,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteTimeSpan(this._header.UserElapsedTimeSpan);
 
 			//CMC : CECOLOR
-			this._writer.WriteCmColor(this._header.CurrentEntityColor);
+			this._writer.WriteCmColor(this._header.CurrentEntityColor, null	);
 
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
@@ -588,7 +588,7 @@ namespace ACadSharp.IO.DWG
 				//BS : DIMTFILL
 				this._writer.WriteBitShort((short)this._header.DimensionTextBackgroundFillMode);
 				//CMC : DIMTFILLCLR
-				this._writer.WriteCmColor(this._header.DimensionTextBackgroundColor);
+				this._writer.WriteCmColor(this._header.DimensionTextBackgroundColor, null);
 			}
 
 			//R2000 + Only:
@@ -675,11 +675,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//CMC: DIMCLRD
-			this._writer.WriteCmColor(this._header.DimensionLineColor);
+			this._writer.WriteCmColor(this._header.DimensionLineColor, null);
 			//CMC : DIMCLRE
-			this._writer.WriteCmColor(this._header.DimensionExtensionLineColor);
+			this._writer.WriteCmColor(this._header.DimensionExtensionLineColor, null);
 			//CMC : DIMCLRT
-			this._writer.WriteCmColor(this._header.DimensionTextColor);
+			this._writer.WriteCmColor(this._header.DimensionTextColor, null);
 
 			//R2000 + Only:
 			if (this.R2000Plus)
@@ -1021,7 +1021,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.WriteBit(false);
 
 				//CMC : INTERFERECOLOR
-				this._writer.WriteCmColor(this._header.InterfereColor);
+				this._writer.WriteCmColor(this._header.InterfereColor, null);
 
 				//H : INTERFEREOBJVS(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, null);

@@ -32,6 +32,10 @@ namespace ACadSharp.IO.Templates
                 {
                     this.CadObject.PointRefs[i].Geometry = record;
                 }
+                else
+                {
+
+                }
             }
         }
     }

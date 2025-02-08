@@ -50,7 +50,10 @@ namespace ACadSharp.IO.DWG
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
 					break;
-				case CadDictionaryWithDefault dictionarydef:
+                case BookColor bookColor:
+                    this.writeBookColor(bookColor);
+                    break;
+                case CadDictionaryWithDefault dictionarydef:
 					this.writeCadDictionaryWithDefault(dictionarydef);
 					break;
 				case CadDictionary dictionary:
@@ -140,8 +143,48 @@ namespace ACadSharp.IO.DWG
         private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 		{
 		}
+        private void writeBookColor(BookColor color)
+        {
+            this._writer.WriteBitShort(0);
 
-		private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)
+            if (this.R2004Plus)
+            {
+                byte[] arr = new byte[]
+                {
+                    color.Color.B,
+                    color.Color.G,
+                    color.Color.R,
+                    0b11000010
+                };
+
+                uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
+
+                this._writer.WriteBitLong((int)rgb);
+
+                byte flags = 0;
+                if (!string.IsNullOrEmpty(color.ColorName))
+                {
+                    flags = (byte)(flags | 1u);
+                }
+
+                if (!string.IsNullOrEmpty(color.BookName))
+                {
+                    flags = (byte)(flags | 2u);
+                }
+
+                this._writer.WriteByte(flags);
+                if (!string.IsNullOrEmpty(color.ColorName))
+                {
+                    this._writer.WriteVariableText(color.ColorName);
+                }
+
+                if (!string.IsNullOrEmpty(color.BookName))
+                {
+                    this._writer.WriteVariableText(color.BookName);
+                }
+            }
+        }
+        private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)
 		{
 			this.writeDictionary(dictionary);
 
@@ -362,7 +405,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteBitShort(flags);
 
 			//fillcolor CMC Fill color for this style
-			this._writer.WriteCmColor(mlineStyle.FillColor);
+			this._writer.WriteCmColor(mlineStyle.FillColor, null);
 			//startang BD Start angle
 			this._writer.WriteBitDouble(mlineStyle.StartAngle);
 			//endang BD End angle
@@ -375,7 +418,7 @@ namespace ACadSharp.IO.DWG
 				//Offset BD Offset of this segment
 				this._writer.WriteBitDouble(element.Offset);
 				//Color CMC Color of this segment
-				this._writer.WriteCmColor(element.Color);
+				this._writer.WriteCmColor(element.Color, null);
 				//R2018+:
 				if (this.R2018Plus)
 				{
@@ -420,7 +463,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	173	Leader type (see paragraph on LEADER for more details).
 			this._writer.WriteBitShort((short)mLeaderStyle.PathType);
 			//	CMC	91	Leader line color
-			this._writer.WriteCmColor(mLeaderStyle.LineColor);
+			this._writer.WriteCmColor(mLeaderStyle.LineColor, null);
 			//	H	340	Leader line type handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.LeaderLineType);
 			//	BL	92	Leader line weight
@@ -457,7 +500,7 @@ namespace ACadSharp.IO.DWG
 			//	BS	176	Text alignment type
 			this._writer.WriteBitShort((short)mLeaderStyle.TextAlignment);
 			//	CMC	93	Text color
-			this._writer.WriteCmColor(mLeaderStyle.TextColor);
+			this._writer.WriteCmColor(mLeaderStyle.TextColor, null);
 			//	BD	45	Text height
 			this._writer.WriteBitDouble(mLeaderStyle.TextHeight);
 			//	B	292	Text frame enabled
@@ -474,7 +517,7 @@ namespace ACadSharp.IO.DWG
 			//	H	343	Block handle (hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, mLeaderStyle.BlockContent);
 			//	CMC	94	Block color
-			this._writer.WriteCmColor(mLeaderStyle.BlockContentColor);
+			this._writer.WriteCmColor(mLeaderStyle.BlockContentColor, null);
 			//	3BD	47,49,140	Block scale vector
 			this._writer.Write3BitDouble(mLeaderStyle.BlockContentScale);
 			//	B	293	Is block scale enabled

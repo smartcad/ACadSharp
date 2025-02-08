@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
@@ -57,21 +58,12 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.LineType = ltype;
 			}
 
-			if (this.ColorHandle.HasValue)
+			if (this.ColorHandle.HasValue && builder.TryGetCadObject(this.ColorHandle, out BookColor book_color))
 			{
-				var colorTemaplate = builder.GetObjectTemplate<DwgColorTemplate>(this.ColorHandle.Value);
-				if(colorTemaplate is not null && !string.IsNullOrEmpty((colorTemaplate.CadObject as DwgColorTemplate.DwgColor).BookName))
-				{
-					var clr = colorTemaplate.CadObject as DwgColorTemplate.DwgColor;
+				this.CadObject.BookColor = book_color;
+				this.CadObject.Color = book_color.Color;
+			}
 
-					this.CadObject.BookColor = new Objects.BookColor(clr.BookName, clr.ColorName);
-					this.CadObject.Color = clr.Color;
-				}
-			}
-			else
-			{
-				//TODO: Set color by name, only for dxf?
-			}
 		}
 
 		public void SetUnlinkedReferences()

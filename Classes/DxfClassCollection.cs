@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ACadSharp.Objects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ namespace ACadSharp.Classes
 		/// <param name="doc"></param>
 		public static void UpdateDxfClasses(CadDocument doc)
 		{
+			if (doc.Classes is null)
+				doc.Classes = new DxfClassCollection();
+
 			//AcDbDictionaryWithDefault
 			doc.Classes.AddOrUpdate(new DxfClass
 			{
@@ -388,7 +392,35 @@ namespace ACadSharp.Classes
 				ProxyFlags = ProxyFlags.R13FormatProxy,
 				WasZombie = false,
 			});
-		}
+
+			if(doc.RootDictionary.ContainsKey(CadDictionary.AcadColor))
+            //AcDbColor
+				doc.Classes.AddOrUpdate(new DxfClass
+				{
+					CppClassName = DxfSubclassMarker.DbColor,
+					ClassNumber = (short)(500 + doc.Classes.Count),
+					DwgVersion = ACadVersion.AC1015,
+					DxfName = DxfFileToken.ObjectDBColor,
+					ItemClassId = 499,
+					MaintenanceVersion = 14,
+					ProxyFlags = ProxyFlags.None,
+					WasZombie = false,
+					InstanceCount = (doc.RootDictionary[CadDictionary.AcadColor] as CadDictionary).EntryHandles.Length
+				});
+
+            ////AcDbGeoData
+            //doc.Classes.AddOrUpdate(new DxfClass
+            //{
+            //    CppClassName = DxfSubclassMarker.GeoData,
+            //    ClassNumber = (short)(500 + doc.Classes.Count),
+            //    DwgVersion = ACadVersion.AC1021,
+            //    DxfName = DxfFileToken.ObjectGeoData,
+            //    ItemClassId = 499,
+            //    MaintenanceVersion = 45,
+            //    ProxyFlags = (ProxyFlags)4095,
+            //    WasZombie = false,
+            //});
+        }
 
 		/// <summary>
 		/// Add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present

@@ -86,7 +86,7 @@ namespace ACadSharp.Blocks
 		{
 			Block clone = (Block)base.Clone();
 
-			clone.Owner = new BlockRecord(this.Name);
+			clone.Owner = new BlockRecord(this.Name, this.Layer);
 
 			return clone;
 		}

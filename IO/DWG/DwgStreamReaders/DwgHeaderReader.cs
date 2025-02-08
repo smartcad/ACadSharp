@@ -368,7 +368,7 @@ namespace ACadSharp.IO.DWG
 			_header.UserElapsedTimeSpan = _reader.ReadTimeSpan();
 
 			//CMC : CECOLOR
-			_header.CurrentEntityColor = _reader.ReadCmColor(); //TODO: Check the method for CECOLOR
+			_header.CurrentEntityColor = _reader.ReadCmColor(out _, out _); //TODO: Check the method for CECOLOR
 
 			//H : HANDSEED The next handle, with an 8-bit length specifier preceding the handle
 			//bytes (standard hex handle form) (code 0). The HANDSEED is not part of the handle
@@ -600,7 +600,7 @@ namespace ACadSharp.IO.DWG
 				//BS : DIMTFILL
 				_header.DimensionTextBackgroundFillMode = (Tables.DimensionTextBackgroundFillMode)_reader.ReadBitShort();
 				//CMC : DIMTFILLCLR
-				_header.DimensionTextBackgroundColor = _reader.ReadCmColor();
+				_header.DimensionTextBackgroundColor = _reader.ReadCmColor(out _, out _);
 			}
 
 			//R2000 + Only:
@@ -687,11 +687,11 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//CMC: DIMCLRD
-			_header.DimensionLineColor = _reader.ReadCmColor();
+			_header.DimensionLineColor = _reader.ReadCmColor(out _, out _);
 			//CMC : DIMCLRE
-			_header.DimensionExtensionLineColor = _reader.ReadCmColor();
+			_header.DimensionExtensionLineColor = _reader.ReadCmColor(out _, out _);
 			//CMC : DIMCLRT
-			_header.DimensionTextColor = _reader.ReadCmColor();
+			_header.DimensionTextColor = _reader.ReadCmColor(out _, out _);
 
 			//R2000 + Only:
 			if (R2000Plus)
@@ -1013,7 +1013,7 @@ namespace ACadSharp.IO.DWG
 				_reader.ReadBit();
 
 				//CMC : INTERFERECOLOR
-				_header.InterfereColor = _reader.ReadCmColor();
+				_header.InterfereColor = _reader.ReadCmColor(out _, out _);
 
 				//H : INTERFEREOBJVS(hard pointer)
 				objectPointers.INTERFEREOBJVS = _reader.HandleReference();

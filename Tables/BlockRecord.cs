@@ -216,22 +216,16 @@ namespace ACadSharp.Tables
 			this.BlockEnd = new BlockEnd(this);
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
-
-		private BlockRecord(string name, Layer lyr) : base(name)
-		{
-			this.BlockEntity = new Block(this, lyr);
-			this.BlockEnd = new BlockEnd(this);
-			this.Entities = new CadObjectCollection<Entity>(this);
-		}
 		
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		/// <param name="name">Unique name for this block record.</param>
-		public BlockRecord(string name) : base(name)
+		public BlockRecord(string name, Layer lyr) : base(name)
 		{
-			this.BlockEntity = new Block(this);
+			this.BlockEntity = new Block(this, lyr);
 			this.BlockEnd = new BlockEnd(this);
+			this.BlockEnd.Layer = lyr;
 			this.Entities = new CadObjectCollection<Entity>(this);
 		}
 

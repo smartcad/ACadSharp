@@ -821,7 +821,7 @@ namespace ACadSharp.IO.DWG
 					//Gradient Value double BD 463
 					this._writer.WriteBitDouble(color.Value);
 					//RGB Color
-					this._writer.WriteCmColor(color.Color);
+					this._writer.WriteCmColor(color.Color, null	);
 				}
 
 				//Gradient Name TV 470
@@ -1141,7 +1141,7 @@ namespace ACadSharp.IO.DWG
 			//	170 LeaderLineType (short)
 			this._writer.WriteBitShort((short)multiLeader.PathType);
 			//	91  Leade LineColor (Color)
-			this._writer.WriteCmColor(multiLeader.LineColor);
+			this._writer.WriteCmColor(multiLeader.LineColor, null);
 			//	341 LeaderLineTypeID (handle/LineType)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.LeaderLineType);
 			//	171 LeaderLine Weight
@@ -1172,13 +1172,13 @@ namespace ACadSharp.IO.DWG
 			//  175 Text Alignment Type
 			this._writer.WriteBitShort((short)multiLeader.TextAlignment);
 			//  92  Text Color
-			this._writer.WriteCmColor(multiLeader.TextColor);
+			this._writer.WriteCmColor(multiLeader.TextColor, null);
 			//  292 Enable Frame Text
 			this._writer.WriteBit(multiLeader.TextFrame);
 			//  344 Block Content ID
 			this._writer.HandleReference(DwgReferenceType.HardPointer, multiLeader.BlockContent); //	Hard/soft??
 																								  //  93  Block Content Color
-			this._writer.WriteCmColor(multiLeader.BlockContentColor);
+			this._writer.WriteCmColor(multiLeader.BlockContentColor, null);
 			//  10  Block Content Scale
 			this._writer.Write3BitDouble(multiLeader.BlockContentScale);
 			//  43  Block Content Rotation
@@ -1287,13 +1287,13 @@ namespace ACadSharp.IO.DWG
 				//	BS	170	Line spacing style (1 = at least, 2 = exactly)
 				this._writer.WriteBitShort((short)annotContext.LineSpacing);
 				//	CMC	90	Text color
-				this._writer.WriteCmColor(annotContext.TextColor);
+				this._writer.WriteCmColor(annotContext.TextColor, null);
 				//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
 				this._writer.WriteBitShort((short)annotContext.TextAttachmentPoint);
 				//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
 				this._writer.WriteBitShort((short)annotContext.FlowDirection);
 				//	CMC	91	Background fill color
-				this._writer.WriteCmColor(annotContext.BackgroundFillColor);
+				this._writer.WriteCmColor(annotContext.BackgroundFillColor, null);
 				//	BD	141	Background scale factor
 				this._writer.WriteBitDouble(annotContext.BackgroundScaleFactor);
 				//	BL	92	Background transparency
@@ -1345,7 +1345,7 @@ namespace ACadSharp.IO.DWG
 				//	BD	46	Rotation (radians)
 				this._writer.WriteBitDouble(annotContext.BlockContentRotation);
 				//  CMC	93	Block color
-				this._writer.WriteCmColor(annotContext.BlockContentColor);
+				this._writer.WriteCmColor(annotContext.BlockContentColor, null);
 				//	BD (16)	47	16 doubles containing the complete transformation
 				//	matrix. Order of transformation is:
 				//	- Rotation,
@@ -1475,7 +1475,7 @@ namespace ACadSharp.IO.DWG
 				//	BS	170	Leader type(0 = invisible leader, 1 = straight leader, 2 = spline leader)
 				this._writer.WriteBitShort((short)leaderLine.PathType);
 				//	CMC	92	Line color
-				this._writer.WriteCmColor(leaderLine.LineColor);
+				this._writer.WriteCmColor(leaderLine.LineColor, null);
 				//	H	340	Line type handle(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, leaderLine.LineType);
 				//	BL	171	Line weight
@@ -2094,7 +2094,7 @@ namespace ACadSharp.IO.DWG
 					//Background scale factor	BL 45 default = 1.5
 					this._writer.WriteBitDouble(mtext.BackgroundScale);
 					//Background color CMC 63
-					this._writer.WriteCmColor(mtext.BackgroundColor);
+					this._writer.WriteCmColor(mtext.BackgroundColor, null);
 					//Background transparency BL 441
 					this._writer.WriteBitLong(mtext.BackgroundTransparency.Value);
 				}
@@ -2348,7 +2348,7 @@ namespace ACadSharp.IO.DWG
 				//Contrast BD 142
 				this._writer.WriteBitDouble(viewport.Contrast);
 				//Ambient light color CMC 63
-				this._writer.WriteCmColor(viewport.AmbientLightColor);
+				this._writer.WriteCmColor(viewport.AmbientLightColor, null);
 			}
 
 			//R13 - R14 Only:

@@ -60,10 +60,19 @@ namespace ACadSharp.Tables
 			}
 		}
 
-		/// <summary>
-		/// The line type of an object. The default line type is the line type of the layer (ByLayer).
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Name, 6)]
+        /// <summary>
+        /// Book color for this entity.
+        /// </summary> 
+        [DxfCodeValue(DxfReferenceType.Name, 430)]
+        public BookColor BookColor
+        {
+            get;
+            set;
+        }
+        /// <summary>
+        /// The line type of an object. The default line type is the line type of the layer (ByLayer).
+        /// </summary>
+        [DxfCodeValue(DxfReferenceType.Name, 6)]
 		public LineType LineType
 		{
 			get { return this._lineType; }

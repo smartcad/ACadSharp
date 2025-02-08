@@ -145,14 +145,14 @@ namespace ACadSharp.IO.DWG
 			this.Main.WriteBytes(bytes);
 		}
 
-		public void WriteCmColor(Color value)
+		public void WriteCmColor(Color value, Objects.BookColor bookColor)
 		{
-			this.Main.WriteCmColor(value);
+			this.Main.WriteCmColor(value, bookColor);
 		}
 
-		public void WriteEnColor(Color color, Transparency transparency)
+		public void WriteEnColor(Color color, Transparency transparency, bool isBookColor)
 		{
-			this.Main.WriteEnColor(color, transparency);
+			this.Main.WriteEnColor(color, transparency, isBookColor);
 		}
 
 		public void WriteDateTime(DateTime value)

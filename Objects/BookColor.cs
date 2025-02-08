@@ -28,16 +28,22 @@ namespace ACadSharp.Objects
         /// <summary>
         /// Color name.
         /// </summary>
-        public string ColorName { get ; }
+        public string ColorName { get; internal set; }
 
         /// <summary>
         /// Book name where the color is stored.
         /// </summary>
-        public string BookName { get; }
+        public string BookName { get; internal set; }
 
         [DxfCodeValue(62, 420)]
         public Color Color { get; set; }
 
+        internal BookColor() : base(string.Empty)
+        {
+            BookName = string.Empty;
+            ColorName = string.Empty;
+        }
+        
         public BookColor(string book_name, string color_name) : base(book_name + color_name)
         {
             BookName = book_name;

@@ -1,4 +1,5 @@
-﻿using CSUtilities.Converters;
+﻿using ACadSharp.Objects;
+using CSUtilities.Converters;
 using System.IO;
 using System.Text;
 
@@ -10,7 +11,7 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
-		public override void WriteCmColor(Color value)
+		public override void WriteCmColor(Color value, BookColor bookColor)
 		{
 			//CMC:
 			//BS: color index(always 0)
@@ -39,19 +40,27 @@ namespace ACadSharp.IO.DWG
 			//BL: RGB value
 			this.WriteBitLong(LittleEndianConverter.Instance.ToInt32(arr));
 
+
 			//RC: Color Byte
-			this.WriteByte(0);
+			if(bookColor != null)
+			{
+				this.WriteByte(3);
+				this.WriteVariableText(bookColor.ColorName);
+				this.WriteVariableText(bookColor.BookName);
+			}
+			else
+				this.WriteByte(0);
 
 			//(&1 => color name follows(TV),
 			//&2 => book name follows(TV))
 		}
 
-		public override void WriteEnColor(Color color, Transparency transparency)
+		public override void WriteEnColor(Color color, Transparency transparency, bool isBookColor)
 		{
 			//BS : color number: flags + color index
 			ushort size = 0;
 
-			if (color.IsByBlock && transparency.IsByLayer)
+			if (color.IsByBlock && transparency.IsByLayer && !isBookColor)
 			{
 				base.WriteBitShort(0);
 				return;
@@ -63,8 +72,15 @@ namespace ACadSharp.IO.DWG
 				size = (ushort)(size | 0b10000000000000);
 			}
 
+			//0x4000: has AcDbColor reference (0x8000 is also set in this case).
+			if (isBookColor)
+			{
+				size = (ushort)(size | 0x4000);
+				size = (ushort)(size | 0x8000);
+			}
+
 			//0x8000: complex color (rgb).
-			if (color.IsTrueColor)
+			else if (color.IsTrueColor)
 			{
 				size = (ushort)(size | 0x8000);
 			}

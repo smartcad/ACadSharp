@@ -236,7 +236,7 @@ namespace ACadSharp.IO.DWG
 		/// CMC : CmColor value
 		/// </summary>
 		/// <returns></returns>
-		Color ReadCmColor();
+		Color ReadCmColor(out string colorName, out string bookName);
 
 		/// <summary>
 		/// ENC: This color is used by entities: this definition may contain a DBCOLOR reference and optional transparency.

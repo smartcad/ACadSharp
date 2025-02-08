@@ -110,7 +110,7 @@ namespace ACadSharp.IO.DXF
 
 			if (record == null)
 			{
-				record = new BlockRecord(name);
+				record = new BlockRecord(name, blckEntity.Layer);
 				record.BlockEntity = blckEntity;
 				CadBlockRecordTemplate recordTemplate = new CadBlockRecordTemplate(record);
 

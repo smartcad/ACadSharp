@@ -205,14 +205,6 @@ namespace ACadSharp.Objects
 		{
 		}
 
-		public Layout(string name) : this(name, name) { }
-
-		public Layout(string name, string blockName) : base()
-		{
-			this.Name = name;
-			this._blockRecord = new BlockRecord(blockName);
-		}
-
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{

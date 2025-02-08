@@ -55,9 +55,9 @@ namespace ACadSharp.IO.DWG
 
 		void WriteTimeSpan(TimeSpan value);
 
-		void WriteCmColor(Color value);
+		void WriteCmColor(Color value, Objects.BookColor bookColor);
 
-		void WriteEnColor(Color color, Transparency transparency);
+		void WriteEnColor(Color color, Transparency transparency, bool isbookclr);
 
 		void Write2BitDouble(XY value);
 

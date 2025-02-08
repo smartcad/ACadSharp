@@ -34,7 +34,7 @@ namespace ACadSharp.Blocks
 		public override CadObject Clone()
 		{
 			BlockEnd clone = (BlockEnd)base.Clone();
-			clone.Owner = new BlockRecord((this.Owner as BlockRecord).Name);
+			clone.Owner = new BlockRecord((this.Owner as BlockRecord).Name, this.Layer);
 			return clone;
 		}
 

@@ -153,10 +153,13 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.Read3BitDoubleWithDefault(defValues);
 		}
 
-		public Color ReadCmColor()
-		{
-			if (!(this._mainReader is DwgStreamReaderAC18))
-				return this._mainReader.ReadCmColor();
+		public Color ReadCmColor(out string bookName, out string colorName)
+        {
+            colorName = string.Empty;
+            bookName = string.Empty;
+
+            if (!(this._mainReader is DwgStreamReaderAC18))
+				return this._mainReader.ReadCmColor(out colorName, out bookName);
 
 			Color color = default;
 
@@ -185,14 +188,12 @@ namespace ACadSharp.IO.DWG
 			//RC : Color Byte
 			byte id = this.ReadByte();
 
-			string colorName = string.Empty;
 			//RC: Color Byte(&1 => color name follows(TV),
 			if ((id & 1) == 1)
 			{
 				colorName = this.ReadVariableText();
 			}
 
-			string bookName = string.Empty;
 			//&2 => book name follows(TV))
 			if ((id & 2) == 2)
 			{

@@ -657,10 +657,13 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
-		public virtual Color ReadCmColor()
+		public virtual Color ReadCmColor(out string colorName, out string bookName)
 		{
 			//R15 and earlier: BS color index
 			short colorIndex = this.ReadBitShort();
+
+			colorName = string.Empty;
+			bookName = string.Empty;
 
 			return new Color(colorIndex);
 		}
