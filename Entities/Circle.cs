@@ -51,7 +51,7 @@ namespace ACadSharp.Entities
 			get { return this._radius; }
 			set
 			{
-				if (value <= 0)
+				if (value < 0)
 				{
 					throw new ArgumentOutOfRangeException(nameof(value), value, "The radius must be greater than 0.");
 				}

@@ -23,6 +23,7 @@ namespace ACadSharp.Tables
 		/// Default block record name for the model space
 		/// </summary>
 		public const string ModelSpaceName = "*Model_Space";
+		public const string ModelSpaceNameCap = "*MODEL_SPACE";
 
 		/// <summary>
 		/// Default block record name for the paper space

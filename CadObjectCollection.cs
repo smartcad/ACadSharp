@@ -48,6 +48,11 @@ namespace ACadSharp
 			this.Owner = owner;
 		}
 
+		public bool Contains(T elem)
+		{
+			return _entries.Contains(elem);
+		}
+
 		/// <summary>
 		/// Add a <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>.
 		/// </summary>

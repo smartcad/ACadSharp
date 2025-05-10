@@ -5,6 +5,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.Templates
 {
@@ -41,7 +42,16 @@ namespace ACadSharp.IO.Templates
 
 			if (this.FirstEntityHandle.HasValue)
 			{
-				foreach (Entity e in this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value))
+				IEnumerable<Entity> entityCollection;
+				if((this.CadObject.Name == BlockRecord.ModelSpaceName || this.CadObject.Name == BlockRecord.ModelSpaceNameCap) && builder is DwgDocumentBuilder dwg_builder)
+				{
+					entityCollection = dwg_builder.ModelSpaceEntities.Where(ent => ent.Owner is null);
+				}
+                else
+                {
+					entityCollection = this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value);
+                }
+                foreach (Entity e in entityCollection)
 				{
 					this.addEntity(builder, e);
 				}
@@ -88,6 +98,8 @@ namespace ACadSharp.IO.Templates
 				return;
 			}
 
+			if(this.CadObject.Entities.Contains(entity))
+				return;
 			this.CadObject.Entities.Add(entity);
 		}
 	}
