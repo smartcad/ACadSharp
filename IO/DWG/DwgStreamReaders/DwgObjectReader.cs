@@ -97,7 +97,7 @@ namespace ACadSharp.IO.DWG
 			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
-			Queue<ulong> handles,
+			IEnumerable<ulong> handles,
 			Dictionary<ulong, long> handleMap,
 			DxfClassCollection classes) : base(version)
 		{
@@ -106,7 +106,7 @@ namespace ACadSharp.IO.DWG
 			this._reader = reader;
 
 			this._handles = new Queue<ulong>(handles);
-			this._map = new Dictionary<ulong, long>(handleMap);
+			this._map = handleMap;
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
 			//Initialize the crc stream
@@ -131,7 +131,7 @@ namespace ACadSharp.IO.DWG
 		public void Read()
 		{
 			//Read each handle in the header
-			while (this._handles.Any())
+			while (this._handles.Count > 0)
 			{
 				ulong handle = this._handles.Dequeue();
 
@@ -369,12 +369,12 @@ namespace ACadSharp.IO.DWG
 			if (this.R13_14Only)
 			{
 				//8 LAYER (hard pointer)
-				template.LayerHandle = this.handleReference();
+				template.LayerHandle = this.handleReference(0);
 
 				//Isbylayerlt B 1 if bylayer linetype, else 0
 				if (!this._objectReader.ReadBit())
 					//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
-					template.LineTypeHandle = this.handleReference();
+					template.LineTypeHandle = this.handleReference(0);
 			}
 
 			//R13-R2000 Only:
@@ -402,7 +402,7 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if ((this._version >= ACadVersion.AC1018) && colorFlag)
 				//[Color book color handle (hard pointer)]
-				template.ColorHandle = this.handleReference();
+				template.ColorHandle = this.handleReference(0);
 
 			//Ltype scale	BD	48
 			entity.LinetypeScale = this._objectReader.ReadBitDouble();
@@ -418,14 +418,14 @@ namespace ACadSharp.IO.DWG
 
 			//R2000+:
 			//8 LAYER (hard pointer)
-			template.LayerHandle = this.handleReference();
+			template.LayerHandle = this.handleReference(0);
 
 			//Ltype flags BB 00 = bylayer, 01 = byblock, 10 = continous, 11 = linetype handle present at end of object
 			template.LtypeFlags = this._objectReader.Read2Bits();
 
 			if (template.LtypeFlags == 3)
 				//6 [LTYPE (hard pointer)] present if linetype flags were 11
-				template.LineTypeHandle = this.handleReference();
+				template.LineTypeHandle = this.handleReference(0);
 
 			//R2007+:
 			if (this.R2007Plus)
@@ -434,7 +434,7 @@ namespace ACadSharp.IO.DWG
 				if (this._objectReader.Read2Bits() == 3)
 				{
 					//MATERIAL present if material flags were 11
-					template.MaterialHandle = this.handleReference();
+					template.MaterialHandle = this.handleReference(0);
 				}
 
 				//Shadow flags RC
@@ -446,7 +446,7 @@ namespace ACadSharp.IO.DWG
 			if (this._objectReader.Read2Bits() == 3)
 			{
 				//PLOTSTYLE (hard pointer) present if plotstyle flags were 11
-				long plotstyleFlags = (long)this.handleReference();
+				long plotstyleFlags = (long)this.handleReference(0);
 			}
 
 			//R2007 +:
@@ -456,18 +456,18 @@ namespace ACadSharp.IO.DWG
 				if (this._objectReader.ReadBit())
 				{
 					//If has full visual style, the full visual style handle (hard pointer).
-					long n = (long)this.handleReference();
+					long n = (long)this.handleReference(0);
 				}
 				if (this._objectReader.ReadBit())
 				{
 					//If has full visual style, the full visual style handle (hard pointer).
-					long n = (long)this.handleReference();
+					long n = (long)this.handleReference(0);
 				}
 				//Shadow flags RC
 				if (this._objectReader.ReadBit())
 				{
 					//If has full visual style, the full visual style handle (hard pointer).
-					long n = (long)this.handleReference();
+					long n = (long)this.handleReference(0);
 				}
 			}
 
@@ -1612,7 +1612,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Common Entity Handle Data
 			//H 2 BLOCK HEADER(hard pointer)
-			template.BlockHeaderHandle = this.handleReference();
+			template.BlockHeaderHandle = this.handleReference(0);
 
 			if (!template.HasAtts)
 				return;
@@ -1621,21 +1621,21 @@ namespace ACadSharp.IO.DWG
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
 			{
 				//H[1st ATTRIB(soft pointer)] if 66 bit set; can be NULL
-				template.FirstAttributeHandle = this.handleReference();
+				template.FirstAttributeHandle = this.handleReference(0);
 				//H[last ATTRIB](soft pointer)] if 66 bit set; can be NULL
-				template.EndAttributeHandle = this.handleReference();
+				template.EndAttributeHandle = this.handleReference(0);
 			}
 			//R2004+:
 			else if (this.R2004Plus)
 			{
 				for (int i = 0; i < template.OwnedObjectsCount; ++i)
 					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
-					template.AttributesHandles.Add(this.handleReference());
+					template.AttributesHandles.Add(this.handleReference(0));
 			}
 
 			//Common:
 			//H[SEQEND(hard owner)] if 66 bit set
-			template.SeqendHandle = this.handleReference();
+			template.SeqendHandle = this.handleReference(0);
 		}
 
 		#endregion Insert methods
@@ -2270,7 +2270,7 @@ namespace ACadSharp.IO.DWG
 				//H[VERTEX(soft pointer)] Repeats “Owned Object Count” times.
 				for (int i = 0; i < ownedVertices; i++)
 				{
-					template.VerticesHandles.Add(this.handleReference());
+					template.VerticesHandles.Add(this.handleReference(0));
 				}
 			}
 
@@ -2278,14 +2278,14 @@ namespace ACadSharp.IO.DWG
 			if (this.R13_15Only)
 			{
 				//H first VERTEX(soft pointer)
-				template.FirstVerticeHandle = this.handleReference();
+				template.FirstVerticeHandle = this.handleReference(0);
 				//H last VERTEX(soft pointer)
-				template.LastVerticeHandle = this.handleReference();
+				template.LastVerticeHandle = this.handleReference(0);
 			}
 
 			//Common:
 			//H SEQEND(hard owner)
-			template.SeqendHandle = this.handleReference();
+			template.SeqendHandle = this.handleReference(0);
 
 			return template;
 		}

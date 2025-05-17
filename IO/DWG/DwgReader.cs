@@ -40,6 +40,11 @@ namespace ACadSharp.IO
 		{
 			this.Configuration = new();
 		}
+		
+		public DwgReader(byte[] buffer, NotificationEventHandler notification = null) : base(buffer, notification) 
+		{
+			this.Configuration = new();
+		}
 
 		/// <summary>
 		/// Read a dwg document in a stream.
@@ -78,8 +83,8 @@ namespace ACadSharp.IO
 		{
 			var _document = new CadDocument();
 
-			//Read the file header
-			this._fileHeader = this.readFileHeader();
+            //Read the file header
+            this._fileHeader = this.readFileHeader();
 
 			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, _document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
@@ -89,11 +94,11 @@ namespace ACadSharp.IO
 
 			this.readAppInfo();
 
-			//Read all the objects in the file
-			_document.Classes = this.readObjects();
+            //Read all the objects in the file
+            _document.Classes = this.readObjects();
 
-			//Build the document 
-			this._builder.BuildDocument();
+            //Build the document 
+            this._builder.BuildDocument();
 
 			return _document;
 		}
@@ -202,13 +207,13 @@ namespace ACadSharp.IO
 				this._builder.HeaderHandles = headerHandles;
 
 			return header;
-		}
+        }
 
-		/// <summary>
-		/// Read the file header data.
-		/// </summary>
-		/// <returns></returns>
-		internal DwgFileHeader readFileHeader()
+        /// <summary>
+        /// Read the file header data.
+        /// </summary>
+        /// <returns></returns>
+        internal DwgFileHeader readFileHeader()
 		{
 			//Reset the stream position at the begining
 			this._fileStream.Position = 0L;
@@ -384,9 +389,9 @@ namespace ACadSharp.IO
 				sreader = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
 			}
 
-			Queue<ulong> objectHandles = new Queue<ulong>(this._builder.HeaderHandles.GetHandles()
+			IEnumerable<ulong> objectHandles = this._builder.HeaderHandles.GetHandles()
 				.Where(o => o.HasValue)
-				.Select(a => a.Value));
+				.Select(a => a.Value);
 
 			DwgObjectReader sectionReader = new DwgObjectReader(
 				this._fileHeader.AcadVersion,

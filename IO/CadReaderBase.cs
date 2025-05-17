@@ -37,6 +37,10 @@ namespace ACadSharp.IO
 		{
 		}
 
+		protected CadReaderBase(byte[] stream, NotificationEventHandler notification = null) : this(notification)
+		{
+			this._fileStream = new StreamIO(stream);
+		}
 		protected CadReaderBase(Stream stream, NotificationEventHandler notification = null) : this(notification)
 		{
 			this._fileStream = new StreamIO(stream);

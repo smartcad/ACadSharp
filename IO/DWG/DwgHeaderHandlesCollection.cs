@@ -69,9 +69,9 @@ namespace ACadSharp.IO.DWG
 			_handles[name] = value;
 		}
 
-		public List<ulong?> GetHandles()
+		public IEnumerable<ulong?> GetHandles()
 		{
-			return new List<ulong?>(_handles.Values);
+			return _handles.Values;
 		}
 
 		private ulong? getHandle([CallerMemberName] string name = null)

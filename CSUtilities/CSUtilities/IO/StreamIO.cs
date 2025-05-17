@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO.DWG;
+using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.Buffers;
@@ -85,6 +86,11 @@ namespace CSUtilities.IO
 
 			stream.Position = position;
 		}
+		
+		public StreamIO(byte[] buffer)
+		{
+            _stream = new MemoryStream(buffer);
+        }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StreamIO" /> class.
@@ -95,11 +101,6 @@ namespace CSUtilities.IO
 		/// Initializes a new instance of the <see cref="StreamIO" /> class.
 		/// </summary>
 		public StreamIO(Stream stream) : this(stream, false, false) { }
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="StreamIO" /> class.
-		/// </summary>
-		public StreamIO(byte[] arr) : this(new MemoryStream(arr)) { }
 
 		public async Task<byte[]> GetBytesAsync(int offset, int length)
 		{
