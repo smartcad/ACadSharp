@@ -129,7 +129,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			List<XY> vertices = this.PolygonalVertexes(256);
 

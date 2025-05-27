@@ -60,7 +60,7 @@ namespace ACadSharp.Entities
 		public Face3D() : base() { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.FromPoints(new List<XYZ> { this.FirstCorner, this.SecondCorner, this.ThirdCorner, this.FourthCorner });
 		}

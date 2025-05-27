@@ -66,7 +66,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.Location);
 		}

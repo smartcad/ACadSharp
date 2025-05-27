@@ -190,7 +190,7 @@ namespace ACadSharp.Entities
 		private ImageDefinitionReactor _definitionReactor;
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			if (!this.ClipBoundaryVertices.Any())
 			{

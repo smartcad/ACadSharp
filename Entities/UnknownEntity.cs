@@ -60,7 +60,7 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// An Unknown Entity does not have any geometric shape, therfore it's bounding box will be always 0
 		/// </remarks>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;
 		}

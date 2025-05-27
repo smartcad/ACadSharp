@@ -60,7 +60,7 @@ namespace ACadSharp.Entities
 		public DimensionAligned() : base(DimensionType.Aligned) { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}

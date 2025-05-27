@@ -70,7 +70,7 @@ namespace ACadSharp.Entities
 		public DimensionAngular3Pt() : base(DimensionType.Angular3Point) { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FirstPoint, this.SecondPoint);
 		}

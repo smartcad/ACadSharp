@@ -110,7 +110,7 @@ namespace ACadSharp.Entities
 		public Spline() : base() { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.FromPoints(this.ControlPoints);
 		}

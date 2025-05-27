@@ -29,14 +29,6 @@ namespace ACadSharp
 		/// </summary>
 		public int Count { get { return this._entries.Count; } }
 
-		public T this[int index]
-		{
-			get
-			{
-				return this._entries.ElementAtOrDefault(index);
-			}
-		}
-
 		protected readonly HashSet<T> _entries = new HashSet<T>();
 
 		/// <summary>

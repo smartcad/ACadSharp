@@ -10,7 +10,7 @@ namespace ACadSharp.Entities
 {
 	public partial class Hatch
 	{
-		public partial class BoundaryPath : IGeometricEntity
+		public partial class BoundaryPath 
 		{
 			/// <summary>
 			/// Flag that indicates that this boundary path is formed by a polyline.
@@ -65,24 +65,6 @@ namespace ACadSharp.Entities
 			public BoundaryPath()
 			{
 				this.Edges.CollectionChanged += this.onEdgesCollectionChanged;
-			}
-
-			/// <inheritdoc/>
-			public BoundingBox GetBoundingBox()
-			{
-				BoundingBox box = BoundingBox.Null;
-
-				foreach (Edge edge in this.Edges)
-				{
-					box = box.Merge(edge.GetBoundingBox());
-				}
-
-				foreach (Entity entity in this.Entities)
-				{
-					box = box.Merge(entity.GetBoundingBox());
-				}
-
-				return box;
 			}
 
 			/// <inheritdoc/>

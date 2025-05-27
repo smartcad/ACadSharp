@@ -63,7 +63,7 @@ namespace ACadSharp.Entities
 				public XY EndTangent { get; set; }
 
 				/// <inheritdoc/>
-				public override BoundingBox GetBoundingBox()
+				public BoundingBox GetBoundingBox()
 				{
 					return BoundingBox.FromPoints(this.ControlPoints);
 				}

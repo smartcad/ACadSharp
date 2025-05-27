@@ -76,7 +76,7 @@ namespace ACadSharp.Entities
 		//3 = Material mapper
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.FromPoints(this.Vertices);
 		}

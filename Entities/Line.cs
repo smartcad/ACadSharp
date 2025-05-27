@@ -64,7 +64,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			var min = new XYZ(System.Math.Min(this.StartPoint.X, this.EndPoint.X), System.Math.Min(this.StartPoint.Y, this.EndPoint.Y), System.Math.Min(this.StartPoint.Z, this.EndPoint.Z));
 			var max = new XYZ(System.Math.Max(this.StartPoint.X, this.EndPoint.X), System.Math.Max(this.StartPoint.Y, this.EndPoint.Y), System.Math.Max(this.StartPoint.Z, this.EndPoint.Z));

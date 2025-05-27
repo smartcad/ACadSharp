@@ -50,7 +50,7 @@ namespace ACadSharp.Entities
 		public DimensionDiameter() : base(DimensionType.Diameter) { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
 		}

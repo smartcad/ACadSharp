@@ -48,7 +48,7 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(210, 220, 230)]
 		public XYZ Normal { get; set; } = XYZ.AxisZ;
 
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;
 		}

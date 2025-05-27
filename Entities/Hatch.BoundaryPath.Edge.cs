@@ -21,7 +21,7 @@ namespace ACadSharp.Entities
 				Spline = 4,
 			}
 
-			public abstract class Edge : IGeometricEntity
+			public abstract class Edge 
 			{
 				/// <summary>
 				/// Edge type.
@@ -36,9 +36,6 @@ namespace ACadSharp.Entities
 				{
 					return (Edge)this.MemberwiseClone();
 				}
-
-				/// <inheritdoc/>
-				public abstract BoundingBox GetBoundingBox();
 			}
 		}
 	}

@@ -91,15 +91,5 @@ namespace ACadSharp.Blocks
 			return clone;
 		}
 
-		public override BoundingBox GetBoundingBox()
-		{
-			BoundingBox box = BoundingBox.Null;
-			foreach (var item in this.BlockOwner.Entities)
-			{
-				box = box.Merge(item.GetBoundingBox());
-			}
-
-			return box;
-		}
 	}
 }

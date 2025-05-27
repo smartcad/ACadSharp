@@ -77,7 +77,7 @@ namespace ACadSharp.Entities
 		private DimensionStyle _style = DimensionStyle.Default;
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.InsertionPoint);
 		}

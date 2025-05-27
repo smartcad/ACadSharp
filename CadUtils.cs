@@ -179,7 +179,7 @@ namespace ACadSharp
 
 		public static byte ToIndex(LineweightType value)
 		{
-			byte result = 0;
+			byte result;
 			switch (value)
 			{
 				case LineweightType.Default:

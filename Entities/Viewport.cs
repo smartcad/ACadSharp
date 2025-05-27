@@ -386,7 +386,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			XYZ min = new XYZ(this.Center.X - this.Width / 2, this.Center.Y - this.Height / 2, this.Center.Z);
 			XYZ max = new XYZ(this.Center.X + this.Width / 2, this.Center.Y + this.Height / 2, this.Center.Z);
@@ -420,10 +420,10 @@ namespace ACadSharp.Entities
 			BoundingBox box = this.GetModelBoundingBox();
 			foreach (Entity e in this.Document.Entities)
 			{
-				if (box.IsIn(e.GetBoundingBox(), out bool partialIn) || (partialIn && includePartial))
-				{
-					entities.Add(e);
-				}
+				//if (box.IsIn(e.GetBoundingBox(), out bool partialIn) || (partialIn && includePartial))
+				//{
+				//	entities.Add(e);
+				//}
 			}
 
 			return entities;

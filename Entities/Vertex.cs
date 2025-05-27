@@ -55,7 +55,7 @@ namespace ACadSharp.Entities
 		IVector IVertex.Location { get { return this.Location; } }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.Location);
 		}

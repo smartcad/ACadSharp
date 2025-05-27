@@ -120,11 +120,6 @@ namespace ACadSharp.Entities
 		{
 			this._layer = lyr;
 		}
-
-		/// <inheritdoc/>
-		public abstract BoundingBox GetBoundingBox();
-
-		/// <inheritdoc/>
 		public void MatchProperties(IEntity entity)
 		{
 			if (entity is null)

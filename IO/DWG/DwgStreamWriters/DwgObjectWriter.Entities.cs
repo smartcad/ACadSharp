@@ -1612,10 +1612,11 @@ namespace ACadSharp.IO.DWG
 			{
 				//Owned Object Count BL Number of objects owned by this object.
 				this._writer.WriteBitLong(count);
-				for (int i = 0; i < count; i++)
-				{
-					this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices[i]);
-				}
+				var enumerator = pline.Vertices.GetEnumerator();
+				while (enumerator.MoveNext())
+                {
+                    this._writer.HandleReference(DwgReferenceType.HardOwnership, enumerator.Current);
+                }
 			}
 
 			//R13-R2000:

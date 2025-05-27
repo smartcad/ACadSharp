@@ -36,7 +36,7 @@ namespace ACadSharp.Entities
 		public XYZ Direction { get; set; } = XYZ.Zero;
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Infinite;
 		}

@@ -39,7 +39,7 @@ namespace ACadSharp.Blocks
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return BoundingBox.Null;
 		}

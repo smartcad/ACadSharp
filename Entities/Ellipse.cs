@@ -185,7 +185,7 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			List<XY> pts = this.PolygonalVertexes(100);
 			return BoundingBox.FromPoints(pts.Select(p => (XYZ)p));

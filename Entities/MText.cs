@@ -213,7 +213,7 @@ namespace ACadSharp.Entities
 		public MText() : base() { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.InsertPoint);
 		}

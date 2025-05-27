@@ -47,12 +47,6 @@ namespace ACadSharp.Entities
 				/// </summary>
 				[DxfCodeValue(73)]
 				public bool CounterClockWise { get; set; }
-
-				/// <inheritdoc/>
-				public override BoundingBox GetBoundingBox()
-				{
-					throw new System.NotImplementedException();
-				}
 			}
 		}
 	}

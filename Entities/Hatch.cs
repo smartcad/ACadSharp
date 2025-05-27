@@ -130,18 +130,6 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public Hatch() : base() { }
 
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			BoundingBox box = BoundingBox.Null;
-
-			foreach (BoundaryPath bp in this.Paths)
-			{
-				box = box.Merge(bp.GetBoundingBox());
-			}
-
-			return box;
-		}
 
 		/// <inheritdoc/>
 		public override CadObject Clone()

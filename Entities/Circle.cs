@@ -67,7 +67,7 @@ namespace ACadSharp.Entities
 		public Circle() : base() { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			XYZ min = new XYZ(Math.Min(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Min(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Min(this.Center.Z, this.Center.Z));
 			XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z, this.Center.Z));

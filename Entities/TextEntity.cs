@@ -163,7 +163,7 @@ namespace ACadSharp.Entities
 		public TextEntity() : base() { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.InsertPoint);
 		}

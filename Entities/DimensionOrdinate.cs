@@ -83,7 +83,7 @@ namespace ACadSharp.Entities
 		public DimensionOrdinate() : base(DimensionType.Ordinate) { }
 
 		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
+		public BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox(this.FeatureLocation, this.LeaderEndpoint);
 		}
