@@ -1052,9 +1052,10 @@ namespace ACadSharp.IO.DXF
 		private CadHatchTemplate.CadBoundaryPathTemplate readLoop()
 		{
 			CadHatchTemplate.CadBoundaryPathTemplate template = new CadHatchTemplate.CadBoundaryPathTemplate();
-			template.Path.Flags = (BoundaryPathFlags)this._reader.ValueAsInt;
+			var flags = (BoundaryPathFlags)this._reader.ValueAsInt;
+			template.Path.Flags = flags;
 
-			if (template.Path.Flags.HasFlag(BoundaryPathFlags.Polyline))
+			if (flags.HasFlag(BoundaryPathFlags.Polyline))
 			{
 				Hatch.BoundaryPath.Polyline pl = this.readPolylineBoundary();
 				template.Path.Edges.Add(pl);

@@ -564,8 +564,11 @@ namespace ACadSharp
 		{
             Classes.Clear();
 			this.RootDictionary.Dispose();
-			this.ModelSpace.Entities.Clear();
-			this.PaperSpace.Entities.Clear();
+
+			if(this.BlockRecords.Contains(BlockRecord.ModelSpaceName))
+				this.ModelSpace.Entities.Clear();
+			if(this.BlockRecords.Contains(BlockRecord.PaperSpaceName))
+				this.PaperSpace.Entities.Clear();
 
             this.BlockRecords?.Dispose();
             this.Layers?.Dispose();

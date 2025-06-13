@@ -21,7 +21,8 @@ namespace ACadSharp
 		{
 			foreach (var item in cadObjectMapDxf(type))
 			{
-				map.DxfProperties.Add(item.Key, item.Value);
+				if(!map.DxfProperties.ContainsKey(item.Key))
+					map.DxfProperties.Add(item.Key, item.Value);
 			}
 		}
 

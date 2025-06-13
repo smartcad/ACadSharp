@@ -36,6 +36,7 @@ namespace ACadSharp.IO
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="notification">Notification handler, sends any message or notification about the reading process.</param>
 		public DxfReader(Stream stream, NotificationEventHandler notification = null) : base(stream, notification) { }
+		public DxfReader(byte[] byte_array) : base(byte_array, null) { }
 
 		/// <summary>
 		/// Check if the file format is in binary.
@@ -255,47 +256,6 @@ namespace ACadSharp.IO
 			return header;
 		}
 
-		/// <summary>
-		/// Read only the tables section in the dxf document
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="CadDocument"/> will not contain any entity, only the tables and it's records
-		/// </remarks>
-		/// <returns></returns>
-		public void ReadTables(CadDocument _document)
-		{
-			this._reader = this._reader ?? this.getReader();
-
-			this._builder = new DxfDocumentBuilder(this._version, _document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
-
-			this.readTables();
-
-			_document.Header = new CadHeader(_document);
-
-			this._builder.RegisterTables();
-
-			this._builder.BuildTables();
-		}
-
-		/// <summary>
-		/// Read only the entities section in the dxf document
-		/// </summary>
-		/// <remarks>
-		/// The entities will be completely independent from each other and linetypes and layers will only have it's name set, all the other properties will be set as default
-		/// </remarks>
-		/// <returns></returns>
-		public List<Entity> ReadEntities(CadDocument _document)
-		{
-			this._reader = this._reader ?? this.getReader();
-
-			this._builder = new DxfDocumentBuilder(this._version, _document, this.Configuration);
-			this._builder.OnNotification += this.onNotificationEvent;
-
-			this.readEntities();
-
-			return this._builder.BuildEntities();
-		}
 
 		/// <inheritdoc/>
 		public override void Dispose()
