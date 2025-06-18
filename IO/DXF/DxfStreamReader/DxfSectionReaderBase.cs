@@ -441,7 +441,7 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				case 2:
-					tmp.HatchPatternName = this._reader.ValueAsString;
+					tmp.CadObject.Pattern = new HatchPattern(this._reader.ValueAsString);
 					return true;
 				case 10:
 					seedPoint.X = this._reader.ValueAsDouble;
@@ -472,10 +472,11 @@ namespace ACadSharp.IO.DXF
 					return true;
 				//Number of pattern definition lines
 				case 78:
+					this.readHatchPatternLines(tmp, this._reader.ValueAsInt);
 					return true;
 				//Number of boundary paths (loops)
 				case 91:
-					this.readLoops(tmp, this._reader.ValueAsInt);
+					this.readHatchBoundary(tmp, this._reader.ValueAsInt);
 					return true;
 				//Number of seed points
 				case 98:
@@ -1030,10 +1031,62 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readLoops(CadHatchTemplate template, int count)
+		private void readHatchPatternLines(CadHatchTemplate template, int count)
 		{
-			if (this._reader.Code == 91)
+			this._reader.ReadNext();
+
+			for (int i = 0; i < count; i++)
+			{
+                if (this._reader.Code != 53)
+				{
+					this._builder.Notify($"Boundary path should start with code 53 but was {this._reader.Code}");
+					break;
+				}
+
+				HatchPattern.Line line = new();
+				int remaining = 6;
+                while (remaining > 0)
+                {
+                    switch (this._reader.Code)
+                    {
+                        case 53:
+                            line.Angle = this._reader.ValueAsDouble * Math.PI / 180;
+                            break;
+                        case 43:
+                            line.BasePoint = new XY(this._reader.ValueAsDouble, line.BasePoint.Y);
+							break;
+                        case 44:
+                            line.BasePoint = new XY(line.BasePoint.X, this._reader.ValueAsDouble);
+                            break;
+                        case 45:
+                            line.Offset = new XY(this._reader.ValueAsDouble, line.Offset.Y);
+							break;
+                        case 46:
+                            line.Offset = new XY(line.Offset.X, this._reader.ValueAsDouble);
+                            break;
+                        case 79:
+							int dash_offset_count = this._reader.ValueAsInt;
+							if(dash_offset_count > 0)
+								remaining += dash_offset_count;
+                            break;
+						case 49:
+							line.DashLengths.Add(this._reader.ValueAsDouble);
+							break;
+                    }
+
+					remaining--;
+					if(remaining > 0)
+						this._reader.ReadNext();
+                }
+
+				template.CadObject.Pattern.Lines.Add(line); 
 				this._reader.ReadNext();
+            }
+		}
+		
+		private void readHatchBoundary(CadHatchTemplate template, int count)
+		{
+			this._reader.ReadNext();
 
 			for (int i = 0; i < count; i++)
 			{
@@ -1043,13 +1096,13 @@ namespace ACadSharp.IO.DXF
 					break;
 				}
 
-				CadHatchTemplate.CadBoundaryPathTemplate path = this.readLoop();
+				CadHatchTemplate.CadBoundaryPathTemplate path = this.readHatchBoundaryPath();
 				if (path != null)
 					template.PathTempaltes.Add(path);
 			}
 		}
 
-		private CadHatchTemplate.CadBoundaryPathTemplate readLoop()
+		private CadHatchTemplate.CadBoundaryPathTemplate readHatchBoundaryPath()
 		{
 			CadHatchTemplate.CadBoundaryPathTemplate template = new CadHatchTemplate.CadBoundaryPathTemplate();
 			var flags = (BoundaryPathFlags)this._reader.ValueAsInt;
