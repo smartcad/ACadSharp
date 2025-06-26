@@ -14,7 +14,7 @@ namespace ACadSharp.IO.DXF
 
 		public override void Dispose()
 		{
-			this._stream.Dispose();
+			//this._stream.Dispose();
 		}
 
 		public override void Flush()

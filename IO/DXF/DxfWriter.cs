@@ -100,10 +100,11 @@ namespace ACadSharp.IO
 		/// <param name="stream"></param>
 		/// <param name="document"></param>
 		/// <param name="binary"></param>
-		public static void Write(Stream stream, CadDocument document, bool binary, NotificationEventHandler notification = null)
+		public static void Write(Stream stream, CadDocument document, bool binary, bool close_stream, NotificationEventHandler notification = null)
 		{
 			using (DxfWriter writer = new DxfWriter(stream, document, binary))
 			{
+				writer.Configuration.CloseStream = close_stream;
 				writer.OnNotification += notification;
 				writer.Write();
 			}

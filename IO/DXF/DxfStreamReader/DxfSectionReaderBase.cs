@@ -1284,10 +1284,10 @@ namespace ACadSharp.IO.DXF
 								ellipse.Center = new XY(ellipse.Center.X, this._reader.ValueAsDouble);
 								break;
 							case 11:
-								ellipse.MajorAxisEndPoint = new XY(this._reader.ValueAsDouble, ellipse.Center.Y);
+								ellipse.MajorAxisEndPoint = new XY(this._reader.ValueAsDouble, ellipse.MajorAxisEndPoint.Y);
 								break;
 							case 21:
-								ellipse.MajorAxisEndPoint = new XY(ellipse.Center.X, this._reader.ValueAsDouble);
+								ellipse.MajorAxisEndPoint = new XY(ellipse.MajorAxisEndPoint.X, this._reader.ValueAsDouble);
 								break;
 							case 40:
 								ellipse.MinorToMajorRatio = this._reader.ValueAsDouble;
