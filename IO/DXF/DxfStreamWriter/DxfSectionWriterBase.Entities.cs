@@ -335,7 +335,8 @@ namespace ACadSharp.IO.DXF
 
 		private void writeHatchBoundaryPathEdge(Hatch.BoundaryPath.Edge edge)
 		{
-			this._writer.Write(72, edge.Type);
+			if(edge is not Hatch.BoundaryPath.Polyline)
+				this._writer.Write(72, edge.Type);
 
 			switch (edge)
 			{
@@ -412,7 +413,7 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(78, (short)pattern.Lines.Count);
 				foreach (HatchPattern.Line line in pattern.Lines)
 				{
-					this._writer.Write(53, line.Angle * (180.0 / System.Math.PI));
+					this._writer.Write(53, line.Angle);
 					this._writer.Write(43, line.BasePoint.X);
 					this._writer.Write(44, line.BasePoint.Y);
 					this._writer.Write(45, line.Offset.X);

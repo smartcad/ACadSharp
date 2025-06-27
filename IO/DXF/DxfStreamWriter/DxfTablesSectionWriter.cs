@@ -220,11 +220,20 @@ namespace ACadSharp.IO.DXF
 		{
 			if (layer.IsOn)
 			{
-				this._writer.Write(62, layer.Color.Index, map);
+				if(layer.Color.Index < 0 && layer.Color.IsTrueColor)
+				{
+					var index = layer.Color.GetApproxIndex();
+                    this._writer.Write(62, index, map);
+                }
+				else
+					this._writer.Write(62, layer.Color.Index, map);
 			}
 			else
 			{
-				this._writer.Write(62, (short)-layer.Color.Index, map);
+				var index = layer.Color.Index;
+				if (index < 0)
+					index = (short)layer.Color.GetApproxIndex();
+				this._writer.Write(62, (short)-index, map);
 			}
 
 			if (layer.Color.IsTrueColor)
