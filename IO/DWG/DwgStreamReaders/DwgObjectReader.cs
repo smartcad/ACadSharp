@@ -1186,7 +1186,7 @@ namespace ACadSharp.IO.DWG
 			var totalEntitiesCount = _objectReader.ReadBitLong();
 			for (int i = 0; i < totalEntitiesCount; i++) {
 				var handle = this.handleReference();
-				template.TotalEntityHandles.Add(handle, null);
+				template.TotalEntityHandles.Add(handle);
 			}
 
 			//	DXF 92 Sub blocks count (no property)
