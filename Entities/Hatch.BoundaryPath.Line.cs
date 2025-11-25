@@ -29,6 +29,11 @@ namespace ACadSharp.Entities
 				{
 					return BoundingBox.FromPoints(new[] { (XYZ)this.Start, (XYZ)this.End });
 				}
+
+                public override string ToString()
+                {
+					return $"{Start.X}, {Start.Y}, {End.X}, {End.Y}";
+                }
 			}
 		}
 	}
