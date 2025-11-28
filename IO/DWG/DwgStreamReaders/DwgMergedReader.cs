@@ -290,7 +290,7 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.ReadShort();
 		}
 
-		public short ReadShort<T>() where T : IEndianConverter, new()
+		public short ReadShort(IEndianConverter converter)
 		{
 			throw new NotImplementedException();
 		}

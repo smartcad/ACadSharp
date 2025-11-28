@@ -4,6 +4,8 @@ namespace CSUtilities.Converters
 {
 	internal class DefaultEndianConverter : IEndianConverter
 	{
+		public static DefaultEndianConverter Instance = new DefaultEndianConverter();
+		private DefaultEndianConverter() { }
 		public byte[] GetBytes(char value) => BitConverter.GetBytes(value);
 		public byte[] GetBytes(short value) => BitConverter.GetBytes(value);
 		public byte[] GetBytes(ushort value) => BitConverter.GetBytes(value);

@@ -128,6 +128,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case 1001:
 					isExtendedData = true;
+					if(template.EDataTemplateByAppName is null)
+						template.EDataTemplateByAppName = new Dictionary<string, ExtendedData>();
+
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:

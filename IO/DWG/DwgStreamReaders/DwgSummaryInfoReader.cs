@@ -93,7 +93,7 @@ namespace ACadSharp.IO.DWG
 
 		private string readUnicodeString()
 		{
-			short textLength = _sreader.ReadShort<LittleEndianConverter>();
+			short textLength = _sreader.ReadShort(LittleEndianConverter.Instance);
 			string value;
 			if (textLength == 0)
 			{

@@ -707,13 +707,13 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.Double:
 					case GroupCodeValueType.ExtendedDataDouble:
 						double d = (entry.Value as double?).Value;
-						ms.Write<double, LittleEndianConverter>(d);
+						ms.Write<double>(d, LittleEndianConverter.Instance);
 						break;
 					case GroupCodeValueType.Point3D:
 						XYZ xyz = (entry.Value as XYZ?).Value;
-						ms.Write<double, LittleEndianConverter>(xyz.X);
-						ms.Write<double, LittleEndianConverter>(xyz.Y);
-						ms.Write<double, LittleEndianConverter>(xyz.Z);
+						ms.Write<double>(xyz.X, LittleEndianConverter.Instance);
+						ms.Write<double>(xyz.Y, LittleEndianConverter.Instance);
+						ms.Write<double>(xyz.Z, LittleEndianConverter.Instance);
 						break;
 					case GroupCodeValueType.Chunk:
 					case GroupCodeValueType.ExtendedDataChunk:
@@ -730,21 +730,21 @@ namespace ACadSharp.IO.DWG
 						{
 							if (string.IsNullOrEmpty(text))
 							{
-								ms.Write<short, LittleEndianConverter>(0);
+								ms.Write<short>(0, LittleEndianConverter.Instance);
 								return;
 							}
 
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
+							ms.Write<short>((short)text.Length, LittleEndianConverter.Instance);
 							ms.Write(text, System.Text.Encoding.Unicode);
 						}
 						else if (string.IsNullOrEmpty(text))
 						{
-							ms.Write<short, LittleEndianConverter>(0);
+							ms.Write<short>(0, LittleEndianConverter.Instance);
 							ms.Write((byte)this._writer.Encoding.CodePage);
 						}
 						else
 						{
-							ms.Write<short, LittleEndianConverter>((short)text.Length);
+							ms.Write<short>((short)text.Length, LittleEndianConverter.Instance);
 							ms.Write((byte)this._writer.Encoding.CodePage);
 							ms.Write(text, this._writer.Encoding);
 						}
@@ -752,7 +752,7 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
 						ulong u = (entry.Value as ulong?).Value;
-						ms.Write<ulong, LittleEndianConverter>(u);
+						ms.Write<ulong>(u, LittleEndianConverter.Instance);
 						break;
 					default:
 						throw new NotSupportedException();

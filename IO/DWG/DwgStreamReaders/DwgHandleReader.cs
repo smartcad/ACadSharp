@@ -29,7 +29,7 @@ namespace ACadSharp.IO.DWG
 				long lastloc = 0;
 
 				//Short: size of this section. Note this is in BIGENDIAN order (MSB first)
-				int size = _sreader.ReadShort<BigEndianConverter>();
+				int size = _sreader.ReadShort(BigEndianConverter.Instance);
 
 				if (size == 2)
 					break;

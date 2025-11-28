@@ -569,6 +569,8 @@ namespace ACadSharp.IO.DWG
 				//template.ExtendedData
 				ExtendedData edata = this.readExtendedDataRecords(endPos);
 
+				if(template.EDataTemplate is null)
+					template.EDataTemplate = new Dictionary<ulong, ExtendedData>();
 				template.EDataTemplate.Add(appHandle, edata);
 
 				size = this._objectReader.ReadBitShort();

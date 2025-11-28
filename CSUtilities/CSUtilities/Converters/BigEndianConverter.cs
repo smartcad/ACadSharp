@@ -13,9 +13,9 @@ namespace CSUtilities.Converters
 			if (BitConverter.IsLittleEndian)
 				return (IEndianConverter)new InverseConverter();
 			else
-				return (IEndianConverter)new DefaultEndianConverter();
+				return (IEndianConverter)DefaultEndianConverter.Instance;
 		}
 
-		public BigEndianConverter() : base(init()) { }
+		private BigEndianConverter() : base(init()) { }
 	}
 }

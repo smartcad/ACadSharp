@@ -522,47 +522,47 @@ namespace ACadSharp.IO
 			}
 
 			//0x0C	4	0x00(long)
-			headerStream.ReadInt<LittleEndianConverter>();
+			headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x10	4	0x6c(long)
-			headerStream.ReadInt<LittleEndianConverter>();
+			headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x14	4	0x04(long)
-			headerStream.ReadInt<LittleEndianConverter>();
+			headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x18	4	Root tree node gap
-			fileheader.RootTreeNodeGap = headerStream.ReadInt<LittleEndianConverter>();
+			fileheader.RootTreeNodeGap = headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x1C	4	Lowermost left tree node gap
-			fileheader.LeftGap = headerStream.ReadInt<LittleEndianConverter>();
+			fileheader.LeftGap = headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x20	4	Lowermost right tree node gap
-			fileheader.RigthGap = headerStream.ReadInt<LittleEndianConverter>();
+			fileheader.RigthGap = headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x24	4	Unknown long(ODA writes 1)	
-			headerStream.ReadInt<LittleEndianConverter>();
+			headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x28	4	Last section page Id
-			fileheader.LastPageId = headerStream.ReadInt<LittleEndianConverter>();
+			fileheader.LastPageId = headerStream.ReadInt(LittleEndianConverter.Instance);
 
 			//0x2C	8	Last section page end address
-			fileheader.LastSectionAddr = headerStream.ReadULong<LittleEndianConverter>();
+			fileheader.LastSectionAddr = headerStream.ReadULong(LittleEndianConverter.Instance);
 			//0x34	8	Second header data address pointing to the repeated header data at the end of the file
-			fileheader.SecondHeaderAddr = headerStream.ReadULong<LittleEndianConverter>();
+			fileheader.SecondHeaderAddr = headerStream.ReadULong(LittleEndianConverter.Instance);
 
 			//0x3C	4	Gap amount
-			fileheader.GapAmount = headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.GapAmount = headerStream.ReadUInt(LittleEndianConverter.Instance);
 			//0x40	4	Section page amount
-			fileheader.SectionAmount = headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.SectionAmount = headerStream.ReadUInt(LittleEndianConverter.Instance);
 			//0x44	4	0x20(long)
-			headerStream.ReadInt<LittleEndianConverter>();
+			headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x48	4	0x80(long)
-			headerStream.ReadInt<LittleEndianConverter>();
+			headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x4C	4	0x40(long)
-			headerStream.ReadInt<LittleEndianConverter>();
+			headerStream.ReadInt(LittleEndianConverter.Instance);
 			//0x50	4	Section Page Map Id
-			fileheader.SectionPageMapId = headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.SectionPageMapId = headerStream.ReadUInt(LittleEndianConverter.Instance);
 			//0x54	8	Section Page Map address(add 0x100 to this value)
-			fileheader.PageMapAddress = headerStream.ReadULong<LittleEndianConverter>() + 256UL;
+			fileheader.PageMapAddress = headerStream.ReadULong(LittleEndianConverter.Instance) + 256UL;
 			//0x5C	4	Section Map Id
-			fileheader.SectionMapId = headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.SectionMapId = headerStream.ReadUInt(LittleEndianConverter.Instance);
 			//0x60	4	Section page array size
-			fileheader.SectionArrayPageSize = headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.SectionArrayPageSize = headerStream.ReadUInt(LittleEndianConverter.Instance);
 			//0x64	4	Gap array size
-			fileheader.GapArraySize = headerStream.ReadUInt<LittleEndianConverter>();
+			fileheader.GapArraySize = headerStream.ReadUInt(LittleEndianConverter.Instance);
 			//0x68	4	CRC32(long).See paragraph 2.14.2 for the 32 - bit CRC calculation, 
 			//			the seed is zero. Note that the CRC 
 			//			calculation is done including the 4 CRC bytes that are 
@@ -622,15 +622,15 @@ namespace ACadSharp.IO
 			decompressedStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 			//0x00	4	Number of section descriptions(NumDescriptions)
-			int ndescriptions = decompressedStream.ReadInt<LittleEndianConverter>();
+			int ndescriptions = decompressedStream.ReadInt(LittleEndianConverter.Instance);
 			//0x04	4	0x02 (long)
-			decompressedStream.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt(LittleEndianConverter.Instance);
 			//0x08	4	0x00007400 (long)
-			decompressedStream.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt(LittleEndianConverter.Instance);
 			//0x0C	4	0x00 (long)
-			decompressedStream.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt(LittleEndianConverter.Instance);
 			//0x10	4	Unknown (long), ODA writes NumDescriptions here.
-			decompressedStream.ReadInt<LittleEndianConverter>();
+			decompressedStream.ReadInt(LittleEndianConverter.Instance);
 
 			for (int i = 0; i < ndescriptions; ++i)
 			{
@@ -646,17 +646,17 @@ namespace ACadSharp.IO
 							decompressed size of the pages is not equal to the section’s size, add more zero 
 							pages to the section until this condition is met.
 				*/
-				descriptor.PageCount = decompressedStream.ReadInt<LittleEndianConverter>();
+				descriptor.PageCount = decompressedStream.ReadInt(LittleEndianConverter.Instance);
 				//0x0C	4	Max Decompressed Size of a section page of this type(normally 0x7400)
-				descriptor.DecompressedSize = (ulong)decompressedStream.ReadInt<LittleEndianConverter>();
+				descriptor.DecompressedSize = (ulong)decompressedStream.ReadInt(LittleEndianConverter.Instance);
 				//0x10	4	Unknown(long)
-				decompressedStream.ReadInt<LittleEndianConverter>();
+				decompressedStream.ReadInt(LittleEndianConverter.Instance);
 				//0x14	4	Compressed(1 = no, 2 = yes, normally 2)
-				descriptor.CompressedCode = decompressedStream.ReadInt<LittleEndianConverter>();
+				descriptor.CompressedCode = decompressedStream.ReadInt(LittleEndianConverter.Instance);
 				//0x18	4	Section Id(starts at 0). The first section(empty section) is numbered 0, consecutive sections are numbered descending from(the number of sections – 1) down to 1.
-				descriptor.SectionId = decompressedStream.ReadInt<LittleEndianConverter>();
+				descriptor.SectionId = decompressedStream.ReadInt(LittleEndianConverter.Instance);
 				//0x1C	4	Encrypted(0 = no, 1 = yes, 2 = unknown)
-				descriptor.Encrypted = decompressedStream.ReadInt<LittleEndianConverter>();
+				descriptor.Encrypted = decompressedStream.ReadInt(LittleEndianConverter.Instance);
 				//0x20	64	Section Name(string)
 				descriptor.Name = decompressedStream.ReadString(64).Split('\0')[0];
 
@@ -665,9 +665,9 @@ namespace ACadSharp.IO
 				{
 					DwgLocalSectionMap localmap = new DwgLocalSectionMap();
 					//0x00	4	Page number(index into SectionPageMap), starts at 1
-					localmap.PageNumber = decompressedStream.ReadInt<LittleEndianConverter>();
+					localmap.PageNumber = decompressedStream.ReadInt(LittleEndianConverter.Instance);
 					//0x04	4	Data size for this page(compressed size).
-					localmap.CompressedSize = (ulong)decompressedStream.ReadInt<LittleEndianConverter>();
+					localmap.CompressedSize = (ulong)decompressedStream.ReadInt(LittleEndianConverter.Instance);
 					//0x08	8	Start offset for this page(OdUInt64).If this start offset is smaller than the sum of the decompressed size of all previous pages, then this page is to be preceded by zero pages until this condition is met.
 					localmap.Offset = decompressedStream.ReadULong();
 
@@ -872,19 +872,19 @@ namespace ACadSharp.IO
 			{
 				DwgSectionDescriptor section = new DwgSectionDescriptor();
 				//0x00	8	Data size
-				section.CompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+				section.CompressedSize = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 				//0x08	8	Max size
-				section.DecompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+				section.DecompressedSize = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 				//0x10	8	Encryption
-				section.Encrypted = (int)sectionMapStream.ReadULong<LittleEndianConverter>();
+				section.Encrypted = (int)sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 				//0x18	8	HashCode
-				section.HashCode = sectionMapStream.ReadULong<LittleEndianConverter>();
+				section.HashCode = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 				//0x20	8	SectionNameLength
-				int sectionNameLength = (int)sectionMapStream.ReadLong<LittleEndianConverter>();
+				int sectionNameLength = (int)sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 				//0x28	8	Unknown
-				sectionMapStream.ReadULong<LittleEndianConverter>();
+				sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 				//0x30	8	Encoding
-				section.Encoding = sectionMapStream.ReadULong<LittleEndianConverter>();
+				section.Encoding = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 				//0x38	8	NumPages.This is the number of pages present 
 				//			in the file for the section, but this does not include 
 				//			pages that contain zeroes only.A page that contains zeroes 
@@ -892,7 +892,7 @@ namespace ACadSharp.IO
 				//			smaller than the sum of the decompressed size of all previous 
 				//			pages, then it is to be preceded by a zero page with a size 
 				//			that is equal to the difference between these two numbers.
-				section.PageCount = (int)sectionMapStream.ReadULong<LittleEndianConverter>();
+				section.PageCount = (int)sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 
 				//Read the name
 				if (sectionNameLength > 0)
@@ -911,19 +911,19 @@ namespace ACadSharp.IO
 					//	of all previous pages, then it is to be preceded 
 					//	by a zero page with a size that is equal to the 
 					//	difference between these two numbers.
-					page.Offset = sectionMapStream.ReadULong<LittleEndianConverter>();
+					page.Offset = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 					//8	Page Size
-					page.Size = sectionMapStream.ReadLong<LittleEndianConverter>();
+					page.Size = sectionMapStream.ReadLong(LittleEndianConverter.Instance);
 					//8	Page Id
-					page.PageNumber = (int)sectionMapStream.ReadLong<LittleEndianConverter>();
+					page.PageNumber = (int)sectionMapStream.ReadLong(LittleEndianConverter.Instance);
 					//8	Page Uncompressed Size
-					page.DecompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+					page.DecompressedSize = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 					//8	Page Compressed Size
-					page.CompressedSize = sectionMapStream.ReadULong<LittleEndianConverter>();
+					page.CompressedSize = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 					//8	Page Checksum
-					page.Checksum = sectionMapStream.ReadULong<LittleEndianConverter>();
+					page.Checksum = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 					//8	Page CRC
-					page.CRC = sectionMapStream.ReadULong<LittleEndianConverter>();
+					page.CRC = sectionMapStream.ReadULong(LittleEndianConverter.Instance);
 
 #if false
 //this code it doesn't take any effect on the reading

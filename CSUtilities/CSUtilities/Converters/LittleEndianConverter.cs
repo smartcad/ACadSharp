@@ -11,11 +11,11 @@ namespace CSUtilities.Converters
 		static IEndianConverter init()
 		{
 			if (BitConverter.IsLittleEndian)
-				return (IEndianConverter)new DefaultEndianConverter();
+				return (IEndianConverter)DefaultEndianConverter.Instance;
 			else
 				return (IEndianConverter)new InverseConverter();
 		}
 
-		public LittleEndianConverter() : base(init()) { }
+		private LittleEndianConverter() : base(init()) { }
 	}
 }

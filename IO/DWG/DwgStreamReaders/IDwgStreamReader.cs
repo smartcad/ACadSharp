@@ -78,7 +78,7 @@ namespace ACadSharp.IO.DWG
 		/// <returns>Value of the last byte.</returns>
 		byte ReadByte();
 		short ReadShort();
-		short ReadShort<T>() where T : IEndianConverter, new();
+		short ReadShort(IEndianConverter converter);
 
 		/// <summary>
 		/// Find the position of the string stream.

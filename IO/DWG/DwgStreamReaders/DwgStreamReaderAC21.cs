@@ -10,7 +10,7 @@ namespace ACadSharp.IO.DWG
 		
 		public override string ReadTextUnicode()
 		{
-			short textLength = this.ReadShort<LittleEndianConverter>();
+			short textLength = this.ReadShort(LittleEndianConverter.Instance);
 			string value;
 			if (textLength == 0)
 			{

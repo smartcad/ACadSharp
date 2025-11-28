@@ -31,7 +31,7 @@ namespace CSUtilities.IO
 
 		public Encoding Encoding { get; set; } = Encoding.Default;
 
-		public IEndianConverter EndianConverter { get; set; } = new DefaultEndianConverter();
+		public IEndianConverter EndianConverter { get; set; } = DefaultEndianConverter.Instance;
 
 		public Stream Stream { get { return _stream; } }
 
@@ -209,7 +209,7 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public short ReadShort()
 		{
-			return ReadShort<DefaultEndianConverter>();
+			return ReadShort(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
@@ -217,10 +217,8 @@ namespace CSUtilities.IO
 		/// </summary>
 		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public short ReadShort<T>() where T : IEndianConverter, new()
+		public short ReadShort(IEndianConverter converter)
 		{
-			T converter = new T();
-
 			byte[] buffer = DwgStreamReaderBase.ByteArray2;
 
             this.ReadBytes(buffer, 2);
@@ -233,18 +231,15 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public ushort ReadUShort()
 		{
-			return ReadUShort<DefaultEndianConverter>();
+			return ReadUShort(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
 		/// Read a <see cref="ushort"/> value form the stream.
 		/// </summary>
-		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public ushort ReadUShort<T>() where T : IEndianConverter, new()
+		public ushort ReadUShort(IEndianConverter converter)
 		{
-			T converter = new T();
-
             byte[] buffer = DwgStreamReaderBase.ByteArray2;
             this.ReadBytes(buffer, 2);
 			return converter.ToUInt16(buffer);
@@ -256,7 +251,7 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public int ReadInt()
 		{
-			return ReadInt<DefaultEndianConverter>();
+			return ReadInt(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
@@ -264,12 +259,9 @@ namespace CSUtilities.IO
 		/// </summary>
 		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public int ReadInt<T>() where T : IEndianConverter, new()
+		public int ReadInt(IEndianConverter converter)
 		{
-			T converter = new T();
-
             byte[] buffer = DwgStreamReaderBase.ByteArray4;
-
             this.ReadBytes(buffer, 4);
 			return converter.ToInt32(buffer);
 		}
@@ -280,7 +272,7 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public uint ReadUInt()
 		{
-			return ReadUInt<DefaultEndianConverter>();
+			return ReadUInt(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
@@ -288,10 +280,8 @@ namespace CSUtilities.IO
 		/// </summary>
 		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public uint ReadUInt<T>() where T : IEndianConverter, new()
+		public uint ReadUInt(IEndianConverter converter)
 		{
-			T converter = new T();
-
             byte[] buffer = DwgStreamReaderBase.ByteArray4;
             this.ReadBytes(buffer, 4);
 			return converter.ToUInt32(buffer);
@@ -303,7 +293,7 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public float ReadSingle()
 		{
-			return ReadSingle<DefaultEndianConverter>();
+			return ReadSingle(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
@@ -311,12 +301,9 @@ namespace CSUtilities.IO
 		/// </summary>
 		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public float ReadSingle<T>() where T : IEndianConverter, new()
+		public float ReadSingle(IEndianConverter converter)
 		{
-			T converter = new T();
-
             byte[] buffer = DwgStreamReaderBase.ByteArray4;
-
             this.ReadBytes(buffer, 4);
 			return converter.ToSingle(buffer);
 		}
@@ -327,7 +314,7 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public double ReadDouble()
 		{
-			return ReadDouble<DefaultEndianConverter>();
+			return ReadDouble(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
@@ -335,12 +322,9 @@ namespace CSUtilities.IO
 		/// </summary>
 		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public double ReadDouble<T>() where T : IEndianConverter, new()
+		public double ReadDouble(IEndianConverter converter)
 		{
-			T converter = new T();
-
             byte[] buffer = DwgStreamReaderBase.ByteArray8;
-
             this.ReadBytes(buffer, 8);
 			return converter.ToDouble(buffer);
 		}
@@ -351,7 +335,7 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public long ReadLong()
 		{
-			return ReadLong<DefaultEndianConverter>();
+			return ReadLong(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
@@ -359,10 +343,8 @@ namespace CSUtilities.IO
 		/// </summary>
 		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public long ReadLong<T>() where T : IEndianConverter, new()
+		public long ReadLong(IEndianConverter converter)
 		{
-			T converter = new T();
-
             byte[] buffer = DwgStreamReaderBase.ByteArray8;
 
             this.ReadBytes(buffer, 8);
@@ -375,7 +357,7 @@ namespace CSUtilities.IO
 		/// <returns></returns>
 		public ulong ReadULong()
 		{
-			return ReadULong<DefaultEndianConverter>();
+			return ReadULong(DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>
@@ -383,10 +365,8 @@ namespace CSUtilities.IO
 		/// </summary>
 		/// <typeparam name="T">Endian converter to process the bytes.</typeparam>
 		/// <returns></returns>
-		public ulong ReadULong<T>() where T : IEndianConverter, new()
+		public ulong ReadULong(IEndianConverter converter)
 		{
-			T converter = new T();
-
             byte[] buffer = DwgStreamReaderBase.ByteArray8;
             this.ReadBytes(buffer, 8);
 			return converter.ToUInt64(buffer);
@@ -430,14 +410,7 @@ namespace CSUtilities.IO
 		public void Write<T>(T value)
 			where T : struct
 		{
-			this.Write(value, new DefaultEndianConverter());
-		}
-
-		public void Write<T, E>(T value)
-			where T : struct
-			where E : IEndianConverter, new()
-		{
-			this.Write(value, new E());
+			this.Write(value, DefaultEndianConverter.Instance);
 		}
 
 		/// <summary>

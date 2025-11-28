@@ -222,7 +222,7 @@ namespace ACadSharp.IO.DWG
 			{
 				case 0:
 					//00 : A short (2 bytes) follows, little-endian order (LSB first)
-					value = this.ReadShort<LittleEndianConverter>();
+					value = this.ReadShort(LittleEndianConverter.Instance);
 					break;
 				case 1:
 					//01 : An unsigned char (1 byte) follows
@@ -264,7 +264,7 @@ namespace ACadSharp.IO.DWG
 			{
 				case 0:
 					//00 : A long (4 bytes) follows, little-endian order (LSB first)
-					value = this.ReadInt<LittleEndianConverter>();
+					value = this.ReadInt(LittleEndianConverter.Instance);
 					break;
 				case 1:
 					//01 : An unsigned char (1 byte) follows
@@ -311,7 +311,7 @@ namespace ACadSharp.IO.DWG
 			switch (this.Read2Bits())
 			{
 				case 0:
-					value = this.ReadDouble<LittleEndianConverter>();
+					value = this.ReadDouble(LittleEndianConverter.Instance);
 					break;
 				case 1:
 					value = 1.0;
@@ -351,14 +351,14 @@ namespace ACadSharp.IO.DWG
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long ReadRawLong()
 		{
-			return this.ReadInt<LittleEndianConverter>();
+			return this.ReadInt(LittleEndianConverter.Instance);
 		}
 
 		/// <inheritdoc/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ulong ReadRawULong()
 		{
-			return this.ReadULong<LittleEndianConverter>();
+			return this.ReadULong(LittleEndianConverter.Instance);
 		}
 
 		/// <inheritdoc/>
