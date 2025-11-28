@@ -96,6 +96,11 @@ namespace ACadSharp.IO.DWG
 		private readonly MemoryStream _objectReaderStream;
 		private readonly MemoryStream _handlesReaderStream;
 		private readonly MemoryStream _textReaderStream;
+		
+		// Pre-allocated reader instances that are reused via Reset() to avoid allocations
+		private readonly IDwgStreamReader _reusableObjectReader;
+		private readonly IDwgStreamReader _reusableHandlesReader;
+		private readonly IDwgStreamReader _reusableTextReader;
 
 		public DwgObjectReader(
 			ACadVersion version,
@@ -144,6 +149,11 @@ namespace ACadSharp.IO.DWG
 			this._objectReaderStream = new MemoryStream(this._crcStreamBuffer, 0, streamLength, false, true);
 			this._handlesReaderStream = new MemoryStream(this._crcStreamBuffer, 0, streamLength, false, true);
 			this._textReaderStream = new MemoryStream(this._crcStreamBuffer, 0, streamLength, false, true);
+			
+			// Pre-allocate reusable reader instances - these will be Reset() instead of recreated
+			this._reusableObjectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._objectReaderStream, this._reader.Encoding);
+			this._reusableHandlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._handlesReaderStream, this._reader.Encoding);
+			this._reusableTextReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._textReaderStream, this._reader.Encoding);
 		}
 
 		/// <summary>
@@ -229,36 +239,45 @@ namespace ACadSharp.IO.DWG
 				//Find the handles offset
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
-				// Reuse pre-allocated MemoryStream - just reset position
+				// Reuse pre-allocated reader via Reset - avoids allocation
 				this._objectReaderStream.Position = 0;
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._objectReaderStream, this._reader.Encoding);
+				this._reusableObjectReader.Reset(this._objectReaderStream, this._reader.Encoding);
+				this._objectReader = this._reusableObjectReader;
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial posiltion and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 
-				// Reuse pre-allocated MemoryStream for handles reader
+				// Reuse pre-allocated reader for handles
 				this._handlesReaderStream.Position = 0;
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._handlesReaderStream, this._reader.Encoding);
+				this._reusableHandlesReader.Reset(this._handlesReaderStream, this._reader.Encoding);
+				this._handlesReader = this._reusableHandlesReader;
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
 
-				// Reuse pre-allocated MemoryStream for text reader
+				// Reuse pre-allocated reader for text
 				this._textReaderStream.Position = 0;
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._textReaderStream, this._reader.Encoding);
+				this._reusableTextReader.Reset(this._textReaderStream, this._reader.Encoding);
+				this._textReader = this._reusableTextReader;
 				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
-				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
+				// Reuse merged reader to avoid allocation
+				if (this._mergedReaders == null)
+					this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
+				else
+					((DwgMergedReader)this._mergedReaders).Reset(this._objectReader, this._textReader, this._handlesReader);
 			}
 			else
 			{
-				// Reuse pre-allocated MemoryStream
+				// Reuse pre-allocated reader via Reset - avoids allocation
 				this._objectReaderStream.Position = 0;
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._objectReaderStream, this._reader.Encoding);
+				this._reusableObjectReader.Reset(this._objectReaderStream, this._reader.Encoding);
+				this._objectReader = this._reusableObjectReader;
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				this._handlesReaderStream.Position = 0;
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._handlesReaderStream, this._reader.Encoding);
+				this._reusableHandlesReader.Reset(this._handlesReaderStream, this._reader.Encoding);
+				this._handlesReader = this._reusableHandlesReader;
 				this._textReader = this._objectReader;
 
 				//set the initial posiltion and get the object type
@@ -687,6 +706,8 @@ namespace ACadSharp.IO.DWG
 			//Numreactors S number of reactors in this object
 			int numberOfReactors = this._objectReader.ReadBitLong();
 
+			if(numberOfReactors > 0 && template.ReactorsHandles is null)
+				template.ReactorsHandles = new List<ulong>(numberOfReactors);
 			//Add the reactors to the template
 			for (int i = 0; i < numberOfReactors; ++i)
 				//[Reactors (soft pointer)]
@@ -728,14 +749,19 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				// Reuse pre-allocated MemoryStream
+				// Reuse pre-allocated reader via Reset - avoids allocation
 				this._textReaderStream.Position = 0;
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._textReaderStream, this._reader.Encoding);
+				this._reusableTextReader.Reset(this._textReaderStream, this._reader.Encoding);
+				this._textReader = this._reusableTextReader;
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
 
-			this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
+			// Reuse merged reader to avoid allocation
+			if (this._mergedReaders == null)
+				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
+			else
+				((DwgMergedReader)this._mergedReaders).Reset(this._objectReader, this._textReader, this._handlesReader);
 		}
 
 		#endregion Common entity data

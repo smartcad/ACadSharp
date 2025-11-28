@@ -434,25 +434,13 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._scale = this.updateCollection(this.Scale, doc.Scales);
-
-			this.Document.Scales.OnRemove += this.scalesOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
-			this.Document.Scales.OnRemove -= this.scalesOnRemove;
-
 			base.UnassignDocument();
 
 			this._scale = (Scale)this.Scale.Clone();
-		}
-
-		private void scalesOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this.Scale))
-			{
-				this.Scale = this.Document.Scales.FirstOrDefault();
-			}
 		}
 
 		private void updateScaleXRecord()

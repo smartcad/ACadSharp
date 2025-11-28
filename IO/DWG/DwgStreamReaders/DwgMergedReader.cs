@@ -337,5 +337,25 @@ namespace ACadSharp.IO.DWG
 		{
 			throw new InvalidOperationException();
 		}
+
+		public void Reset(Stream stream, Encoding encoding = null)
+		{
+			// DwgMergedReader is a wrapper around other readers and should not be reset directly.
+			// The underlying readers should be reset individually.
+			throw new InvalidOperationException("DwgMergedReader cannot be reset directly. Reset the underlying readers instead.");
+		}
+
+		/// <summary>
+		/// Resets the merged reader with new underlying readers to avoid allocation.
+		/// </summary>
+		/// <param name="mainReader">The main data reader.</param>
+		/// <param name="textReader">The text data reader.</param>
+		/// <param name="handleReader">The handle reference reader.</param>
+		public void Reset(IDwgStreamReader mainReader, IDwgStreamReader textReader, IDwgStreamReader handleReader)
+		{
+			this._mainReader = mainReader;
+			this._textReader = textReader;
+			this._handleReader = handleReader;
+		}
 	}
 }

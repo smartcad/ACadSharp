@@ -13,7 +13,7 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? XDictHandle { get; set; }
 
-		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
+		public List<ulong> ReactorsHandles { get; set; }
 
 		public Dictionary<ulong, ExtendedData> EDataTemplate { get; set; }
 
@@ -31,7 +31,7 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.XDictionary = cadDictionary;
 			}
 
-			foreach (ulong handle in this.ReactorsHandles)
+			if(this.ReactorsHandles is not null) foreach (ulong handle in this.ReactorsHandles)
 			{
 				if (builder.TryGetCadObject(handle, out CadObject reactor))
 				{

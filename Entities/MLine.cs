@@ -121,25 +121,14 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._style = this.updateCollection(this.Style, doc.MLineStyles);
-
-			this.Document.MLineStyles.OnRemove += this.mLineStylesOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
-			this.Document.MLineStyles.OnRemove -= this.mLineStylesOnRemove;
-
 			base.UnassignDocument();
 
 			this._style = (MLineStyle)this.Style.Clone();
 		}
 
-		private void mLineStylesOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this.Style))
-			{
-				this.Style = this.Document.MLineStyles[MLineStyle.DefaultName];
-			}
-		}
 	}
 }

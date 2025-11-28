@@ -225,25 +225,14 @@ namespace ACadSharp.Entities
 			base.AssignDocument(doc);
 
 			this._definition = this.updateCollection(this.Definition, doc.ImageDefinitions);
-
-			this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
-			this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
-
 			base.UnassignDocument();
 
 			this.Definition = (ImageDefinition)this.Definition?.Clone();
 		}
 
-		private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this.Definition))
-			{
-				this.Definition = null;
-			}
-		}
 	}
 }

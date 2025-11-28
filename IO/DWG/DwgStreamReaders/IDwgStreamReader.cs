@@ -73,6 +73,13 @@ namespace ACadSharp.IO.DWG
 		bool IsEmpty { get; }
 
 		/// <summary>
+		/// Resets the reader to use a new stream, allowing instance reuse to avoid allocations.
+		/// </summary>
+		/// <param name="stream">The new stream to read from.</param>
+		/// <param name="encoding">Optional encoding to use. If null, keeps the current encoding.</param>
+		void Reset(Stream stream, Encoding encoding = null);
+
+		/// <summary>
 		/// Read a byte and store the value, apply the shift to correct the bit reading.
 		/// </summary>
 		/// <returns>Value of the last byte.</returns>

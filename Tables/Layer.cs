@@ -147,25 +147,14 @@ namespace ACadSharp.Tables
 			base.AssignDocument(doc);
 
 			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
-
-			doc.LineTypes.OnRemove += this.tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
-			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
-
 			base.UnassignDocument();
 
 			this.LineType = (LineType)this.LineType.Clone();
 		}
 
-		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this.LineType))
-			{
-				this.LineType = this.Document.LineTypes[LineType.ContinuousName];
-			}
-		}
 	}
 }

@@ -52,6 +52,21 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
+		/// <inheritdoc/>
+		public virtual void Reset(Stream stream, Encoding encoding = null)
+		{
+			this._stream = stream;
+			this._stream.Position = 0;
+			this.BitShift = 0;
+			this._lastByte = 0;
+			this.IsEmpty = false;
+
+			if (encoding != null)
+			{
+				this.Encoding = encoding;
+			}
+		}
+
 		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding = null, bool resetPositon = false)
 		{
 			IDwgStreamReader reader = null;

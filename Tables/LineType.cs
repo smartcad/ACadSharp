@@ -22,11 +22,11 @@ namespace ACadSharp.Tables
 
 		public const string ContinuousName = "Continuous";
 
-		public static LineType ByLayer { get { return new LineType("ByLayer"); } }
+		public static readonly LineType ByLayer = new LineType("ByLayer");
 
-		public static LineType ByBlock { get { return new LineType("ByBlock"); } }
+		public static readonly LineType ByBlock = new LineType("ByBlock");
 
-		public static LineType Continuous { get { return new LineType("Continuous"); } }
+		public static readonly LineType Continuous = new LineType("Continuous");
 
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.LTYPE;
@@ -68,7 +68,15 @@ namespace ACadSharp.Tables
 		/// LineType Segments
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 73)]
-		public IEnumerable<Segment> Segments { get { return this._segments; } }
+		public IEnumerable<Segment> Segments 
+		{ 
+			get 
+			{ 
+				if(this._segments is null)
+					return Enumerable.Empty<Segment>();
+				return this._segments; 
+			} 
+		}
 
 		///// <summary>
 		///// Pointer to STYLE object (one per element if code 74 > 0)
@@ -76,7 +84,7 @@ namespace ACadSharp.Tables
 		//[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		//public TextStyle Style { get; set; }
 
-		private List<Segment> _segments = new List<Segment>();
+		private List<Segment> _segments;
 
 		internal LineType() : base() { }
 
@@ -94,6 +102,9 @@ namespace ACadSharp.Tables
 				throw new ArgumentException($"Segment has already a LineType: {segment.LineType.Name}");
 
 			segment.LineType = this;
+
+			if(this._segments is null)
+				this._segments = new List<Segment>();
 			this._segments.Add(segment);
 		}
 
@@ -102,11 +113,14 @@ namespace ACadSharp.Tables
 		{
 			LineType clone = (LineType)base.Clone();
 
-			clone._segments.Clear();
-			foreach (var segment in this._segments)
-			{
-				clone.AddSegment(segment.Clone());
-			}
+			if(this._segments is not null)
+            {
+                clone._segments.Clear();
+                foreach(var segment in this._segments)
+                {
+                    clone.AddSegment(segment.Clone());
+                }
+            }
 
 			return clone;
 		}
