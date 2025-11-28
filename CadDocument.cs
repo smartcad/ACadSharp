@@ -436,6 +436,30 @@ namespace ACadSharp
 			}
 		}
 
+		private void onAdd(object sender, CadObject e)
+		{
+			if (e is CadDictionary dictionary)
+			{
+				this.RegisterCollection(dictionary);
+			}
+			else
+			{
+				this.addCadObject(e);
+			}
+		}
+
+		private void onRemove(object sender, CadObject e)
+		{
+			if (e is CadDictionary dictionary)
+			{
+				this.UnregisterCollection(dictionary);
+			}
+			else
+			{
+				this.removeCadObject(e);
+			}
+		}
+
 		internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
 			where T : CadObject
 		{

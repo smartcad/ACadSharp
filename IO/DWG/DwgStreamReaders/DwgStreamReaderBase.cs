@@ -7,16 +7,28 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
 	internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 	{
-        internal static byte[] ByteArray16 = new byte[16];
-        internal static byte[] ByteArray8 = new byte[8];
-        internal static byte[] ByteArray4 = new byte[4];
-		internal static byte[] ByteArray2 = new byte[2];
+		// Thread-local static buffers to avoid allocations in hot paths
+		// These are safe because DWG reading is typically single-threaded per file
+		[ThreadStatic]
+		private static byte[] _tlsByteArray16;
+		[ThreadStatic]
+		private static byte[] _tlsByteArray8;
+		[ThreadStatic]
+		private static byte[] _tlsByteArray4;
+		[ThreadStatic]
+		private static byte[] _tlsByteArray2;
+
+		internal static byte[] ByteArray16 => _tlsByteArray16 ??= new byte[16];
+		internal static byte[] ByteArray8 => _tlsByteArray8 ??= new byte[8];
+		internal static byte[] ByteArray4 => _tlsByteArray4 ??= new byte[4];
+		internal static byte[] ByteArray2 => _tlsByteArray2 ??= new byte[2];
 
 		/// <inheritdoc/>
 		public int BitShift { get; set; }
@@ -89,6 +101,7 @@ namespace ACadSharp.IO.DWG
 			return reader;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override byte ReadByte()
 		{
 			if (this.BitShift == 0)
@@ -145,6 +158,7 @@ namespace ACadSharp.IO.DWG
 		#region Read BIT CODES AND DATA DEFINITIONS
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool ReadBit()
 		{
 			if (this.BitShift == 0)
@@ -164,12 +178,14 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public short ReadBitAsShort()
 		{
 			return this.ReadBit() ? (short)1 : (short)0;
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public byte Read2Bits()
 		{
 			byte value;
@@ -198,6 +214,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public short ReadBitShort()
 		{
 			short value;
@@ -232,12 +249,14 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool ReadBitShortAsBool()
 		{
 			return this.ReadBitShort() != 0;
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int ReadBitLong()
 		{
 			int value;
@@ -269,6 +288,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long ReadBitLongLong()
 		{
 			ulong value = 0;
@@ -284,6 +304,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public double ReadBitDouble()
 		{
 			double value;
@@ -306,42 +327,49 @@ namespace ACadSharp.IO.DWG
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public XY Read2BitDouble()
 		{
 			return new XY(this.ReadBitDouble(), this.ReadBitDouble());
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public XYZ Read3BitDouble()
 		{
 			return new XYZ(this.ReadBitDouble(), this.ReadBitDouble(), this.ReadBitDouble());
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public char ReadRawChar()
 		{
 			return (char)this.ReadByte();
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public long ReadRawLong()
 		{
 			return this.ReadInt<LittleEndianConverter>();
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ulong ReadRawULong()
 		{
 			return this.ReadULong<LittleEndianConverter>();
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public XY Read2RawDouble()
 		{
 			return new XY(this.ReadDouble(), this.ReadDouble());
 		}
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ulong ReadModularChar()
 		{
 			int shift = 0;
@@ -511,6 +539,7 @@ namespace ACadSharp.IO.DWG
         }
 
 		/// <inheritdoc/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool HandleReference(ulong referenceHandle, out DwgReferenceType reference, out ulong handle)
 		{
 			//|CODE (4 bits)|COUNTER (4 bits)|HANDLE or OFFSET|

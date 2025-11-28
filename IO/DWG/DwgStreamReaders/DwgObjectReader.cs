@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
+using System.Runtime.CompilerServices;
 using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
 using System.Net;
@@ -90,8 +91,11 @@ namespace ACadSharp.IO.DWG
 
 		private readonly Stream _crcStream;
 		private readonly byte[] _crcStreamBuffer;
-
-		private readonly byte[] _buffer;
+		
+		// Reusable MemoryStream instances to avoid allocations in hot path
+		private readonly MemoryStream _objectReaderStream;
+		private readonly MemoryStream _handlesReaderStream;
+		private readonly MemoryStream _textReaderStream;
 
 		public DwgObjectReader(
 			ACadVersion version,
@@ -105,9 +109,19 @@ namespace ACadSharp.IO.DWG
 
 			this._reader = reader;
 
-			this._handles = new Queue<ulong>(handles);
+			// Pre-allocate queue with estimated capacity to avoid resizing
+			var handlesList = handles as ICollection<ulong> ?? handles.ToList();
+			this._handles = new Queue<ulong>(handlesList.Count > 0 ? handlesList.Count : 16);
+			foreach (var h in handlesList)
+				this._handles.Enqueue(h);
+			
 			this._map = handleMap;
-			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
+			
+			// Pre-allocate dictionary with known capacity
+			int classCount = classes.Count;
+			this._classes = new Dictionary<short, DxfClass>(classCount);
+			foreach (var c in classes)
+				this._classes[c.ClassNumber] = c;
 
 			//Initialize the crc stream
 			//RS : CRC for the data section, starting after the sentinel. Use 0xC0C1 for the initial value
@@ -116,13 +130,20 @@ namespace ACadSharp.IO.DWG
 			else
 				this._crcStream = this._reader.Stream;
 
-			this._crcStreamBuffer = new byte[this._crcStream.Length];
-			this._crcStream.Read(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length);
+			int streamLength = (int)this._crcStream.Length;
+			this._crcStreamBuffer = new byte[streamLength];
+			this._crcStream.Read(this._crcStreamBuffer, 0, streamLength);
 
 			this._crcStream.Position = 0L;
 
 			//Setup the entity handler
 			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);
+			
+			// Pre-allocate reusable MemoryStream instances wrapping the buffer
+			// Using the constructor that exposes GetBuffer() for zero-copy access
+			this._objectReaderStream = new MemoryStream(this._crcStreamBuffer, 0, streamLength, false, true);
+			this._handlesReaderStream = new MemoryStream(this._crcStreamBuffer, 0, streamLength, false, true);
+			this._textReaderStream = new MemoryStream(this._crcStreamBuffer, 0, streamLength, false, true);
 		}
 
 		/// <summary>
@@ -180,6 +201,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private ObjectType getEntityType(long offset)
 		{
 			ObjectType type = ObjectType.INVALID;
@@ -207,38 +229,41 @@ namespace ACadSharp.IO.DWG
 				//Find the handles offset
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
-				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				// Reuse pre-allocated MemoryStream - just reset position
+				this._objectReaderStream.Position = 0;
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._objectReaderStream, this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial posiltion and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
 
-				//Create a handler section reader
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				// Reuse pre-allocated MemoryStream for handles reader
+				this._handlesReaderStream.Position = 0;
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._handlesReaderStream, this._reader.Encoding);
 				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
 
-				//Create a text section reader
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				// Reuse pre-allocated MemoryStream for text reader
+				this._textReaderStream.Position = 0;
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._textReaderStream, this._reader.Encoding);
 				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
 			}
 			else
 			{
-				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				// Reuse pre-allocated MemoryStream
+				this._objectReaderStream.Position = 0;
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._objectReaderStream, this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				this._handlesReaderStream.Position = 0;
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._handlesReaderStream, this._reader.Encoding);
 				this._textReader = this._objectReader;
 
 				//set the initial posiltion and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
-				//if(type == ObjectType.UNLISTED || type == ObjectType.INVALID || type == ObjectType.UNDEFINED)
-				//            System.Diagnostics.Debug.WriteLine(type);
 			}
 
 			return type;
@@ -701,7 +726,9 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, new MemoryStream(this._crcStreamBuffer), this._reader.Encoding);
+				// Reuse pre-allocated MemoryStream
+				this._textReaderStream.Position = 0;
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._textReaderStream, this._reader.Encoding);
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
@@ -5907,6 +5934,11 @@ namespace ACadSharp.IO.DWG
 			_readedObjects?.Clear();
 			_map?.Clear();
 			_classes?.Clear();
+			
+			// Dispose reusable MemoryStream instances
+			_objectReaderStream?.Dispose();
+			_handlesReaderStream?.Dispose();
+			_textReaderStream?.Dispose();
 		}
 	}
 }

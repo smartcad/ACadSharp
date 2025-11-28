@@ -40,22 +40,37 @@ namespace ACadSharp.IO
 
 		public ulong InitialHandSeed { get; set; } = 0;
 
-		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
+		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates;
 
-		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new();
+		protected Dictionary<ulong, ICadObjectTemplate> templatesMap;
 
-		protected Dictionary<ulong, CadObject> cadObjects = new();
+		protected Dictionary<ulong, CadObject> cadObjects;
 
-		protected Dictionary<ulong, ICadTableEntryTemplate> tableEntryTemplates = new();
+		protected Dictionary<ulong, ICadTableEntryTemplate> tableEntryTemplates;
 
-		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new();
+		protected Dictionary<ulong, ICadTableTemplate> tableTemplates;
 
-		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
+		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates;
 
-		public CadDocumentBuilder(ACadVersion version, CadDocument document)
+		/// <summary>
+		/// Initializes the document builder with estimated object counts for pre-allocation.
+		/// </summary>
+		/// <param name="version">The DWG version.</param>
+		/// <param name="document">The document being built.</param>
+		/// <param name="estimatedObjectCount">Estimated number of objects for pre-allocating dictionaries.</param>
+		public CadDocumentBuilder(ACadVersion version, CadDocument document, int estimatedObjectCount = 256)
 		{
 			this.Version = version;
 			this.DocumentToBuild = document;
+
+			// Pre-allocate dictionaries with estimated capacity to reduce rehashing
+			int tableCapacity = Math.Max(32, estimatedObjectCount / 16);
+			this.cadObjectsTemplates = new Dictionary<ulong, CadTemplate>(estimatedObjectCount);
+			this.templatesMap = new Dictionary<ulong, ICadObjectTemplate>(estimatedObjectCount);
+			this.cadObjects = new Dictionary<ulong, CadObject>(estimatedObjectCount);
+			this.tableEntryTemplates = new Dictionary<ulong, ICadTableEntryTemplate>(tableCapacity);
+			this.tableTemplates = new Dictionary<ulong, ICadTableTemplate>(16);
+			this.dictionaryTemplates = new Dictionary<ulong, ICadDictionaryTemplate>(tableCapacity);
 		}
 
 		public virtual void BuildDocument()

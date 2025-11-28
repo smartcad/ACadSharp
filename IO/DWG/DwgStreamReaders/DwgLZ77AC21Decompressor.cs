@@ -1,4 +1,7 @@
-﻿namespace ACadSharp.IO.DWG
+﻿using System;
+using System.Runtime.CompilerServices;
+
+namespace ACadSharp.IO.DWG
 {
 	internal static class DwgLZ77AC21Decompressor
 	{
@@ -167,6 +170,7 @@
 				}
 			}
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copyBytes(byte[] dst, uint dstIndex, uint length, uint srcOffset)
 		{
 			uint initialIndex = dstIndex - srcOffset;
@@ -350,42 +354,43 @@
 	  copy2b(src, srcIndex, dst, dstIndex + 29U);
 	}
 };
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copy(byte[] src, uint srcIndex, byte[] dst, uint dstIndex, uint length)
 		{
-			for (; length >= 32U; length -= 32U)
+			// For larger sequential copies, use Buffer.BlockCopy which is highly optimized
+			if (length >= 32U)
 			{
-				copy4b(src, srcIndex + 24U, dst, dstIndex);
-				copy4b(src, srcIndex + 28U, dst, dstIndex + 4U);
-				copy4b(src, srcIndex + 16U, dst, dstIndex + 8U);
-				copy4b(src, srcIndex + 20U, dst, dstIndex + 12U);
-				copy4b(src, srcIndex + 8U, dst, dstIndex + 16U);
-				copy4b(src, srcIndex + 12U, dst, dstIndex + 20U);
-				copy4b(src, srcIndex, dst, dstIndex + 24U);
-				copy4b(src, srcIndex + 4U, dst, dstIndex + 28U);
-
-				srcIndex += 32U;
-				dstIndex += 32U;
+				uint fullBlocks = length / 32U;
+				uint blockBytes = fullBlocks * 32U;
+				Buffer.BlockCopy(src, (int)srcIndex, dst, (int)dstIndex, (int)blockBytes);
+				srcIndex += blockBytes;
+				dstIndex += blockBytes;
+				length -= blockBytes;
 			}
 			if (length <= 0U)
 				return;
 
 			m_copyMethods[(int)length](src, srcIndex, dst, dstIndex);
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copy1b(byte[] src, uint srcIndex, byte[] dst, uint dstIndex)
 		{
 			dst[(int)dstIndex] = src[(int)srcIndex];
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copy2b(byte[] src, uint srcIndex, byte[] dst, uint dstIndex)
 		{
 			dst[(int)dstIndex] = src[(int)srcIndex + 1];
 			dst[(int)dstIndex + 1] = src[(int)srcIndex];
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copy3b(byte[] src, uint srcIndex, byte[] dst, uint dstIndex)
 		{
 			dst[(int)dstIndex] = src[(int)srcIndex + 2];
 			dst[(int)dstIndex + 1] = src[(int)srcIndex + 1];
 			dst[(int)dstIndex + 2] = src[(int)srcIndex];
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copy4b(byte[] src, uint srcIndex, byte[] dst, uint dstIndex)
 		{
 			dst[(int)dstIndex] = src[(int)srcIndex];
@@ -393,11 +398,13 @@
 			dst[(int)dstIndex + 2] = src[(int)srcIndex + 2];
 			dst[(int)dstIndex + 3] = src[(int)srcIndex + 3];
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copy8b(byte[] src, uint srcIndex, byte[] dst, uint dstIndex)
 		{
 			copy4b(src, srcIndex, dst, dstIndex);
 			copy4b(src, srcIndex + 4U, dst, dstIndex + 4U);
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void copy16b(byte[] src, uint srcIndex, byte[] dst, uint dstIndex)
 		{
 			copy8b(src, srcIndex + 8U, dst, dstIndex);

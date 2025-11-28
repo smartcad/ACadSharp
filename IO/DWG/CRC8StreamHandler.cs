@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace ACadSharp.IO.DWG
 {
@@ -38,11 +39,18 @@ namespace ACadSharp.IO.DWG
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			int nbytes = this._stream.Read(buffer, offset, count);
-			int length = offset + count;
+			int length = offset + nbytes; // Use actual bytes read, not requested count
+			ushort seed = this.Seed;
+			ushort[] crcTable = CRC.CrcTable;
 
+			// Inline the CRC calculation to avoid method call overhead per byte
 			for (int index = offset; index < length; ++index)
-				this.Seed = decode(this.Seed, buffer[index]);
+			{
+				int tableIndex = buffer[index] ^ (byte)seed;
+				seed = (ushort)((uint)seed >> 8 ^ crcTable[tableIndex]);
+			}
 
+			this.Seed = seed;
 			return nbytes;
 		}
 
@@ -66,16 +74,19 @@ namespace ACadSharp.IO.DWG
 		{
 			ushort currValue = seed;
 			int index = (int)startPos;
+			ushort[] crcTable = CRC.CrcTable;
 
 			while (endPos-- > 0)
 			{
-				currValue = CRC8StreamHandler.decode(currValue, buffer[index]);
+				int tableIndex = buffer[index] ^ (byte)currValue;
+				currValue = (ushort)((uint)currValue >> 8 ^ crcTable[tableIndex]);
 				index++;
 			}
 
 			return currValue;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static ushort decode(ushort key, byte value)
 		{
 			int index = value ^ (byte)key;

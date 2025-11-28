@@ -1,5 +1,6 @@
 ﻿using CSUtilities.Converters;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ACadSharp.IO.DWG
 {
@@ -16,8 +17,9 @@ namespace ACadSharp.IO.DWG
 
 		public Dictionary<ulong, long> Read()
 		{
-			//Handle map, handle | loc
-			Dictionary<ulong, long> objectMap = new Dictionary<ulong, long>();
+			// Pre-allocate with reasonable initial capacity to avoid resizing
+			// Typical DWG files have thousands of handles, so start with 4096
+			Dictionary<ulong, long> objectMap = new Dictionary<ulong, long>(4096);
 
 			//Repeat until section size==2 (the last empty (except the CRC) section):
 			while (true)

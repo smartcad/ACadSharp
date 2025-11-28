@@ -22,8 +22,8 @@ namespace ACadSharp.IO.DWG
 
 		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
 
-		public DwgDocumentBuilder(ACadVersion version, CadDocument document, DwgReaderConfiguration configuration)
-			: base(version, document)
+		public DwgDocumentBuilder(ACadVersion version, CadDocument document, DwgReaderConfiguration configuration, int estimatedObjectCount = 256)
+			: base(version, document, estimatedObjectCount)
 		{
 			this.Configuration = configuration;
 		}

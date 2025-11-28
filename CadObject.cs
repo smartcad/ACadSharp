@@ -65,12 +65,54 @@ namespace ACadSharp
 		/// <summary>
 		/// Objects that are attached to this object
 		/// </summary>
-		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
+		/// <remarks>
+		/// The dictionary is lazily initialized to reduce memory allocation for objects that don't have reactors.
+		/// </remarks>
+		public Dictionary<ulong, CadObject> Reactors
+		{
+			get
+			{
+				if (this._reactors == null)
+				{
+					this._reactors = new Dictionary<ulong, CadObject>();
+				}
+				return this._reactors;
+			}
+		}
 
 		/// <summary>
-		/// Extended data attached to this object
+		/// Gets a value indicating whether this object has any reactors.
 		/// </summary>
-		public ExtendedDataDictionary ExtendedData { get; } = new ExtendedDataDictionary();
+		/// <remarks>
+		/// Use this property to check for reactors without triggering lazy initialization.
+		/// </remarks>
+		public bool HasReactors => this._reactors != null && this._reactors.Count > 0;
+
+		/// <summary>
+		/// Extended data attached to this object.
+		/// </summary>
+		/// <remarks>
+		/// The dictionary is lazily initialized to reduce memory allocation for objects that don't have extended data.
+		/// </remarks>
+		public ExtendedDataDictionary ExtendedData
+		{
+			get
+			{
+				if (this._extendedData == null)
+				{
+					this._extendedData = new ExtendedDataDictionary();
+				}
+				return this._extendedData;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether this object has any extended data.
+		/// </summary>
+		/// <remarks>
+		/// Use this property to check for extended data without triggering lazy initialization.
+		/// </remarks>
+		public bool HasExtendedData => this._extendedData != null && this._extendedData.HasData;
 
 		/// <summary>
 		/// Document where this element belongs
@@ -82,6 +124,8 @@ namespace ACadSharp
 		}
 
 		private CadDictionary _xdictionary = null;
+		private Dictionary<ulong, CadObject> _reactors = null;
+		private ExtendedDataDictionary _extendedData = null;
 
 		/// <summary>
 		/// Default constructor.
@@ -118,10 +162,10 @@ namespace ACadSharp
 			clone.Document = null;
 			clone.Owner = null;
 
-			//Collections
-			clone.Reactors.Clear();
+			//Collections - reset to null to allow lazy initialization
+			clone._reactors = null;
+			clone._extendedData = null;
 			clone.XDictionary = new CadDictionary();
-			clone.ExtendedData.Clear();
 
 			return clone;
 		}

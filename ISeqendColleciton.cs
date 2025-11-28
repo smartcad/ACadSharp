@@ -6,9 +6,9 @@ namespace ACadSharp
 {
 	public interface ISeqendCollection : IEnumerable
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnSeqendAdded;
+		public event EventHandler<Seqend> OnSeqendAdded;
 
-		public event EventHandler<CollectionChangedEventArgs> OnSeqendRemoved;
+		public event EventHandler<Seqend> OnSeqendRemoved;
 
 		Seqend Seqend { get; }
 	}

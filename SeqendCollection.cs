@@ -11,9 +11,9 @@ namespace ACadSharp
 	public class SeqendCollection<T> : CadObjectCollection<T>, ISeqendCollection
 		where T : CadObject
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnSeqendAdded;
+		public event EventHandler<Seqend> OnSeqendAdded;
 
-		public event EventHandler<CollectionChangedEventArgs> OnSeqendRemoved;
+		public event EventHandler<Seqend> OnSeqendRemoved;
 
 		/// <summary>
 		/// Sequence end entity for dxf.
@@ -55,7 +55,7 @@ namespace ACadSharp
 			// The add could fail due an Exception
 			if (addSeqend && this._entries.Any())
 			{
-				this.OnSeqendAdded?.Invoke(this, new CollectionChangedEventArgs(this._seqend));
+				this.OnSeqendAdded?.Invoke(this, this._seqend);
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace ACadSharp
 			var e = base.Remove(item);
 			if(e != null)
 			{
-				this.OnSeqendRemoved?.Invoke(this, new CollectionChangedEventArgs(this._seqend));
+				this.OnSeqendRemoved?.Invoke(this, this._seqend);
 			}
 
 			return e;

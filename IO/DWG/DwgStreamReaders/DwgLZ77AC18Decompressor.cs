@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Buffers;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace ACadSharp.IO.DWG
 {
@@ -7,6 +10,13 @@ namespace ACadSharp.IO.DWG
 	/// </summary>
 	internal static class DwgLZ77AC18Decompressor
 	{
+		// Thread-local buffer for copy operations to avoid repeated allocations
+		[ThreadStatic]
+		private static byte[] _copyBuffer;
+		private const int CopyBufferSize = 256;
+		
+		private static byte[] CopyBuffer => _copyBuffer ??= new byte[CopyBufferSize];
+		
 		/// <summary>
 		/// Decompress a stream with a specific decompressed size.
 		/// </summary>
@@ -15,8 +25,9 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		public static Stream Decompress(Stream compressed, long decompressedSize)
 		{
-			//Create a new stream
-			MemoryStream memoryStream = new MemoryStream(new byte[decompressedSize]);
+			// Pre-allocate the exact size needed
+			MemoryStream memoryStream = new MemoryStream((int)decompressedSize);
+			memoryStream.SetLength(decompressedSize);
 
 			//Decompress the stream
 			DecompressToDest(compressed, memoryStream);
@@ -92,17 +103,35 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 		
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static byte copy(int count, Stream src, Stream dst)
 		{
-			for (int i = 0; i < count; ++i)
+			// Use buffered copy for larger counts to reduce call overhead
+			if (count > 8)
 			{
-				byte b = (byte)src.ReadByte();
-				dst.WriteByte(b);
+				var buffer = CopyBuffer;
+				int remaining = count;
+				while (remaining > 0)
+				{
+					int toRead = remaining > CopyBufferSize ? CopyBufferSize : remaining;
+					int read = src.Read(buffer, 0, toRead);
+					dst.Write(buffer, 0, read);
+					remaining -= read;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < count; ++i)
+				{
+					byte b = (byte)src.ReadByte();
+					dst.WriteByte(b);
+				}
 			}
 
 			return (byte)src.ReadByte();
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static int literalCount(int code, Stream src)
 		{
 			int lowbits = code & 0b1111;
@@ -118,6 +147,7 @@ namespace ACadSharp.IO.DWG
 			return lowbits;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static int readCompressedBytes(int opcode1, int validBits, Stream compressed)
 		{
 			int compressedBytes = opcode1 & validBits;
@@ -135,6 +165,7 @@ namespace ACadSharp.IO.DWG
 			return compressedBytes + 2;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static int twoByteOffset(ref int offset, int addedValue, Stream stream)
 		{
 			int firstByte = stream.ReadByte();
