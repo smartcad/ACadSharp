@@ -851,9 +851,9 @@ namespace ACadSharp.Tables
 		/// (see DIMTXSTY System Variable).
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public TextStyle Style
+		public TextStyle TextStyle
 		{
-			get { return this._style; }
+			get { return this._text_style; }
 			set
 			{
 				if (value == null)
@@ -861,7 +861,7 @@ namespace ACadSharp.Tables
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._style = this.updateTable(value, this.Document?.TextStyles);
+				this._text_style = this.updateTable(value, this.Document?.TextStyles);
 			}
 		}
 
@@ -939,7 +939,7 @@ namespace ACadSharp.Tables
 
 		private double _scaleFactor = 1.0d;
 
-		private TextStyle _style = TextStyle.Default;
+		private TextStyle _text_style = TextStyle.Default;
 		
 		private double _joggedRadiusDimensionTransverseSegmentAngle = System.Math.PI / 4.0;
 
@@ -962,7 +962,7 @@ namespace ACadSharp.Tables
 		{
 			DimensionStyle clone = (DimensionStyle)base.Clone();
 
-			clone.Style = (TextStyle)this.Style?.Clone();
+			clone.TextStyle = (TextStyle)this.TextStyle?.Clone();
 			clone.LeaderArrow = (BlockRecord)this.LeaderArrow?.Clone();
 			clone.ArrowBlock = (BlockRecord)this.ArrowBlock?.Clone();
 			clone.DimArrow1 = (BlockRecord)this.DimArrow1?.Clone();
@@ -975,7 +975,7 @@ namespace ACadSharp.Tables
 		{
 			base.AssignDocument(doc);
 
-			this._style = this.updateTable(this.Style, doc.TextStyles);
+			this._text_style = this.updateTable(this.TextStyle, doc.TextStyles);
 
 			doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}
@@ -986,14 +986,14 @@ namespace ACadSharp.Tables
 
 			base.UnassignDocument();
 
-			this.Style = (TextStyle)this.Style.Clone();
+			this.TextStyle = (TextStyle)this.TextStyle.Clone();
 		}
 
 		protected void tableOnRemove(object sender, CollectionChangedEventArgs e)
 		{
-			if (e.Item.Equals(this.Style))
+			if (e.Item.Equals(this.TextStyle))
 			{
-				this.Style = this.Document.TextStyles[TextStyle.DefaultName];
+				this.TextStyle = this.Document.TextStyles[TextStyle.DefaultName];
 			}
 		}
 	}

@@ -1092,7 +1092,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 			//340 shapefile(DIMTXSTY)(hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.Style);
+			this._writer.HandleReference(DwgReferenceType.HardPointer, dimStyle.TextStyle);
 
 			//R2000+:
 			if (this.R2000Plus)

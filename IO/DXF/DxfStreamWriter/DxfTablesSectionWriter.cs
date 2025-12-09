@@ -206,7 +206,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(289, (byte)style.DimensionTextArrowFit);
 			this._writer.Write(290, style.IsExtensionLineLengthFixed);
 
-			this._writer.WriteHandle(340, style.Style, map);
+			this._writer.WriteHandle(340, style.TextStyle, map);
 			this._writer.WriteHandle(341, style.LeaderArrow, map);
 			this._writer.WriteHandle(342, style.ArrowBlock, map);
 			this._writer.WriteHandle(343, style.DimArrow1, map);

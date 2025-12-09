@@ -27,7 +27,7 @@ namespace ACadSharp.IO.Templates
 
 			if (this.getTableReference(builder, this.TextStyleHandle, TextStyle_Name, out TextStyle style))
 			{
-				this.CadObject.Style = style;
+				this.CadObject.TextStyle = style;
 			}
 
 			if (this.getTableReference(builder, this.DIMLDRBLK, this.DIMBL_Name, out BlockRecord leaderArrow))
