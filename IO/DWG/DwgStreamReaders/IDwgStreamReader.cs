@@ -91,7 +91,9 @@ namespace ACadSharp.IO.DWG
 		uint ReadUInt();
 
 		double ReadDouble();
-		void ReadBytes(byte[] buffer, int length);
+		byte[] ReadBytes(int length);
+
+        void ReadBytes(byte[] buffer, int length);
 
 		#region Read BIT CODES AND DATA DEFINITIONS
 		/// <summary>

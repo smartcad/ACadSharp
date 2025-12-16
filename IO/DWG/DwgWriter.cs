@@ -13,8 +13,9 @@ namespace ACadSharp.IO
 	/// Class for writing a DWG from a <see cref="CadDocument"/>.
 	/// </summary>
 	public class DwgWriter : CadWriterBase<CadWriterConfiguration>
-	{
-		private ACadVersion _version { get { return this._document.Header.Version; } }
+    {
+        public DwgPreview Preview { get; set; }
+        private ACadVersion _version { get { return this._document.Header.Version; } }
 
 		private DwgFileHeader _fileHeader;
 
@@ -212,10 +213,20 @@ namespace ACadSharp.IO
 		{
 			MemoryStream stream = new MemoryStream();
 			DwgPreviewWriter writer = new DwgPreviewWriter(this._version, stream);
-			writer.Write();
+            if(this.Preview != null && this.Preview.Code != DwgPreview.PreviewType.Unknown)
+            {
+                writer.Write(this.Preview, this._stream.Position);
 
-			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
-		}
+                //Page has to fit the image byte size, in intervals of 0x400
+                int pageSize = (int)((stream.Length % 0x400) * 0x400 + 0x400);
+                this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, pageSize);
+            }
+            else
+            {
+                writer.Write();
+                this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
+            }
+        }
 
 		private void writeAppInfo()
 		{

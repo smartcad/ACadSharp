@@ -31,10 +31,12 @@ namespace ACadSharp
 		/// </summary>
 		public CadSummaryInfo SummaryInfo { get; set; }
 
-		/// <summary>
-		/// Dxf classes defined in this document
-		/// </summary>
-		public DxfClassCollection Classes { get; set; }
+        public DwgPreview Preview { get; set; }
+
+        /// <summary>
+        /// Dxf classes defined in this document
+        /// </summary>
+        public DxfClassCollection Classes { get; set; }
 
 		/// <summary>
 		/// The collection of all registered applications in the drawing

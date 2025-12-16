@@ -107,6 +107,13 @@ namespace ACadSharp.IO.DWG
 			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
 		}
 
+		public byte[] ReadBytes(int length)
+        {
+            byte[] numArray = new byte[length];
+            this.applyShiftToArr(length, numArray);
+            return numArray;
+        }
+
 		public override void ReadBytes(byte[] numArray, int length)
 		{
 			this.applyShiftToArr(length, numArray);

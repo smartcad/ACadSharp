@@ -137,8 +137,12 @@ namespace ACadSharp.IO.DWG
 		{
 			return this._mainReader.ReadByte();
 		}
+        public byte[] ReadBytes(int length)
+        {
+            return this._mainReader.ReadBytes(length);
+        }
 
-		public void ReadBytes(byte[] buffer, int length)
+        public void ReadBytes(byte[] buffer, int length)
 		{
 			throw new NotImplementedException();
 		}

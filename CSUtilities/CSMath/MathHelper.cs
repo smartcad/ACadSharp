@@ -41,16 +41,6 @@ namespace CSMath
 		}
 
 		/// <summary>
-		/// Convert a value from radian to degree
-		/// </summary>
-		/// <param name="value">Value in radians</param>
-		/// <returns>The radian value</returns>
-		public static double RadToDeg(double value)
-		{
-			return value * RadToDegFactor;
-		}
-
-		/// <summary>
 		/// Convert a value from degree to radian
 		/// </summary>
 		/// <param name="value">Value in degrees</param>

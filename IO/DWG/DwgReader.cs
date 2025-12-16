@@ -20,8 +20,8 @@ namespace ACadSharp.IO
 	/// Class for reading a DWG file into a <see cref="CadDocument"></see>.
 	/// </summary>
 	public class DwgReader : CadReaderBase<DwgReaderConfiguration> , IDisposable
-	{
-		private DwgDocumentBuilder _builder;
+    {
+        private DwgDocumentBuilder _builder;
 		private DwgFileHeader _fileHeader;
 
 		/// <summary>
@@ -90,7 +90,8 @@ namespace ACadSharp.IO
 			this._builder.OnNotification += this.onNotificationEvent;
 
 			_document.SummaryInfo = this.ReadSummaryInfo();
-			_document.Header = this.ReadHeader();
+			_document.Preview = this.ReadPreview();
+            _document.Header = this.ReadHeader();
 
 			this.readAppInfo();
 
@@ -141,48 +142,17 @@ namespace ACadSharp.IO
 			if (this._fileHeader.PreviewAddress < 0)
 				return null;
 
-			IDwgStreamReader sectionHandler = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
-			sectionHandler.Position = this._fileHeader.PreviewAddress;
 
-			//{0x1F,0x25,0x6D,0x07,0xD4,0x36,0x28,0x28,0x9D,0x57,0xCA,0x3F,0x9D,0x44,0x10,0x2B }
-			byte[] sentinel = sectionHandler.ReadSentinel();
+            IDwgStreamReader streamReader = this.getSectionStream(DwgSectionDefinition.Preview);
+            if(streamReader == null)
+            {
+                streamReader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream);
+                streamReader.Position = this._fileHeader.PreviewAddress;
+            }
 
-			//overall size	RL	overall size of image area
-			long overallSize = sectionHandler.ReadRawLong();
-
-			//imagespresent RC counter indicating what is present here
-			byte imagespresent = (byte)sectionHandler.ReadRawChar();
-
-			for (int i = 0; i < imagespresent; i++)
-			{
-				//Code RC code indicating what follows
-				byte code = (byte)sectionHandler.ReadRawChar();
-				switch (code)
-				{
-					case 1:
-						//header data start RL start of header data
-						long headerDataStart = sectionHandler.ReadRawLong();
-						//header data size RL size of header data
-						long headerDataSize = sectionHandler.ReadRawLong();
-						break;
-					case 2:
-						//start of bmp RL start of bmp data
-						long startOfBmp = sectionHandler.ReadRawLong();
-						//size of bmp RL size of bmp data
-						long sizeBmp = sectionHandler.ReadRawLong();
-						break;
-					case 3:
-						//start of wmf RL start of wmf data
-						long startOfWmf = sectionHandler.ReadRawLong();
-						//size of wmf RL size of wmf data
-						long sizeWmf = sectionHandler.ReadRawLong();
-						break;
-				}
-			}
-
-			//TODO: Implement the image reading
-			throw new NotImplementedException();
-		}
+            DwgPreviewReader reader = new DwgPreviewReader(this._fileHeader.AcadVersion, streamReader, this._fileHeader.PreviewAddress);
+            return reader.Read();
+        }
 
 		/// <inheritdoc/>
 		/// <remarks>
