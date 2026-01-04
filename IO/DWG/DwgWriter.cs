@@ -112,6 +112,29 @@ namespace ACadSharp.IO
 			}
 		}
 
+		/// <summary>
+		/// Write a <see cref="CadDocument"/> into a <see cref="Stream"/> with a preview image
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <param name="document"></param>
+		/// <param name="preview">The preview image to embed in the DWG file</param>
+		/// <param name="configuration"></param>
+		/// <param name="notification"></param>
+		public static void Write(Stream stream, CadDocument document, DwgPreview preview, CadWriterConfiguration configuration = null, NotificationEventHandler notification = null)
+		{
+			using (DwgWriter writer = new DwgWriter(stream, document))
+			{
+				if (configuration != null)
+				{
+					writer.Configuration = configuration;
+				}
+
+				writer.Preview = preview;
+				writer.OnNotification += notification;
+				writer.Write();
+			}
+		}
+
 		private void getFileHeaderWriter()
 		{
 			switch (this._document.Header.Version)
