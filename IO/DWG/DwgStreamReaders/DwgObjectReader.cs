@@ -1044,6 +1044,12 @@ namespace ACadSharp.IO.DWG
 				case "DIMASSOC":
 					template = this.readDimAssoc();
 					break;
+				case "LARGE_RADIAL_DIMENSION":
+					template = this.readDimRadialLarge();
+					break;
+				case "ARC_DIMENSION":
+					template = this.readDimArc();
+					break;
 				//case "VISUALSTYLE":
 				//	template = this.readVisualStyle();
 				//	break;
@@ -2170,6 +2176,61 @@ namespace ACadSharp.IO.DWG
 			template.StyleHandle = this.handleReference();
 			//H 2 anonymous BLOCK(hard pointer)
 			template.BlockHandle = this.handleReference();
+		}
+
+		private CadTemplate readDimRadialLarge()
+		{
+			DimensionRadialLarge dimension = new DimensionRadialLarge();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+            // 14 - override center point
+            dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+            // 10 - pt (definition point / center point) - already read in common data
+            // 15 - jog point
+            dimension.ChordPoint = this._objectReader.Read3BitDouble();
+			// 40 - jog angle
+			dimension.JogAngle = this._objectReader.ReadBitDouble();
+            // 13 - chord point
+            dimension.OverrideCenter = this._objectReader.Read3BitDouble();
+            dimension.JogPoint = this._objectReader.Read3BitDouble();
+
+            this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimArc()
+		{
+			DimensionArc dimension = new DimensionArc();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			dimension.StartExtensionPoint = this._objectReader.Read3BitDouble();
+			dimension.EndExtensionPoint = this._objectReader.Read3BitDouble();
+			// 15 - center point
+			dimension.CenterPoint = this._objectReader.Read3BitDouble();
+			dimension.HasLeader = this._objectReader.ReadBit();
+			if(dimension.HasLeader)
+			{
+                dimension.Leader1Point = this._objectReader.Read3BitDouble();
+                dimension.Leader2Point = this._objectReader.Read3BitDouble();
+            }
+			// 41 - start angle
+            dimension.EndAngle = this._objectReader.ReadBitDouble();
+			dimension.StartAngle = this._objectReader.ReadBitDouble();
+			var th = this._objectReader.ReadBit();
+            var ttth = this._objectReader.Read3BitDouble();
+            var ttth2 = this._objectReader.Read3BitDouble();
+			// 70 - arc symbol type (in AcDbArcDimension context)
+			// 71 - has leader
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		#endregion

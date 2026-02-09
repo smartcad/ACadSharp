@@ -64,6 +64,8 @@
 		public const string EntityCircle = "CIRCLE";
 		public const string EntityCoordinationModel = "COORDINATION MODEL";
 		public const string EntityDimension = "DIMENSION";
+		public const string EntityLargeRadialDimension = "LARGE_RADIAL_DIMENSION";
+		public const string EntityArcDimension = "ARC_DIMENSION";
 		public const string EntityEllipse = "ELLIPSE";
 		public const string EntityHatch = "HATCH";
 		public const string EntityHelix = "HELIX";

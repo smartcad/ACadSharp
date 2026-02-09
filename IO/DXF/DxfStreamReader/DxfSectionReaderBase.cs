@@ -150,6 +150,10 @@ namespace ACadSharp.IO.DXF
 					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityDimension:
 					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
+				case DxfFileToken.EntityLargeRadialDimension:
+					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(new DimensionRadialLarge()), this.readDimension);
+				case DxfFileToken.EntityArcDimension:
+					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(new DimensionArc()), this.readArcDimension);
 				case DxfFileToken.Entity3DFace:
 					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityEllipse:
@@ -416,6 +420,14 @@ namespace ACadSharp.IO.DXF
 							tmp.SetDimensionObject(new DimensionRadius());
 							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionRadius>());
 							return true;
+						case DxfSubclassMarker.RadialDimensionLarge:
+							tmp.SetDimensionObject(new DimensionRadialLarge());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionRadialLarge>());
+							return true;
+						case DxfSubclassMarker.ArcDimension:
+							tmp.SetDimensionObject(new DimensionArc());
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionArc>());
+							return true;
 						case DxfSubclassMarker.OrdinateDimension:
 							tmp.SetDimensionObject(new DimensionOrdinate());
 							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionOrdinate>());
@@ -426,6 +438,59 @@ namespace ACadSharp.IO.DXF
 							return false;
 					}
 				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+			}
+		}
+
+		private bool readArcDimension(CadEntityTemplate template, DxfMap map, string subclass = null)
+		{
+			CadDimensionTemplate tmp = template as CadDimensionTemplate;
+			DimensionArc arcDim = tmp.CadObject as DimensionArc;
+
+			switch (this._reader.Code)
+			{
+				case 2:
+					tmp.BlockName = this._reader.ValueAsString;
+					return true;
+				case 3:
+					tmp.StyleName = this._reader.ValueAsString;
+					return true;
+				case 42:
+					// Measurement - read only
+					return true;
+				case 73:
+				case 74:
+				case 75:
+				case 90:
+				case 361:
+					return true;
+				case 100:
+					switch (this._reader.ValueAsString)
+					{
+						case DxfSubclassMarker.Dimension:
+							return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
+						case DxfSubclassMarker.ArcDimension:
+							map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionArc>());
+							return true;
+						default:
+							return false;
+					}
+				default:
+					if (arcDim != null && map.SubClasses.ContainsKey(DxfSubclassMarker.ArcDimension))
+					{
+						// Handle ArcDimension-specific codes
+						switch (this._reader.Code)
+						{
+							case 70:
+								// In AcDbArcDimension subclass, code 70 is ArcSymbolType
+								arcDim.ArcSymbolType = (ArcLengthSymbolType)this._reader.ValueAsShort;
+								return true;
+							case 71:
+								// In AcDbArcDimension subclass, code 71 is HasLeader
+								arcDim.HasLeader = this._reader.ValueAsShort != 0;
+								return true;
+						}
+					}
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
 		}

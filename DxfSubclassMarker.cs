@@ -19,10 +19,12 @@
 		public const string AlignedDimension = "AcDbAlignedDimension";
 		public const string LinearDimension = "AcDbRotatedDimension";
 		public const string RadialDimension = "AcDbRadialDimension";
+		public const string RadialDimensionLarge = "AcDbRadialDimensionLarge";
 		public const string DiametricDimension = "AcDbDiametricDimension";
 		public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 		public const string Angular2LineDimension = "AcDb2LineAngularDimension";
 		public const string OrdinateDimension = "AcDbOrdinateDimension";
+		public const string ArcDimension = "AcDbArcDimension";
 		public const string BlockRecord = "AcDbBlockTableRecord";
 		public const string BlockBegin = "AcDbBlockBegin";
 		public const string BlockEnd = "AcDbBlockEnd";

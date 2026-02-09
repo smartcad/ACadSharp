@@ -174,6 +174,9 @@ namespace ACadSharp.IO.DXF
 				case DimensionAligned aligned:
 					this.writeDimensionAligned(aligned);
 					break;
+				case DimensionRadialLarge radialLarge:
+					this.writeDimensionRadialLarge(radialLarge);
+					break;
 				case DimensionRadius radius:
 					this.writeDimensionRadius(radius);
 					break;
@@ -188,6 +191,9 @@ namespace ACadSharp.IO.DXF
 					break;
 				case DimensionOrdinate ordinate:
 					this.writeDimensionOrdinate(ordinate);
+					break;
+				case DimensionArc arcDim:
+					this.writeDimensionArc(arcDim);
 					break;
 				default:
 					throw new NotImplementedException($"Dimension type not implemented {dim.GetType().FullName}");
@@ -271,6 +277,35 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(13, ordinate.FeatureLocation, map);
 			this._writer.Write(14, ordinate.LeaderEndpoint, map);
+		}
+
+		private void writeDimensionRadialLarge(DimensionRadialLarge radialLarge)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionRadialLarge>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RadialDimensionLarge);
+
+			this._writer.Write(13, radialLarge.ChordPoint, map);
+			this._writer.Write(14, radialLarge.OverrideCenter, map);
+			this._writer.Write(15, radialLarge.JogPoint, map);
+			this._writer.Write(40, radialLarge.JogAngle, map);
+		}
+
+		private void writeDimensionArc(DimensionArc arcDim)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionArc>();
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ArcDimension);
+
+			this._writer.Write(13, arcDim.StartExtensionPoint, map);
+			this._writer.Write(14, arcDim.EndExtensionPoint, map);
+			this._writer.Write(15, arcDim.CenterPoint, map);
+			this._writer.Write(70, (short)arcDim.ArcSymbolType);
+			this._writer.Write(40, arcDim.EndAngle, map);
+			this._writer.Write(41, arcDim.StartAngle, map);
+			this._writer.Write(71, arcDim.HasLeader ? (short)1 : (short)0);
+			this._writer.Write(16, arcDim.Leader1Point, map);
+			this._writer.Write(17, arcDim.Leader2Point, map);
 		}
 
 		private void writeHatch(Hatch hatch)
