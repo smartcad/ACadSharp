@@ -56,7 +56,7 @@ namespace ACadSharp.Header
 		/// System variable LASTSAVEDBY
 		/// </remarks>
 		[CadSystemVariable(DxfReferenceType.Ignored, "$LASTSAVEDBY", 3)]
-		public string LastSavedBy { get; set; } = "ACadSharp";
+		public string LastSavedBy { get; set; } = "SmartCAD 2D";
 
 		/// <summary>
 		/// The default value is 0.
