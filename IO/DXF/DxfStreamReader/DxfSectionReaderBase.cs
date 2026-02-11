@@ -138,6 +138,7 @@ namespace ACadSharp.IO.DXF
 
 		protected CadEntityTemplate readEntity()
 		{
+			System.Diagnostics.Debug.WriteLine(_reader.ValueAsString);
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
@@ -151,7 +152,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityDimension:
 					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
 				case DxfFileToken.EntityLargeRadialDimension:
-					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(new DimensionRadialLarge()), this.readDimension);
+					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(new DimensionRadialLarge()), this.readRadialLargeDimension);
 				case DxfFileToken.EntityArcDimension:
 					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(new DimensionArc()), this.readArcDimension);
 				case DxfFileToken.Entity3DFace:
@@ -440,9 +441,53 @@ namespace ACadSharp.IO.DXF
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
-		}
+        }
+        private bool readRadialLargeDimension(CadEntityTemplate template, DxfMap map, string subclass = null)
+        {
+            CadDimensionTemplate tmp = template as CadDimensionTemplate;
 
-		private bool readArcDimension(CadEntityTemplate template, DxfMap map, string subclass = null)
+            switch(this._reader.Code)
+            {
+                case 2:
+                    tmp.BlockName = this._reader.ValueAsString;
+                    return true;
+                case 3:
+                    tmp.StyleName = this._reader.ValueAsString;
+                    return true;
+                case 42:
+                    // Measurement - read only
+                    return true;
+                case 70:
+                    //Flags do not have set
+                    tmp.SetDimensionFlags((DimensionType)this._reader.ValueAsShort);
+                    return true;
+                case 73:
+                case 74:
+                case 75:
+                case 90:
+                case 361:
+                    return true;
+                case 100:
+                    switch(this._reader.ValueAsString)
+                    {
+                        case DxfSubclassMarker.Dimension:
+                            return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
+                        case DxfSubclassMarker.RadialDimensionLarge:
+                            map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionRadialLarge>());
+                            return true;
+                        default:
+                            return false;
+                    }
+                default:
+                    if(map.SubClasses.ContainsKey(DxfSubclassMarker.RadialDimensionLarge))
+                    {
+                        return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.RadialDimensionLarge]);
+                    }
+                    return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
+            }
+        }
+
+        private bool readArcDimension(CadEntityTemplate template, DxfMap map, string subclass = null)
 		{
 			CadDimensionTemplate tmp = template as CadDimensionTemplate;
 			DimensionArc arcDim = tmp.CadObject as DimensionArc;
@@ -490,8 +535,10 @@ namespace ACadSharp.IO.DXF
 								arcDim.HasLeader = this._reader.ValueAsShort != 0;
 								return true;
 						}
+
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.ArcDimension]);
 					}
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
 			}
 		}
 
@@ -1490,6 +1537,11 @@ namespace ACadSharp.IO.DXF
 
 			while (this._reader.DxfCode != DxfCode.ControlString)
 			{
+				if (this._reader.Code == 330)
+				{
+					reactors.Add(this._reader.ValueAsHandle);
+				}
+
 				this._reader.ReadNext();
 			}
 

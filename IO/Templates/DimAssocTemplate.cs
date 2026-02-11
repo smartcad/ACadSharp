@@ -26,6 +26,9 @@ namespace ACadSharp.IO.Templates
                 this.CadObject.DimensionObject = dim;
             }
             
+            if (this.MainGeometryHandle == null)
+                return;
+
             for (var i = 0; i < this.MainGeometryHandle.Length; i++)
             {
                 if (builder.TryGetCadObject(this.MainGeometryHandle[i], out Entity record))
