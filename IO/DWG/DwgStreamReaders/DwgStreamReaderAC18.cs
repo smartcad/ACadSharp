@@ -21,21 +21,32 @@ namespace ACadSharp.IO.DWG
 			uint rgb = (uint)this.ReadBitLong();
 			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 
-			if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
+			//The high byte (arr[3]) encodes the color method:
+			// 0xC0 = ByLayer
+			// 0xC1 = ByBlock
+			// 0xC2 = True color (RGB)
+			// 0xC3 = Indexed color (ACI)
+			byte colorMethod = arr[3];
+
+			if (colorMethod == 0xC0)
 			{
-				//Indexed color
-				color = new Color(arr[0]);
+				//ByLayer
+				color = Color.ByLayer;
+			}
+			else if (colorMethod == 0xC1)
+			{
+				//ByBlock
+				color = Color.ByBlock;
+			}
+			else if (colorMethod == 0xC2)
+			{
+				//True color
+				color = new Color(arr[2], arr[1], arr[0]);
 			}
 			else
 			{
-				//CECOLOR:
-				//3221225472
-				//0b11000000000000000000000000000000
-				//0b1100_0000_0000_0000_0000_0000_0000_0000 --> this should be ByLayer
-				//0xC0000000
-
-				//True color
-				color = new Color(arr[2], arr[1], arr[0]);
+				//Indexed color (0xC3 or legacy check for bit 0x01000000)
+				color = new Color(arr[0]);
 			}
 
 			//RC: Color Byte(&1 => color name follows(TV),

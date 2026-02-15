@@ -173,20 +173,38 @@ namespace ACadSharp.IO.DWG
 			//CMC:
 			//BS: color index(always 0)
 			short colorIndex = this.ReadBitShort();
+			//this.ReadBitShort();
 			//BL: RGB value
 			//Always negative
 			uint rgb = (uint)this.ReadBitLong();
 			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
 
-			if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
+			//The high byte (arr[3]) encodes the color method:
+			// 0xC0 = ByLayer
+			// 0xC1 = ByBlock
+			// 0xC2 = True color (RGB)
+			// 0xC3 = Indexed color (ACI)
+			byte colorMethod = arr[3];
+
+			if (colorMethod == 0xC0)
 			{
-				//Indexed color
-				color = new Color(arr[0]);
+				//ByLayer
+				color = Color.ByLayer;
 			}
-			else
+			else if (colorMethod == 0xC1)
+			{
+				//ByBlock
+				color = Color.ByBlock;
+			}
+			else if (colorMethod == 0xC2)
 			{
 				//True color
 				color = new Color(arr[2], arr[1], arr[0]);
+			}
+			else
+			{
+				//Indexed color (0xC3 or legacy check for bit 0x01000000)
+				color = new Color(arr[0]);
 			}
 
 			//RC : Color Byte
