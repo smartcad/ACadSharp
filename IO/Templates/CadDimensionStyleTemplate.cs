@@ -35,6 +35,11 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.LeaderArrow = leaderArrow;
 			}
 
+			if (this.getTableReference(builder, this.DIMBLK, this.DIMBL_Name, out BlockRecord arrowBlock))
+			{
+				this.CadObject.ArrowBlock = arrowBlock;
+			}
+
 			if (this.getTableReference(builder, this.DIMBLK1, this.DIMBLK1_Name, out BlockRecord dimArrow1))
 			{
 				this.CadObject.DimArrow1 = dimArrow1;

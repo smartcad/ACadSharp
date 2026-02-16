@@ -42,6 +42,11 @@
 		Ordinate = 6,
 
 		/// <summary>
+		/// Arc length dimension
+		/// </summary>
+		ArcLength = 8,
+
+		/// <summary>
 		/// Indicates that the block reference(group code 2) is referenced by this dimension only
 		/// </summary>
 		BlockReference = 32,

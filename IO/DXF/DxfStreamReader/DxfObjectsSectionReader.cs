@@ -1,6 +1,8 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
+using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF
@@ -63,6 +65,8 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<PdfUnderlayDefinition>(new CadNonGraphicalObjectTemplate(new PdfUnderlayDefinition()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectSortEntsTable:
 					return this.readSortentsTable();
+				case DxfFileToken.ObjectDimAssoc:
+					return this.readDimAssoc();
 				case DxfFileToken.ObjectScale:
 					return this.readObjectCodes<Scale>(new CadTemplate<Scale>(new Scale()), this.readScale);
 				case DxfFileToken.ObjectVisualStyle:
@@ -257,6 +261,133 @@ namespace ACadSharp.IO.DXF
 					}
 					return true;
 			}
+		}
+
+		private CadTemplate readDimAssoc()
+		{
+			DimensionAssociativity dimassoc = new DimensionAssociativity();
+			DimAssocTemplate template = new DimAssocTemplate(dimassoc);
+
+			//Jump the 0 marker
+			this._reader.ReadNext();
+
+			this.readCommonObjectData(template);
+
+			System.Diagnostics.Debug.Assert(DxfSubclassMarker.DimAssoc == this._reader.ValueAsString);
+
+			//Jump the 100 AcDbDimAssoc marker
+			this._reader.ReadNext();
+
+			List<ulong> geometryHandles = new List<ulong>();
+			List<DimensionAssociativity.ObjectSnapPointReference> pointRefs = new List<DimensionAssociativity.ObjectSnapPointReference>();
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					// Dimension object handle (330 after subclass marker)
+					case 330:
+						template.DimensionHandle = this._reader.ValueAsHandle;
+						break;
+					// Associativity flag
+					case 90:
+						dimassoc.AssociativityFlag = (DimensionAssociativity.DimassocAssociativityPoint)this._reader.ValueAsShort;
+						break;
+					// Trans space flag
+					case 70:
+						dimassoc.TransSpaceFlag = this._reader.ValueAsBool;
+						break;
+					// Rotated dimension type
+					case 71:
+						dimassoc.RotatedDimensionFlag = (DimensionAssociativity.RotatedDimensionTypes)this._reader.ValueAsShort;
+						break;
+					// Class name - "AcDbOsnapPointRef" (start of a point reference)
+					case 1:
+						// Read the snap point reference fields
+						this.readOsnapPointRef(geometryHandles, pointRefs);
+						continue; // readOsnapPointRef advances the reader, don't ReadNext again
+					default:
+						this._builder.Notify($"Group Code not handled {this._reader.GroupCodeValue} for {typeof(DimensionAssociativity)}, code : {this._reader.Code} | value : {this._reader.ValueAsString}");
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			if (pointRefs.Count > 0)
+			{
+				dimassoc.PointRefs = pointRefs.ToArray();
+				template.MainGeometryHandle = geometryHandles.ToArray();
+			}
+
+			return template;
+		}
+
+		private void readOsnapPointRef(List<ulong> geometryHandles, List<DimensionAssociativity.ObjectSnapPointReference> pointRefs)
+		{
+			// We're currently at code 1 = "AcDbOsnapPointRef", advance past it
+			this._reader.ReadNext();
+
+			DimensionAssociativity.ObjectOSnapTypes snapType = DimensionAssociativity.ObjectOSnapTypes.None;
+			ulong geometryHandle = 0;
+			short subentType = 0;
+			int gsMarker = 0;
+			double parameter = 0.0;
+			XYZ point = XYZ.Zero;
+			bool hasLastPointReference = false;
+
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					case 72:
+						snapType = (DimensionAssociativity.ObjectOSnapTypes)this._reader.ValueAsShort;
+						break;
+					case 331:
+						geometryHandle = this._reader.ValueAsHandle;
+						break;
+					case 73:
+						subentType = this._reader.ValueAsShort;
+						break;
+					case 91:
+						gsMarker = this._reader.ValueAsInt;
+						break;
+					case 40:
+						parameter = this._reader.ValueAsDouble;
+						break;
+					case 10:
+						point = new XYZ(this._reader.ValueAsDouble, point.Y, point.Z);
+						break;
+					case 20:
+						point = new XYZ(point.X, this._reader.ValueAsDouble, point.Z);
+						break;
+					case 30:
+						point = new XYZ(point.X, point.Y, this._reader.ValueAsDouble);
+						break;
+					case 75:
+						hasLastPointReference = this._reader.ValueAsBool;
+						break;
+					case 1:
+						// Next "AcDbOsnapPointRef" - save current and start new one
+						geometryHandles.Add(geometryHandle);
+						pointRefs.Add(new DimensionAssociativity.ObjectSnapPointReference(
+							snapType, subentType, gsMarker, parameter, point, hasLastPointReference));
+
+						// Reset for next point ref
+						this.readOsnapPointRef(geometryHandles, pointRefs);
+						return;
+					default:
+						this._builder.Notify($"Group Code not handled in OsnapPointRef, code : {this._reader.Code} | value : {this._reader.ValueAsString}");
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			// Save the last point reference
+			geometryHandles.Add(geometryHandle);
+			pointRefs.Add(new DimensionAssociativity.ObjectSnapPointReference(
+				snapType, subentType, gsMarker, parameter, point, hasLastPointReference));
 		}
 
 		private CadTemplate readSortentsTable()
