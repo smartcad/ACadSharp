@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 using ACadSharp.Types.Units;
 using System;
 
@@ -741,6 +742,7 @@ namespace ACadSharp.Tables
 		/// </remarks>
 		[DxfCodeValue(176)]
 		public Color DimensionLineColor { get; set; } = Color.ByBlock;
+		public BookColor DimensionLineBookColor { get; set; }
 
 		/// <summary>
 		/// Gets or sets colors to extension lines, center marks, and centerlines

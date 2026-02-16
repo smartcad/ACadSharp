@@ -4709,7 +4709,13 @@ namespace ACadSharp.IO.DWG
 				//DIMSOXD B 175
 				dimStyle.SuppressOutsideExtensions = this._objectReader.ReadBit();
 				//DIMCLRD BS 176
-				dimStyle.DimensionLineColor = this._mergedReaders.ReadCmColor(out _, out _);
+				dimStyle.DimensionLineColor = this._mergedReaders.ReadCmColor(out string clr_name, out string book_name);
+
+				if(!string.IsNullOrEmpty(clr_name))
+				{
+					dimStyle.DimensionLineBookColor = new BookColor(book_name, clr_name);
+				}
+
 				//DIMCLRE BS 177
 				dimStyle.ExtensionLineColor = this._mergedReaders.ReadCmColor(out _, out _);
 				//DIMCLRT BS 178
