@@ -138,7 +138,6 @@ namespace ACadSharp.IO.DXF
 
 		protected CadEntityTemplate readEntity()
 		{
-			System.Diagnostics.Debug.WriteLine(_reader.ValueAsString);
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
