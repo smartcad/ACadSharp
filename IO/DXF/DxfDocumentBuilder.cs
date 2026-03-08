@@ -54,20 +54,29 @@ namespace ACadSharp.IO.DXF
 		public List<Entity> BuildEntities()
 		{
 			var entities = new List<Entity>();
+			var entityTemplates = new List<CadEntityTemplate>();
 
-			foreach (CadEntityTemplate item in this.cadObjectsTemplates.Values.OfType<CadEntityTemplate>())
+			foreach (var kvp in this.cadObjectsTemplates)
+			{
+				if (kvp.Value is CadEntityTemplate entityTemplate)
+				{
+					entityTemplates.Add(entityTemplate);
+				}
+			}
+
+			foreach (var item in entityTemplates)
 			{
 				item.Build(this);
-
 				item.SetUnlinkedReferences();
 			}
 
-			foreach (var item in this.cadObjectsTemplates.Values
-				.OfType<CadEntityTemplate>()
-				.Where(o => o.CadObject.Owner == null))
+			foreach (var item in entityTemplates)
 			{
-				item.CadObject.Handle = 0;
-				entities.Add(item.CadObject);
+				if (item.CadObject.Owner == null)
+				{
+					item.CadObject.Handle = 0;
+					entities.Add(item.CadObject);
+				}
 			}
 
 			return entities;

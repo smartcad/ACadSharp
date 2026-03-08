@@ -40,17 +40,17 @@ namespace ACadSharp.IO
 
 		public ulong InitialHandSeed { get; set; } = 0;
 
-		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new();
+		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new(256);
 
-		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new();
+		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new(256);
 
-		protected Dictionary<ulong, CadObject> cadObjects = new();
+		protected Dictionary<ulong, CadObject> cadObjects = new(256);
 
-		protected Dictionary<ulong, ICadTableEntryTemplate> tableEntryTemplates = new();
+		protected Dictionary<ulong, ICadTableEntryTemplate> tableEntryTemplates = new(64);
 
-		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new();
+		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new(16);
 
-		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new();
+		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new(16);
 
 		public CadDocumentBuilder(ACadVersion version, CadDocument document)
 		{

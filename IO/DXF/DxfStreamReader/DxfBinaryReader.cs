@@ -38,16 +38,25 @@ namespace ACadSharp.IO.DXF
 
 		protected override string readStringLine()
 		{
-			byte b = this._stream.ReadByte();
-			List<byte> bytes = new List<byte>();
+			byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(256);
+			int count = 0;
 
+			byte b = this._stream.ReadByte();
 			while (b != 0)
 			{
-				bytes.Add(b);
+				if (count == buffer.Length)
+				{
+					byte[] larger = System.Buffers.ArrayPool<byte>.Shared.Rent(buffer.Length * 2);
+					System.Buffer.BlockCopy(buffer, 0, larger, 0, count);
+					System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+					buffer = larger;
+				}
+				buffer[count++] = b;
 				b = this._stream.ReadByte();
 			}
 
-			this.ValueRaw = this._encoding.GetString(bytes.ToArray(), 0, bytes.Count);
+			this.ValueRaw = this._encoding.GetString(buffer, 0, count);
+			System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
 			return this.ValueRaw;
 		}
 

@@ -13,11 +13,26 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? XDictHandle { get; set; }
 
-		public List<ulong> ReactorsHandles { get; set; } = new List<ulong>();
+		private List<ulong> _reactorsHandles;
+		public List<ulong> ReactorsHandles
+		{
+			get => _reactorsHandles ??= new List<ulong>();
+			set => _reactorsHandles = value;
+		}
 
-		public Dictionary<ulong, ExtendedData> EDataTemplate { get; set; } = new Dictionary<ulong, ExtendedData>();
+		private Dictionary<ulong, ExtendedData> _eDataTemplate;
+		public Dictionary<ulong, ExtendedData> EDataTemplate
+		{
+			get => _eDataTemplate ??= new Dictionary<ulong, ExtendedData>();
+			set => _eDataTemplate = value;
+		}
 
-		public Dictionary<string, ExtendedData> EDataTemplateByAppName { get; set; } = new Dictionary<string, ExtendedData>();
+		private Dictionary<string, ExtendedData> _eDataTemplateByAppName;
+		public Dictionary<string, ExtendedData> EDataTemplateByAppName
+		{
+			get => _eDataTemplateByAppName ??= new Dictionary<string, ExtendedData>();
+			set => _eDataTemplateByAppName = value;
+		}
 
 		public CadTemplate(CadObject cadObject)
 		{
@@ -31,34 +46,40 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.XDictionary = cadDictionary;
 			}
 
-			foreach (ulong handle in this.ReactorsHandles)
+			if (_reactorsHandles != null)
 			{
-				if (builder.TryGetCadObject(handle, out CadObject reactor))
+				foreach (ulong handle in _reactorsHandles)
 				{
-					if (this.CadObject.Reactors.ContainsKey(handle))
+					if (builder.TryGetCadObject(handle, out CadObject reactor))
 					{
-						builder.Notify($"Reactor with handle {handle} already exist in the object {this.CadObject.Handle}", NotificationType.Warning);
+						if (this.CadObject.Reactors.ContainsKey(handle))
+						{
+							builder.Notify($"Reactor with handle {handle} already exist in the object {this.CadObject.Handle}", NotificationType.Warning);
+						}
+						else
+						{
+							this.CadObject.Reactors.Add(handle, reactor);
+						}
 					}
 					else
 					{
-						this.CadObject.Reactors.Add(handle, reactor);
+						builder.Notify($"Reactor with handle {handle} not found", NotificationType.Warning);
 					}
-				}
-				else
-				{
-					builder.Notify($"Reactor with handle {handle} not found", NotificationType.Warning);
 				}
 			}
 
-			foreach (KeyValuePair<ulong, ExtendedData> item in this.EDataTemplate)
+			if (_eDataTemplate != null)
 			{
-				if (builder.TryGetCadObject(item.Key, out AppId app))
+				foreach (KeyValuePair<ulong, ExtendedData> item in _eDataTemplate)
 				{
-					this.CadObject.ExtendedData.Add(app, item.Value);
-				}
-				else
-				{
-					builder.Notify($"AppId in extended data with handle {item.Key} not found", NotificationType.Warning);
+					if (builder.TryGetCadObject(item.Key, out AppId app))
+					{
+						this.CadObject.ExtendedData.Add(app, item.Value);
+					}
+					else
+					{
+						builder.Notify($"AppId in extended data with handle {item.Key} not found", NotificationType.Warning);
+					}
 				}
 			}
 		}
