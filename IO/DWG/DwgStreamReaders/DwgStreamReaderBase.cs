@@ -129,8 +129,7 @@ namespace ACadSharp.IO.DWG
 			long startPositon = position;
 			if (flag)
 			{
-				//String stream present
-
+				//String stream present				this.IsEmpty = false;
 				//If 1, then the “endbit” location should be decremented by 16 bytes
 				this.applyFlagToPosition(position, out long length, out long size);
 
