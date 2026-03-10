@@ -44,10 +44,10 @@ namespace ACadSharp.IO.Templates
 				insert.Block = block;
 			}
 
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
-			{
-				insert.Attributes.Seqend = seqend;
-			}
+			//if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
+			//{
+			//	insert.Attributes.Seqend = seqend;
+			//}
 
 			if (this.FirstAttributeHandle.HasValue)
 			{

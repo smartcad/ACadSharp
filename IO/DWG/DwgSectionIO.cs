@@ -67,7 +67,7 @@ namespace ACadSharp.IO.DWG
 			this.R2018Plus = version >= ACadVersion.AC1032;
 		}
 
-		public static bool CheckSentinel(byte[] actual, byte[] expected)
+		public static bool CheckSentinel(ReadOnlySpan<byte> actual, byte[] expected)
 		{
 			if (expected.Length != actual.Length)
 				return false;

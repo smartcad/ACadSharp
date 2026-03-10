@@ -691,9 +691,9 @@ namespace ACadSharp.IO.DXF
 					var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
 					this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
 
-					this._builder.AddTemplate(seqendTemplate);
+					//this._builder.AddTemplate(seqendTemplate);
 
-					template.SeqendHandle = seqend.Handle;
+					//template.SeqendHandle = seqend.Handle;
 				}
 			}
 			else

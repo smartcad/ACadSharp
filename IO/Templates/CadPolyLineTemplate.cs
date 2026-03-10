@@ -11,8 +11,6 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LastVertexHandle { get; internal set; }
 
-		public ulong? SeqendHandle { get; internal set; }
-
 		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
 
 		public Polyline PolyLine => this.CadObject as Polyline;
@@ -26,11 +24,6 @@ namespace ACadSharp.IO.Templates
 			base.Build(builder);
 
 			Polyline polyLine = this.CadObject as Polyline;
-
-			if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
-			{
-				polyLine.Vertices.Seqend = seqend;
-			}
 
 			if (this.FirstVertexHandle.HasValue)
 			{

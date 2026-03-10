@@ -100,14 +100,8 @@ namespace ACadSharp.IO.DXF
 					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
 						pline.VertexHandles.Add(v.Handle);
 						break;
-					case CadPolyLineTemplate pline when template.CadObject is Seqend seqend:
-						pline.SeqendHandle = seqend.Handle;
-						break;
 					case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
 						insert.AttributesHandles.Add(att.Handle);
-						break;
-					case CadInsertTemplate insert when template.CadObject is Seqend seqend:
-						insert.SeqendHandle = seqend.Handle;
 						break;
 					default:
 						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}");

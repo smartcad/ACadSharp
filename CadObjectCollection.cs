@@ -105,7 +105,13 @@ namespace ACadSharp
 		}
 
 		/// <inheritdoc/>
-		public IEnumerator<T> GetEnumerator()
+		public HashSet<T>.Enumerator GetEnumerator()
+		{
+			return this._entries.GetEnumerator();
+		}
+
+		/// <inheritdoc/>
+		IEnumerator<T> IEnumerable<T>.GetEnumerator()
 		{
 			return this._entries.GetEnumerator();
 		}

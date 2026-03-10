@@ -53,7 +53,7 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private Queue<ulong> _handles;
 
-		private readonly Dictionary<ulong, ObjectType> _readedObjects = new Dictionary<ulong, ObjectType>();
+		private readonly Dictionary<ulong, ObjectType> _readedObjects;
 
 		private readonly Dictionary<ulong, long> _map;
 
@@ -111,6 +111,7 @@ namespace ACadSharp.IO.DWG
 
 			this._handles = new Queue<ulong>(handles);
 			this._map = handleMap;
+			this._readedObjects = new Dictionary<ulong, ObjectType>(handleMap.Count);
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
 			//Initialize the crc stream
@@ -761,9 +762,9 @@ namespace ACadSharp.IO.DWG
 				case ObjectType.ENDBLK:
 					template = this.readEndBlock();
 					break;
-				case ObjectType.SEQEND:
-					template = this.readSeqend();
-					break;
+				//case ObjectType.SEQEND:
+				//	template = this.readSeqend();
+				//	break;
 				case ObjectType.INSERT:
 					template = this.readInsert();
 					break;
@@ -1666,7 +1667,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H[SEQEND(hard owner)] if 66 bit set
-			template.SeqendHandle = this.handleReference(0);
+			this.handleReference(0);
 		}
 
 		#endregion Insert methods
@@ -1789,7 +1790,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H SEQEND(hard owner)
-			template.SeqendHandle = this.handleReference();
+			this.handleReference();
 
 			return template;
 		}
@@ -1847,7 +1848,7 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//H SEQEND(hard owner)
-			template.SeqendHandle = this.handleReference();
+			this.handleReference();
 
 			return template;
 		}
@@ -3818,14 +3819,14 @@ namespace ACadSharp.IO.DWG
 
 				//Size of preview data BL Indicates number of bytes of data following.
 				int n = this._objectReader.ReadBitLong();
-				List<byte> data = new List<byte>();
+				byte[] data = new byte[n];
 				for (int index = 0; index < n; ++index)
 				{
 					//Binary Preview Data N*RC 310
-					data.Add(this._objectReader.ReadByte());
+					data[index] = this._objectReader.ReadByte();
 				}
 
-				record.Preview = data.ToArray();
+				record.Preview = data;
 			}
 
 			//R2007+:
@@ -5662,7 +5663,7 @@ namespace ACadSharp.IO.DWG
 
 				i += faceSize;
 
-				mesh.Faces.Add(arr.ToArray());
+				mesh.Faces.Add(arr);
 			}
 
 			//Edges
