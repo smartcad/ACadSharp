@@ -3817,17 +3817,16 @@ namespace ACadSharp.IO.DWG
 				//Block Description TV 4 Block description.
 				block.Comments = this._textReader.ReadVariableText();
 
-				//Size of preview data BL Indicates number of bytes of data following.
-				int n = this._objectReader.ReadBitLong();
-				byte[] data = new byte[n];
-				for (int index = 0; index < n; ++index)
-				{
-					//Binary Preview Data N*RC 310
-					data[index] = this._objectReader.ReadByte();
-				}
+                //Size of preview data BL Indicates number of bytes of data following.
+                int n = this._objectReader.ReadBitLong();
+                byte[] data = n == 0 ? Array.Empty<byte>() : new byte[n];  // ✅ Use cached instance when n==0
+                for(int index = 0; index < n; ++index)
+                {
+                    data[index] = this._objectReader.ReadByte();
+                }
 
-				record.Preview = data;
-			}
+                record.Preview = data;
+            }
 
 			//R2007+:
 			if (this.R2007Plus)
