@@ -36,6 +36,8 @@ namespace ACadSharp.Tables.Collections
 
 		protected abstract string[] defaultEntries { get; }
 
+		protected abstract T CreateDefaultEntry(string name);
+
 		protected readonly Dictionary<string, T> entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
 		protected Table() { }
@@ -128,7 +130,7 @@ namespace ACadSharp.Tables.Collections
 				if (this.Contains(entry))
 					continue;
 
-				this.Add((T)Activator.CreateInstance(typeof(T), new object[] { entry }));
+				this.Add(this.CreateDefaultEntry(entry));
 			}
 		}
 

@@ -10,6 +10,8 @@
 
 		protected override string[] defaultEntries { get { return new string[] { VPort.DefaultName }; } }
 
+		protected override VPort CreateDefaultEntry(string name) => new VPort(name);
+
 		internal VPortsTable() : base() { }
 
 		internal VPortsTable(CadDocument document) : base(document) { }

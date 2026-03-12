@@ -10,6 +10,8 @@
 
 		protected override string[] defaultEntries { get { return new string[] { TextStyle.DefaultName }; } }
 
+		protected override TextStyle CreateDefaultEntry(string name) => new TextStyle(name);
+
 		internal TextStylesTable() : base() { }
 
 		internal TextStylesTable(CadDocument document) : base(document) { }

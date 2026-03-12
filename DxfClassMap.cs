@@ -1,7 +1,5 @@
-﻿using ACadSharp.Attributes;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Reflection;
 
 namespace ACadSharp
 {
@@ -38,25 +36,12 @@ namespace ACadSharp
 				return classMap;
 			}
 
-			classMap = new DxfClassMap();
-
-			var att = type.GetCustomAttribute<DxfSubClassAttribute>();
-			if (att == null)
-				throw new ArgumentException($"{type.FullName} is not a dxf subclass");
-
-			classMap.Name = type.GetCustomAttribute<DxfSubClassAttribute>().ClassName;
-
-			addClassProperties(classMap, type);
-
-			DxfSubClassAttribute baseAtt = type.BaseType.GetCustomAttribute<DxfSubClassAttribute>();
-			if (baseAtt != null && baseAtt.IsEmpty)
-			{
-				//Properties in the table seem to be embeded to the hinerit type
-				addClassProperties(classMap, type.BaseType);
-			}
+			if (!DxfMetadataRegistry.TryGetClassMap(type, out classMap))
+				throw new ArgumentException(
+					$"{type.FullName} does not have a generated DXF class map. " +
+					"Ensure the type has the [DxfSubClass] attribute and the source generator has run.");
 
 			_cache.TryAdd(type, classMap);
-
 			return classMap;
 		}
 

@@ -38,6 +38,8 @@ namespace ACadSharp.Tables.Collections
 			}
 		}
 
+		protected override LineType CreateDefaultEntry(string name) => new LineType(name);
+
 		internal LineTypesTable() : base() { }
 
 		internal LineTypesTable(CadDocument document) : base(document) { }

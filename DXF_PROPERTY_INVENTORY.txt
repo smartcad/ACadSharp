@@ -1,0 +1,2590 @@
+DXF property inventory generated from ACadSharp source attributes.
+Purpose: audit input for AOT/reflection migration. Do not use as runtime metadata.
+Generated: 2026-03-12
+
+Summary
+  DxfName/DxfSubClass markers: 160
+  DxfCodeValue mappings: 819
+  CadSystemVariable mappings: 229
+
+== Type Markers ==
+Blocks\Block.cs:15: [DxfName(DxfFileToken.Block)]
+  > [DxfSubClass(DxfSubclassMarker.BlockBegin)]
+  > public class Block : Entity
+Blocks\Block.cs:16: [DxfSubClass(DxfSubclassMarker.BlockBegin)]
+  > public class Block : Entity
+  > {
+Blocks\BlockEnd.cs:15: [DxfName(DxfFileToken.EndBlock)]
+  > [DxfSubClass(DxfSubclassMarker.BlockEnd)]
+  > public class BlockEnd : Entity
+Blocks\BlockEnd.cs:16: [DxfSubClass(DxfSubclassMarker.BlockEnd)]
+  > public class BlockEnd : Entity
+  > {
+Entities\Arc.cs:16: [DxfName(DxfFileToken.EntityArc)]
+  > [DxfSubClass(DxfSubclassMarker.Arc)]
+  > public class Arc : Circle
+Entities\Arc.cs:17: [DxfSubClass(DxfSubclassMarker.Arc)]
+  > public class Arc : Circle
+  > {
+Entities\AttributeBase.cs:16: [DxfSubClass(null, true)]
+  > public abstract class AttributeBase : TextEntity
+  > {
+Entities\AttributeDefinition.cs:12: [DxfName(DxfFileToken.EntityAttributeDefinition)]
+  > [DxfSubClass(DxfSubclassMarker.AttributeDefinition)]
+  > public class AttributeDefinition : AttributeBase
+Entities\AttributeDefinition.cs:13: [DxfSubClass(DxfSubclassMarker.AttributeDefinition)]
+  > public class AttributeDefinition : AttributeBase
+  > {
+Entities\AttributeEntity.cs:12: [DxfName(DxfFileToken.EntityAttribute)]
+  > [DxfSubClass(DxfSubclassMarker.Attribute)]
+  > public class AttributeEntity : AttributeBase
+Entities\AttributeEntity.cs:13: [DxfSubClass(DxfSubclassMarker.Attribute)]
+  > public class AttributeEntity : AttributeBase
+  > {
+Entities\CadImageBase.cs:13: [DxfSubClass(null, true)]
+  > public abstract class CadImageBase : Entity
+  > {
+Entities\Circle.cs:14: [DxfName(DxfFileToken.EntityCircle)]
+  > [DxfSubClass(DxfSubclassMarker.Circle)]
+  > public class Circle : Entity
+Entities\Circle.cs:15: [DxfSubClass(DxfSubclassMarker.Circle)]
+  > public class Circle : Entity
+  > {
+Entities\Dimension.cs:16: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.Dimension)]
+  > public abstract class Dimension : Entity
+Entities\Dimension.cs:17: [DxfSubClass(DxfSubclassMarker.Dimension)]
+  > public abstract class Dimension : Entity
+  > {
+Entities\DimensionAligned.cs:13: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.AlignedDimension)]
+  > public class DimensionAligned : Dimension
+Entities\DimensionAligned.cs:14: [DxfSubClass(DxfSubclassMarker.AlignedDimension)]
+  > public class DimensionAligned : Dimension
+  > {
+Entities\DimensionAngular2Line.cs:13: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.Angular2LineDimension)]
+  > public class DimensionAngular2Line : Dimension
+Entities\DimensionAngular2Line.cs:14: [DxfSubClass(DxfSubclassMarker.Angular2LineDimension)]
+  > public class DimensionAngular2Line : Dimension
+  > {
+Entities\DimensionAngular3Pt.cs:14: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.Angular3PointDimension)]
+  > public class DimensionAngular3Pt : Dimension
+Entities\DimensionAngular3Pt.cs:15: [DxfSubClass(DxfSubclassMarker.Angular3PointDimension)]
+  > public class DimensionAngular3Pt : Dimension
+  > {
+Entities\DimensionArc.cs:34: [DxfName(DxfFileToken.EntityArcDimension)]
+  > [DxfSubClass(DxfSubclassMarker.ArcDimension)]
+  > public class DimensionArc : Dimension
+Entities\DimensionArc.cs:35: [DxfSubClass(DxfSubclassMarker.ArcDimension)]
+  > public class DimensionArc : Dimension
+  > {
+Entities\DimensionDiameter.cs:13: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.DiametricDimension)]
+  > public class DimensionDiameter : Dimension
+Entities\DimensionDiameter.cs:14: [DxfSubClass(DxfSubclassMarker.DiametricDimension)]
+  > public class DimensionDiameter : Dimension
+  > {
+Entities\DimensionLinear.cs:14: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.LinearDimension)]
+  > public class DimensionLinear : DimensionAligned
+Entities\DimensionLinear.cs:15: [DxfSubClass(DxfSubclassMarker.LinearDimension)]
+  > public class DimensionLinear : DimensionAligned
+  > {
+Entities\DimensionOrdinate.cs:15: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.OrdinateDimension)]
+  > public class DimensionOrdinate : Dimension
+Entities\DimensionOrdinate.cs:16: [DxfSubClass(DxfSubclassMarker.OrdinateDimension)]
+  > public class DimensionOrdinate : Dimension
+  > {
+Entities\DimensionRadialLarge.cs:13: [DxfName(DxfFileToken.EntityLargeRadialDimension)]
+  > [DxfSubClass(DxfSubclassMarker.RadialDimensionLarge)]
+  > public class DimensionRadialLarge : Dimension
+Entities\DimensionRadialLarge.cs:14: [DxfSubClass(DxfSubclassMarker.RadialDimensionLarge)]
+  > public class DimensionRadialLarge : Dimension
+  > {
+Entities\DimensionRadius.cs:13: [DxfName(DxfFileToken.EntityDimension)]
+  > [DxfSubClass(DxfSubclassMarker.RadialDimension)]
+  > public class DimensionRadius : Dimension
+Entities\DimensionRadius.cs:14: [DxfSubClass(DxfSubclassMarker.RadialDimension)]
+  > public class DimensionRadius : Dimension
+  > {
+Entities\Ellipse.cs:16: [DxfName(DxfFileToken.EntityEllipse)]
+  > [DxfSubClass(DxfSubclassMarker.Ellipse)]
+  > public class Ellipse : Entity
+Entities\Ellipse.cs:17: [DxfSubClass(DxfSubclassMarker.Ellipse)]
+  > public class Ellipse : Entity
+  > {
+Entities\Entity.cs:12: [DxfSubClass(DxfSubclassMarker.Entity)]
+  > public abstract class Entity : CadObject, IEntity
+  > {
+Entities\Face3D.cs:14: [DxfName(DxfFileToken.Entity3DFace)]
+  > [DxfSubClass(DxfSubclassMarker.Face3d)]
+  > public class Face3D : Entity
+Entities\Face3D.cs:15: [DxfSubClass(DxfSubclassMarker.Face3d)]
+  > public class Face3D : Entity
+  > {
+Entities\Hatch.cs:15: [DxfName(DxfFileToken.EntityHatch)]
+  > [DxfSubClass(DxfSubclassMarker.Hatch)]
+  > public partial class Hatch : Entity
+Entities\Hatch.cs:16: [DxfSubClass(DxfSubclassMarker.Hatch)]
+  > public partial class Hatch : Entity
+  > {
+Entities\Insert.cs:17: [DxfName(DxfFileToken.EntityInsert)]
+  > [DxfSubClass(DxfSubclassMarker.Insert)]
+  > public class Insert : Entity
+Entities\Insert.cs:18: [DxfSubClass(DxfSubclassMarker.Insert)]
+  > public class Insert : Entity
+  > {
+Entities\Leader.cs:16: [DxfName(DxfFileToken.EntityLeader)]
+  > [DxfSubClass(DxfSubclassMarker.Leader)]
+  > public class Leader : Entity
+Entities\Leader.cs:17: [DxfSubClass(DxfSubclassMarker.Leader)]
+  > public class Leader : Entity
+  > {
+Entities\Line.cs:13: [DxfName(DxfFileToken.EntityLine)]
+  > [DxfSubClass(DxfSubclassMarker.Line)]
+  > public class Line : Entity
+Entities\Line.cs:14: [DxfSubClass(DxfSubclassMarker.Line)]
+  > public class Line : Entity
+  > {
+Entities\LwPolyLine.cs:15: [DxfName(DxfFileToken.EntityLwPolyline)]
+  > [DxfSubClass(DxfSubclassMarker.LwPolyline)]
+  > public partial class LwPolyline : Entity, IPolyline
+Entities\LwPolyLine.cs:16: [DxfSubClass(DxfSubclassMarker.LwPolyline)]
+  > public partial class LwPolyline : Entity, IPolyline
+  > {
+Entities\Mesh.cs:14: [DxfName(DxfFileToken.EntityMesh)]
+  > [DxfSubClass(DxfSubclassMarker.Mesh)]
+  > public partial class Mesh : Entity
+Entities\Mesh.cs:15: [DxfSubClass(DxfSubclassMarker.Mesh)]
+  > public partial class Mesh : Entity
+  > {
+Entities\MLine.cs:16: [DxfName(DxfFileToken.EntityMLine)]
+  > [DxfSubClass(DxfSubclassMarker.MLine)]
+  > public partial class MLine : Entity
+Entities\MLine.cs:17: [DxfSubClass(DxfSubclassMarker.MLine)]
+  > public partial class MLine : Entity
+  > {
+Entities\MText.cs:15: [DxfName(DxfFileToken.EntityMText)]
+  > [DxfSubClass(DxfSubclassMarker.MText)]
+  > public partial class MText : Entity, IText
+Entities\MText.cs:16: [DxfSubClass(DxfSubclassMarker.MText)]
+  > public partial class MText : Entity, IText
+  > {
+Entities\MultiLeader.cs:19: [DxfName(DxfFileToken.EntityMultiLeader)]
+  > [DxfSubClass(DxfSubclassMarker.MultiLeader)]
+  > public class MultiLeader : Entity
+Entities\MultiLeader.cs:20: [DxfSubClass(DxfSubclassMarker.MultiLeader)]
+  > public class MultiLeader : Entity
+  > {
+Entities\PdfUnderlay.cs:12: [DxfName(DxfFileToken.EntityPdfUnderlay)]
+  > [DxfSubClass(DxfSubclassMarker.Underlay)]
+  > public class PdfUnderlay : UnderlayEntity
+Entities\PdfUnderlay.cs:13: [DxfSubClass(DxfSubclassMarker.Underlay)]
+  > public class PdfUnderlay : UnderlayEntity
+  > {
+Entities\Point.cs:14: [DxfName(DxfFileToken.EntityPoint)]
+  > [DxfSubClass(DxfSubclassMarker.Point)]
+  > public class Point : Entity
+Entities\Point.cs:15: [DxfSubClass(DxfSubclassMarker.Point)]
+  > public class Point : Entity
+  > {
+Entities\PolyfaceMesh.cs:15: [DxfName(DxfFileToken.EntityPolyline)]
+  > [DxfSubClass(DxfSubclassMarker.PolyfaceMesh)]
+  > public class PolyfaceMesh : Polyline
+Entities\PolyfaceMesh.cs:16: [DxfSubClass(DxfSubclassMarker.PolyfaceMesh)]
+  > public class PolyfaceMesh : Polyline
+  > {
+Entities\PolyLine.cs:12: [DxfName(DxfFileToken.EntityPolyline)]
+  > [DxfSubClass(null, true)]
+  > public abstract class Polyline : Entity, IPolyline
+Entities\PolyLine.cs:13: [DxfSubClass(null, true)]
+  > public abstract class Polyline : Entity, IPolyline
+  > {
+Entities\PolyLine2D.cs:15: [DxfName(DxfFileToken.EntityPolyline)]
+  > [DxfSubClass(DxfSubclassMarker.Polyline)]
+  > public class Polyline2D : Polyline
+Entities\PolyLine2D.cs:16: [DxfSubClass(DxfSubclassMarker.Polyline)]
+  > public class Polyline2D : Polyline
+  > {
+Entities\PolyLine3D.cs:15: [DxfName(DxfFileToken.EntityPolyline)]
+  > [DxfSubClass(DxfSubclassMarker.Polyline3d)]
+  > public class Polyline3D : Polyline
+Entities\PolyLine3D.cs:16: [DxfSubClass(DxfSubclassMarker.Polyline3d)]
+  > public class Polyline3D : Polyline
+  > {
+Entities\RasterImage.cs:13: [DxfName(DxfFileToken.EntityImage)]
+  > [DxfSubClass(DxfSubclassMarker.RasterImage)]
+  > public class RasterImage : CadImageBase
+Entities\RasterImage.cs:14: [DxfSubClass(DxfSubclassMarker.RasterImage)]
+  > public class RasterImage : CadImageBase
+  > {
+Entities\Ray.cs:13: [DxfName(DxfFileToken.EntityRay)]
+  > [DxfSubClass(DxfSubclassMarker.Ray)]
+  > public class Ray : Entity
+Entities\Ray.cs:14: [DxfSubClass(DxfSubclassMarker.Ray)]
+  > public class Ray : Entity
+  > {
+Entities\Seqend.cs:12: [DxfName(DxfFileToken.EntitySeqend)]
+  > public class Seqend : Entity
+  > {
+Entities\Shape.cs:15: [DxfName(DxfFileToken.EntityShape)]
+  > [DxfSubClass(DxfSubclassMarker.Shape)]
+  > public class Shape : Entity
+Entities\Shape.cs:16: [DxfSubClass(DxfSubclassMarker.Shape)]
+  > public class Shape : Entity
+  > {
+Entities\Solid.cs:13: [DxfName(DxfFileToken.EntitySolid)]
+  > [DxfSubClass(DxfSubclassMarker.Solid)]
+  > public class Solid : Entity
+Entities\Solid.cs:14: [DxfSubClass(DxfSubclassMarker.Solid)]
+  > public class Solid : Entity
+  > {
+Entities\Solid3D.cs:13: [DxfName(DxfFileToken.Entity3DSolid)]
+  > [DxfSubClass(DxfSubclassMarker.ModelerGeometry)]
+  > public class Solid3D : Entity
+Entities\Solid3D.cs:14: [DxfSubClass(DxfSubclassMarker.ModelerGeometry)]
+  > public class Solid3D : Entity
+  > {
+Entities\Spline.cs:14: [DxfName(DxfFileToken.EntitySpline)]
+  > [DxfSubClass(DxfSubclassMarker.Spline)]
+  > public class Spline : Entity
+Entities\Spline.cs:15: [DxfSubClass(DxfSubclassMarker.Spline)]
+  > public class Spline : Entity
+  > {
+Entities\TextEntity.cs:15: [DxfName(DxfFileToken.EntityText)]
+  > [DxfSubClass(DxfSubclassMarker.Text)]
+  > public class TextEntity : Entity, IText
+Entities\TextEntity.cs:16: [DxfSubClass(DxfSubclassMarker.Text)]
+  > public class TextEntity : Entity, IText
+  > {
+Entities\Tolerance.cs:15: [DxfName(DxfFileToken.EntityTolerance)]
+  > [DxfSubClass(DxfSubclassMarker.Tolerance)]
+  > public class Tolerance : Entity
+Entities\Tolerance.cs:16: [DxfSubClass(DxfSubclassMarker.Tolerance)]
+  > public class Tolerance : Entity
+  > {
+Entities\UnderlayEntity.cs:11: [DxfSubClass(null, true)]
+  > public abstract class UnderlayEntity : Entity
+  > {
+Entities\Vertex.cs:9: [DxfSubClass(DxfSubclassMarker.Vertex, true)]
+  > public abstract class Vertex : Entity, IVertex
+  > {
+Entities\Vertex2D.cs:13: [DxfName(DxfFileToken.EntityVertex)]
+  > [DxfSubClass(DxfSubclassMarker.PolylineVertex)]
+  > public class Vertex2D : Vertex
+Entities\Vertex2D.cs:14: [DxfSubClass(DxfSubclassMarker.PolylineVertex)]
+  > public class Vertex2D : Vertex
+  > {
+Entities\Vertex3D.cs:12: [DxfName(DxfFileToken.EntityVertex)]
+  > [DxfSubClass(DxfSubclassMarker.Polyline3dVertex)]
+  > public class Vertex3D : Vertex
+Entities\Vertex3D.cs:13: [DxfSubClass(DxfSubclassMarker.Polyline3dVertex)]
+  > public class Vertex3D : Vertex
+  > {
+Entities\VertexFaceMesh.cs:12: [DxfName(DxfFileToken.EntityVertex)]
+  > [DxfSubClass(DxfSubclassMarker.PolyfaceMeshVertex)]
+  > public class VertexFaceMesh : Vertex
+Entities\VertexFaceMesh.cs:13: [DxfSubClass(DxfSubclassMarker.PolyfaceMeshVertex)]
+  > public class VertexFaceMesh : Vertex
+  > {
+Entities\VertexFaceRecord.cs:12: [DxfName(DxfFileToken.EntityVertex)]
+  > [DxfSubClass(DxfSubclassMarker.PolyfaceMeshFace)]
+  > public class VertexFaceRecord : Vertex
+Entities\VertexFaceRecord.cs:13: [DxfSubClass(DxfSubclassMarker.PolyfaceMeshFace)]
+  > public class VertexFaceRecord : Vertex
+  > {
+Entities\Viewport.cs:18: [DxfName(DxfFileToken.EntityViewport)]
+  > [DxfSubClass(DxfSubclassMarker.Viewport)]
+  > public class Viewport : Entity
+Entities\Viewport.cs:19: [DxfSubClass(DxfSubclassMarker.Viewport)]
+  > public class Viewport : Entity
+  > {
+Entities\Wipeout.cs:12: [DxfName(DxfFileToken.EntityWipeout)]
+  > [DxfSubClass(DxfSubclassMarker.Wipeout)]
+  > public class Wipeout : CadImageBase
+Entities\Wipeout.cs:13: [DxfSubClass(DxfSubclassMarker.Wipeout)]
+  > public class Wipeout : CadImageBase
+  > {
+Entities\XLine.cs:13: [DxfName(DxfFileToken.EntityXline)]
+  > [DxfSubClass(DxfSubclassMarker.XLine)]
+  > public class XLine : Entity
+Entities\XLine.cs:14: [DxfSubClass(DxfSubclassMarker.XLine)]
+  > public class XLine : Entity
+  > {
+Objects\AcdbPlaceHolder.cs:12: [DxfName(DxfFileToken.ObjectPlaceholder)]
+  > [DxfSubClass(DxfSubclassMarker.AcDbPlaceHolder)]
+  > public class AcdbPlaceHolder : NonGraphicalObject
+Objects\AcdbPlaceHolder.cs:13: [DxfSubClass(DxfSubclassMarker.AcDbPlaceHolder)]
+  > public class AcdbPlaceHolder : NonGraphicalObject
+  > {
+Objects\BookColor.cs:15: [DxfName(DxfFileToken.ObjectDBColor)]
+  > [DxfSubClass(DxfSubclassMarker.DbColor)]
+  > public class BookColor : NonGraphicalObject
+Objects\BookColor.cs:16: [DxfSubClass(DxfSubclassMarker.DbColor)]
+  > public class BookColor : NonGraphicalObject
+  > {
+Objects\CadDictionary.cs:17: [DxfName(DxfFileToken.ObjectDictionary)]
+  > [DxfSubClass(DxfSubclassMarker.Dictionary)]
+  > public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGraphicalObject>, IDisposable
+Objects\CadDictionary.cs:18: [DxfSubClass(DxfSubclassMarker.Dictionary)]
+  > public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGraphicalObject>, IDisposable
+  > {
+Objects\CadDictionaryWithDefault.cs:12: [DxfName(DxfFileToken.ObjectDictionaryWithDefault)]
+  > [DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
+  > public class CadDictionaryWithDefault : CadDictionary
+Objects\CadDictionaryWithDefault.cs:13: [DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
+  > public class CadDictionaryWithDefault : CadDictionary
+  > {
+Objects\DictionaryVariable.cs:12: [DxfName(DxfFileToken.ObjectDictionaryVar)]
+  > [DxfSubClass(DxfSubclassMarker.DictionaryVariables)]
+  > public class DictionaryVariable : NonGraphicalObject
+Objects\DictionaryVariable.cs:13: [DxfSubClass(DxfSubclassMarker.DictionaryVariables)]
+  > public class DictionaryVariable : NonGraphicalObject
+  > {
+Objects\Evaluations\EvaluationGraph.cs:10: [DxfName(DxfFileToken.ObjectEvalGraph)]
+  > [DxfSubClass(DxfSubclassMarker.EvalGraph)]
+  > public partial class EvaluationGraph : NonGraphicalObject
+Objects\Evaluations\EvaluationGraph.cs:11: [DxfSubClass(DxfSubclassMarker.EvalGraph)]
+  > public partial class EvaluationGraph : NonGraphicalObject
+  > {
+Objects\Group.cs:14: [DxfName(DxfFileToken.TableGroup)]
+  > [DxfSubClass(DxfSubclassMarker.Group)]
+  > public class Group : NonGraphicalObject
+Objects\Group.cs:15: [DxfSubClass(DxfSubclassMarker.Group)]
+  > public class Group : NonGraphicalObject
+  > {
+Objects\ImageDefinition.cs:13: [DxfName(DxfFileToken.ObjectImageDefinition)]
+  > [DxfSubClass(DxfSubclassMarker.RasterImageDef)]
+  > public class ImageDefinition : NonGraphicalObject
+Objects\ImageDefinition.cs:14: [DxfSubClass(DxfSubclassMarker.RasterImageDef)]
+  > public class ImageDefinition : NonGraphicalObject
+  > {
+Objects\ImageDefinitionReactor.cs:12: [DxfName(DxfFileToken.ObjectImageDefinitionReactor)]
+  > [DxfSubClass(DxfSubclassMarker.RasterImageDefReactor)]
+  > public class ImageDefinitionReactor : NonGraphicalObject
+Objects\ImageDefinitionReactor.cs:13: [DxfSubClass(DxfSubclassMarker.RasterImageDefReactor)]
+  > public class ImageDefinitionReactor : NonGraphicalObject
+  > {
+Objects\Layout.cs:18: [DxfName(DxfFileToken.ObjectLayout)]
+  > [DxfSubClass(DxfSubclassMarker.Layout)]
+  > public class Layout : PlotSettings
+Objects\Layout.cs:19: [DxfSubClass(DxfSubclassMarker.Layout)]
+  > public class Layout : PlotSettings
+  > {
+Objects\MLineStyle.cs:13: [DxfName(DxfFileToken.ObjectMLineStyle)]
+  > [DxfSubClass(DxfSubclassMarker.MLineStyle)]
+  > public partial class MLineStyle : NonGraphicalObject
+Objects\MLineStyle.cs:14: [DxfSubClass(DxfSubclassMarker.MLineStyle)]
+  > public partial class MLineStyle : NonGraphicalObject
+  > {
+Objects\MultiLeaderStyle.cs:15: [DxfName(DxfFileToken.ObjectMLeaderStyle)]
+  > [DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
+  > public class MultiLeaderStyle : NonGraphicalObject
+Objects\MultiLeaderStyle.cs:16: [DxfSubClass(DxfSubclassMarker.MLeaderStyle)]
+  > public class MultiLeaderStyle : NonGraphicalObject
+  > {
+Objects\NonGraphicalObject.cs:9: [DxfSubClass(null, true)]
+  > public abstract class NonGraphicalObject : CadObject, INamedCadObject
+  > {
+Objects\PdfUnderlayDefinition.cs:12: [DxfName(DxfFileToken.ObjectPdfDefinition)]
+  > [DxfSubClass(DxfSubclassMarker.UnderlayDefinition)]
+  > public class PdfUnderlayDefinition : UnderlayDefinition
+Objects\PdfUnderlayDefinition.cs:13: [DxfSubClass(DxfSubclassMarker.UnderlayDefinition)]
+  > public class PdfUnderlayDefinition : UnderlayDefinition
+  > {
+Objects\PlotSettings.cs:14: [DxfName(DxfFileToken.ObjectPlotSettings)]
+  > [DxfSubClass(DxfSubclassMarker.PlotSettings)]
+  > public class PlotSettings : NonGraphicalObject
+Objects\PlotSettings.cs:15: [DxfSubClass(DxfSubclassMarker.PlotSettings)]
+  > public class PlotSettings : NonGraphicalObject
+  > {
+Objects\Scale.cs:13: [DxfName(DxfFileToken.ObjectScale)]
+  > [DxfSubClass(DxfSubclassMarker.Scale)]
+  > public class Scale : NonGraphicalObject
+Objects\Scale.cs:14: [DxfSubClass(DxfSubclassMarker.Scale)]
+  > public class Scale : NonGraphicalObject
+  > {
+Objects\SortEntitiesTable.cs:16: [DxfName(DxfFileToken.ObjectSortEntsTable)]
+  > [DxfSubClass(DxfSubclassMarker.SortentsTable)]
+  > public partial class SortEntitiesTable : NonGraphicalObject
+Objects\SortEntitiesTable.cs:17: [DxfSubClass(DxfSubclassMarker.SortentsTable)]
+  > public partial class SortEntitiesTable : NonGraphicalObject
+  > {
+Objects\UnderlayDefinition.cs:8: [DxfSubClass(null, true)]
+  > public abstract class UnderlayDefinition : NonGraphicalObject
+  > {
+Objects\VisualStyle.cs:12: [DxfName(DxfFileToken.ObjectVisualStyle)]
+  > [DxfSubClass(DxfSubclassMarker.VisualStyle)]
+  > public class VisualStyle : NonGraphicalObject
+Objects\VisualStyle.cs:13: [DxfSubClass(DxfSubclassMarker.VisualStyle)]
+  > public class VisualStyle : NonGraphicalObject
+  > {
+Objects\XRecrod.cs:16: [DxfName(DxfFileToken.ObjectXRecord)]
+  > [DxfSubClass(DxfSubclassMarker.XRecord)]
+  > public partial class XRecord : NonGraphicalObject
+Objects\XRecrod.cs:17: [DxfSubClass(DxfSubclassMarker.XRecord)]
+  > public partial class XRecord : NonGraphicalObject
+  > {
+Tables\AppId.cs:13: [DxfName(DxfFileToken.TableAppId)]
+  > [DxfSubClass(DxfSubclassMarker.ApplicationId)]
+  > public class AppId : TableEntry
+Tables\AppId.cs:14: [DxfSubClass(DxfSubclassMarker.ApplicationId)]
+  > public class AppId : TableEntry
+  > {
+Tables\BlockRecord.cs:18: [DxfName(DxfFileToken.TableBlockRecord)]
+  > [DxfSubClass(DxfSubclassMarker.BlockRecord)]
+  > public class BlockRecord : TableEntry
+Tables\BlockRecord.cs:19: [DxfSubClass(DxfSubclassMarker.BlockRecord)]
+  > public class BlockRecord : TableEntry
+  > {
+Tables\Collections\Table.cs:10: [DxfSubClass(DxfSubclassMarker.Table)]
+  > public abstract class Table<T> : CadObject, ITable, IObservableCadCollection<T>, IDisposable
+  > where T : TableEntry
+Tables\DimensionStyle.cs:18: [DxfName(DxfFileToken.TableDimstyle)]
+  > [DxfSubClass(DxfSubclassMarker.DimensionStyle)]
+  > public class DimensionStyle : TableEntry
+Tables\DimensionStyle.cs:19: [DxfSubClass(DxfSubclassMarker.DimensionStyle)]
+  > public class DimensionStyle : TableEntry
+  > {
+Tables\Layer.cs:14: [DxfName(DxfFileToken.TableLayer)]
+  > [DxfSubClass(DxfSubclassMarker.Layer)]
+  > public class Layer : TableEntry
+Tables\Layer.cs:15: [DxfSubClass(DxfSubclassMarker.Layer)]
+  > public class Layer : TableEntry
+  > {
+Tables\LineType.cs:15: [DxfName(DxfFileToken.TableLinetype)]
+  > [DxfSubClass(DxfSubclassMarker.Linetype)]
+  > public partial class LineType : TableEntry
+Tables\LineType.cs:16: [DxfSubClass(DxfSubclassMarker.Linetype)]
+  > public partial class LineType : TableEntry
+  > {
+Tables\TableEntry.cs:6: [DxfSubClass(DxfSubclassMarker.TableRecord, true)]
+  > public abstract class TableEntry : CadObject, INamedCadObject
+  > {
+Tables\TextStyle.cs:13: [DxfName(DxfFileToken.TableStyle)]
+  > [DxfSubClass(DxfSubclassMarker.TextStyle)]
+  > public class TextStyle : TableEntry
+Tables\TextStyle.cs:14: [DxfSubClass(DxfSubclassMarker.TextStyle)]
+  > public class TextStyle : TableEntry
+  > {
+Tables\UCS.cs:13: [DxfName(DxfFileToken.TableUcs)]
+  > [DxfSubClass(DxfSubclassMarker.Ucs)]
+  > public class UCS : TableEntry
+Tables\UCS.cs:14: [DxfSubClass(DxfSubclassMarker.Ucs)]
+  > public class UCS : TableEntry
+  > {
+Tables\View.cs:14: [DxfName(DxfFileToken.TableView)]
+  > [DxfSubClass(DxfSubclassMarker.View)]
+  > public class View : TableEntry
+Tables\View.cs:15: [DxfSubClass(DxfSubclassMarker.View)]
+  > public class View : TableEntry
+  > {
+Tables\VPort.cs:17: [DxfName(DxfFileToken.TableVport)]
+  > [DxfSubClass(DxfSubclassMarker.VPort)]
+  > public class VPort : TableEntry
+Tables\VPort.cs:18: [DxfSubClass(DxfSubclassMarker.VPort)]
+  > public class VPort : TableEntry
+  > {
+
+== DXF Property Mappings ==
+Blocks\Block.cs:36: [DxfCodeValue(2, 3)]
+  > public string Name
+Blocks\Block.cs:46: [DxfCodeValue(70)]
+  > public BlockTypeFlags Flags { get; set; }
+Blocks\Block.cs:52: [DxfCodeValue(10, 20, 30)]
+  > public XYZ BasePoint { get; set; } = XYZ.Zero;
+Blocks\Block.cs:58: [DxfCodeValue(1)]
+  > public string XrefPath { get; set; }
+Blocks\Block.cs:64: [DxfCodeValue(4)]
+  > public string Comments { get; set; }
+CadObject.cs:34: [DxfCodeValue(5)]
+  > public ulong Handle { get; internal set; }
+CadObject.cs:40: [DxfCodeValue(DxfReferenceType.Handle, 330)]
+  > public IHandledCadObject Owner { get; internal set; }
+Classes\DxfClass.cs:11: [DxfCodeValue(1)]
+  > public string DxfName { get; set; }
+Classes\DxfClass.cs:17: [DxfCodeValue(2)]
+  > public string CppClassName { get; set; }
+Classes\DxfClass.cs:23: [DxfCodeValue(3)]
+  > public string ApplicationName { get; set; } = "ObjectDBX Classes";
+Classes\DxfClass.cs:29: [DxfCodeValue(90)]
+  > public ProxyFlags ProxyFlags { get; set; }
+Classes\DxfClass.cs:35: [DxfCodeValue(91)]
+  > public int InstanceCount { get; set; }
+Classes\DxfClass.cs:41: [DxfCodeValue(280)]
+  > public bool WasZombie { get; set; }
+Classes\DxfClass.cs:49: [DxfCodeValue(281)]
+  > public bool IsAnEntity { get; set; }
+Entities\Arc.cs:32: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double StartAngle { get; set; } = 0.0;
+Entities\Arc.cs:41: [DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+  > public double EndAngle { get; set; } = Math.PI;
+Entities\AttributeBase.cs:19: [DxfCodeValue(74)]
+  > public override TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
+Entities\AttributeBase.cs:22: [DxfCodeValue(280)]
+  > public byte Version { get; set; }
+Entities\AttributeBase.cs:31: [DxfCodeValue(2)]
+  > public string Tag
+Entities\AttributeBase.cs:54: [DxfCodeValue(70)]
+  > public AttributeFlags Flags { get; set; }
+Entities\AttributeBase.cs:60: [DxfCodeValue(71)]
+  > public AttributeType AttributeType { get; set; } = AttributeType.SingleLine;
+Entities\AttributeDefinition.cs:28: [DxfCodeValue(3)]
+  > public string Prompt { get; set; } = string.Empty;
+Entities\CadImageBase.cs:19: [DxfCodeValue(90)]
+  > public int ClassVersion { get; set; }
+Entities\CadImageBase.cs:25: [DxfCodeValue(10, 20, 30)]
+  > public XYZ InsertPoint { get; set; }
+Entities\CadImageBase.cs:31: [DxfCodeValue(11, 21, 31)]
+  > public XYZ UVector { get; set; } = XYZ.AxisX;
+Entities\CadImageBase.cs:37: [DxfCodeValue(12, 22, 32)]
+  > public XYZ VVector { get; set; } = XYZ.AxisY;
+Entities\CadImageBase.cs:46: [DxfCodeValue(13, 23)]
+  > public XY Size { get; set; }
+Entities\CadImageBase.cs:52: [DxfCodeValue(70)]
+  > public ImageDisplayFlags Flags { get; set; }
+Entities\CadImageBase.cs:58: [DxfCodeValue(280)]
+  > public bool ClippingState { get; set; }
+Entities\CadImageBase.cs:67: [DxfCodeValue(281)]
+  > public byte Brightness
+Entities\CadImageBase.cs:88: [DxfCodeValue(282)]
+  > public byte Contrast
+Entities\CadImageBase.cs:109: [DxfCodeValue(283)]
+  > public byte Fade
+Entities\CadImageBase.cs:127: [DxfCodeValue(290)]
+  > public ClipMode ClipMode { get; set; }
+Entities\CadImageBase.cs:133: [DxfCodeValue(71)]
+  > public ClipType ClipType { get; set; } = ClipType.Rectangular;
+Entities\CadImageBase.cs:142: [DxfCodeValue(DxfReferenceType.Count, 91)]
+  > [DxfCollectionCodeValue(14, 24)]
+Entities\CadImageBase.cs:149: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public ImageDefinition Definition
+Entities\CadImageBase.cs:175: [DxfCodeValue(DxfReferenceType.Handle, 360)]
+  > internal ImageDefinitionReactor DefinitionReactor
+Entities\Circle.cs:30: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Circle.cs:36: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\Circle.cs:42: [DxfCodeValue(10, 20, 30)]
+  > public XYZ Center { get; set; } = XYZ.Zero;
+Entities\Circle.cs:48: [DxfCodeValue(40)]
+  > public double Radius
+Entities\Dimension.cs:26: [DxfCodeValue(280)]
+  > public byte Version { get; set; }
+Entities\Dimension.cs:32: [DxfCodeValue(DxfReferenceType.Name, 2)]
+  > public BlockRecord Block { get; set; }
+Entities\Dimension.cs:38: [DxfCodeValue(10, 20, 30)]
+  > public XYZ DefinitionPoint { get; set; }
+Entities\Dimension.cs:44: [DxfCodeValue(11, 21, 31)]
+  > public XYZ TextMiddlePoint { get; set; }
+Entities\Dimension.cs:50: [DxfCodeValue(12, 22, 32)]
+  > public XYZ InsertionPoint { get; set; }
+Entities\Dimension.cs:56: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Dimension.cs:62: [DxfCodeValue(70)]
+  > public DimensionType Flags
+Entities\Dimension.cs:96: [DxfCodeValue(71)]
+  > public AttachmentPointType AttachmentPoint { get; set; }
+Entities\Dimension.cs:102: [DxfCodeValue(DxfReferenceType.Optional, 72)]
+  > public LineSpacingStyleType LineSpacingStyle { get; set; }
+Entities\Dimension.cs:114: [DxfCodeValue(DxfReferenceType.Optional, 41)]
+  > public double LineSpacingFactor { get; set; }
+Entities\Dimension.cs:120: [DxfCodeValue(DxfReferenceType.Optional, 42)]
+  > public abstract double Measurement { get; }
+Entities\Dimension.cs:134: [DxfCodeValue(74)]
+  > public bool FlipArrow1 { get; set; }
+Entities\Dimension.cs:148: [DxfCodeValue(75)]
+  > public bool FlipArrow2 { get; set; }
+Entities\Dimension.cs:160: [DxfCodeValue(DxfReferenceType.Optional, 1)]
+  > public string Text { get; set; }
+Entities\Dimension.cs:169: [DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 53)]
+  > public double TextRotation { get; set; }
+Entities\Dimension.cs:176: [DxfCodeValue(DxfReferenceType.Optional | DxfReferenceType.IsAngle, 51)]
+  > public double HorizontalDirection { get; set; }
+Entities\Dimension.cs:184: [DxfCodeValue(DxfReferenceType.Name, 3)]
+  > public DimensionStyle Style
+Entities\DimensionAligned.cs:29: [DxfCodeValue(13, 23, 33)]
+  > public XYZ FirstPoint { get; set; }
+Entities\DimensionAligned.cs:35: [DxfCodeValue(14, 24, 34)]
+  > public XYZ SecondPoint { get; set; }
+Entities\DimensionAligned.cs:43: [DxfCodeValue(DxfReferenceType.Optional, 52)]
+  > public double ExtLineRotation { get; set; }
+Entities\DimensionAngular2Line.cs:29: [DxfCodeValue(13, 23, 33)]
+  > public XYZ FirstPoint { get; set; }
+Entities\DimensionAngular2Line.cs:35: [DxfCodeValue(14, 24, 34)]
+  > public XYZ SecondPoint { get; set; }
+Entities\DimensionAngular2Line.cs:41: [DxfCodeValue(15, 25, 35)]
+  > public XYZ AngleVertex { get; set; }
+Entities\DimensionAngular2Line.cs:47: [DxfCodeValue(16, 26, 36)]
+  > public XYZ DimensionArc { get; set; }
+Entities\DimensionAngular3Pt.cs:30: [DxfCodeValue(13, 23, 33)]
+  > public XYZ FirstPoint { get; set; }
+Entities\DimensionAngular3Pt.cs:36: [DxfCodeValue(14, 24, 34)]
+  > public XYZ SecondPoint { get; set; }
+Entities\DimensionAngular3Pt.cs:42: [DxfCodeValue(15, 25, 35)]
+  > public XYZ AngleVertex { get; set; }
+Entities\DimensionArc.cs:51: [DxfCodeValue(13, 23, 33)]
+  > public XYZ StartExtensionPoint { get; set; }
+Entities\DimensionArc.cs:58: [DxfCodeValue(14, 24, 34)]
+  > public XYZ EndExtensionPoint { get; set; }
+Entities\DimensionArc.cs:64: [DxfCodeValue(15, 25, 35)]
+  > public XYZ CenterPoint { get; set; }
+Entities\DimensionArc.cs:79: [DxfCodeValue(40)]
+  > public double EndAngle { get; set; }
+Entities\DimensionArc.cs:86: [DxfCodeValue(41)]
+  > public double StartAngle { get; set; }
+Entities\DimensionArc.cs:98: [DxfCodeValue(16, 26, 36)]
+  > public XYZ Leader1Point { get; set; }
+Entities\DimensionArc.cs:105: [DxfCodeValue(17, 27, 37)]
+  > public XYZ Leader2Point { get; set; }
+Entities\DimensionDiameter.cs:29: [DxfCodeValue(15, 25, 35)]
+  > public XYZ AngleVertex { get; set; }
+Entities\DimensionDiameter.cs:35: [DxfCodeValue(40)]
+  > public double LeaderLength { get; set; }
+Entities\DimensionLinear.cs:33: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation { get; set; }
+Entities\DimensionOrdinate.cs:31: [DxfCodeValue(13, 23, 33)]
+  > public XYZ FeatureLocation { get; set; }
+Entities\DimensionOrdinate.cs:37: [DxfCodeValue(14, 24, 34)]
+  > public XYZ LeaderEndpoint { get; set; }
+Entities\DimensionRadialLarge.cs:30: [DxfCodeValue(13, 23, 33)]
+  > public XYZ ChordPoint { get; set; }
+Entities\DimensionRadialLarge.cs:37: [DxfCodeValue(14, 24, 34)]
+  > public XYZ OverrideCenter { get; set; }
+Entities\DimensionRadialLarge.cs:44: [DxfCodeValue(15, 25, 35)]
+  > public XYZ JogPoint { get; set; }
+Entities\DimensionRadialLarge.cs:51: [DxfCodeValue(40)]
+  > public double JogAngle { get; set; }
+Entities\DimensionRadius.cs:29: [DxfCodeValue(15, 25, 35)]
+  > public XYZ AngleVertex { get; set; }
+Entities\DimensionRadius.cs:35: [DxfCodeValue(40)]
+  > public double LeaderLength { get; set; }
+Entities\Ellipse.cs:32: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\Ellipse.cs:38: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Ellipse.cs:44: [DxfCodeValue(10, 20, 30)]
+  > public XYZ Center { get; set; } = XYZ.Zero;
+Entities\Ellipse.cs:53: [DxfCodeValue(11, 21, 31)]
+  > public XYZ EndPoint { get; set; } = XYZ.AxisX;
+Entities\Ellipse.cs:59: [DxfCodeValue(40)]
+  > public double RadiusRatio { get; set; } = 0.0;
+Entities\Ellipse.cs:68: [DxfCodeValue(41)]
+  > public double StartParameter { get; set; } = 0.0;
+Entities\Ellipse.cs:77: [DxfCodeValue(42)]
+  > public double EndParameter { get; set; } = MathUtils.TwoPI;
+Entities\Entity.cs:19: [DxfCodeValue(DxfReferenceType.Name, 8)]
+  > public Layer Layer
+Entities\Entity.cs:42: [DxfCodeValue(62, 420)]
+  > public Color Color { get; set; } = Color.ByLayer;
+Entities\Entity.cs:50: [DxfCodeValue(DxfReferenceType.Name, 430)]
+  > public BookColor BookColor
+Entities\Entity.cs:68: [DxfCodeValue(370)]
+  > public LineweightType LineWeight { get; set; } = LineweightType.ByLayer;
+Entities\Entity.cs:72: [DxfCodeValue(48)]
+  > public double LinetypeScale { get; set; } = 1.0;
+Entities\Entity.cs:76: [DxfCodeValue(60)]
+  > public bool IsInvisible { get; set; } = false;
+Entities\Entity.cs:80: [DxfCodeValue(440)]
+  > public Transparency Transparency { get; set; } = Transparency.ByLayer;
+Entities\Entity.cs:84: [DxfCodeValue(DxfReferenceType.Name, 6)]
+  > public LineType LineType
+Entities\Entity.cs:107: [DxfCodeValue(DxfReferenceType.Handle, 347)]
+  > public Material Material { get; set; }
+Entities\Face3D.cs:30: [DxfCodeValue(10, 20, 30)]
+  > public XYZ FirstCorner { get; set; }
+Entities\Face3D.cs:36: [DxfCodeValue(11, 21, 31)]
+  > public XYZ SecondCorner { get; set; }
+Entities\Face3D.cs:42: [DxfCodeValue(12, 22, 32)]
+  > public XYZ ThirdCorner { get; set; }
+Entities\Face3D.cs:51: [DxfCodeValue(13, 23, 33)]
+  > public XYZ FourthCorner { get; set; }
+Entities\Face3D.cs:57: [DxfCodeValue(70)]
+  > public InvisibleEdgeFlags Flags { get; set; }
+Entities\GradientColor.cs:13: [DxfCodeValue(463)]
+  > public double Value { get; set; }
+Entities\GradientColor.cs:19: [DxfCodeValue(421)]
+  > public Color Color { get; set; }
+Entities\Hatch.BoundaryPath.Arc.cs:18: [DxfCodeValue(10, 20)]
+  > public XY Center { get; set; }
+Entities\Hatch.BoundaryPath.Arc.cs:27: [DxfCodeValue(40)]
+  > public double Radius { get; set; }
+Entities\Hatch.BoundaryPath.Arc.cs:33: [DxfCodeValue(50)]
+  > public double StartAngle { get; set; }
+Entities\Hatch.BoundaryPath.Arc.cs:39: [DxfCodeValue(51)]
+  > public double EndAngle { get; set; }
+Entities\Hatch.BoundaryPath.Arc.cs:45: [DxfCodeValue(73)]
+  > public bool CounterClockWise { get; set; }
+Entities\Hatch.BoundaryPath.cs:23: [DxfCodeValue(92)]
+  > public BoundaryPathFlags Flags
+Entities\Hatch.BoundaryPath.cs:51: [DxfCodeValue(DxfReferenceType.Count, 93)]
+  > public ObservableCollection<Edge> Edges { get; private set; } = new();
+Entities\Hatch.BoundaryPath.cs:57: [DxfCodeValue(DxfReferenceType.Count, 97)]
+  > public List<Entity> Entities { get; set; } = new List<Entity>();
+Entities\Hatch.BoundaryPath.Ellipse.cs:18: [DxfCodeValue(10, 20)]
+  > public XY Center { get; set; }
+Entities\Hatch.BoundaryPath.Ellipse.cs:24: [DxfCodeValue(11, 21)]
+  > public XY MajorAxisEndPoint { get; set; }
+Entities\Hatch.BoundaryPath.Ellipse.cs:30: [DxfCodeValue(40)]
+  > public double MinorToMajorRatio { get; set; }
+Entities\Hatch.BoundaryPath.Ellipse.cs:36: [DxfCodeValue(50)]
+  > public double StartAngle { get; set; }
+Entities\Hatch.BoundaryPath.Ellipse.cs:42: [DxfCodeValue(51)]
+  > public double EndAngle { get; set; }
+Entities\Hatch.BoundaryPath.Ellipse.cs:48: [DxfCodeValue(73)]
+  > public bool CounterClockWise { get; set; }
+Entities\Hatch.BoundaryPath.Line.cs:17: [DxfCodeValue(10, 20)]
+  > public XY Start { get; set; }
+Entities\Hatch.BoundaryPath.Line.cs:23: [DxfCodeValue(11, 21)]
+  > public XY End { get; set; }
+Entities\Hatch.BoundaryPath.Polyline.cs:20: [DxfCodeValue(72)]
+  > public bool HasBulge => this.Bulges.Any(b => b != 0);
+Entities\Hatch.BoundaryPath.Polyline.cs:26: [DxfCodeValue(73)]
+  > public bool IsClosed { get; set; }
+Entities\Hatch.BoundaryPath.Polyline.cs:35: [DxfCodeValue(DxfReferenceType.Optional, 42)]
+  > public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
+Entities\Hatch.BoundaryPath.Polyline.cs:44: [DxfCodeValue(DxfReferenceType.Count, 93)]
+  > public List<XYZ> Vertices { get; set; } = new();
+Entities\Hatch.BoundaryPath.Spline.cs:19: [DxfCodeValue(94)]
+  > public int Degree { get; set; }
+Entities\Hatch.BoundaryPath.Spline.cs:25: [DxfCodeValue(73)]
+  > public bool Rational { get; set; }
+Entities\Hatch.BoundaryPath.Spline.cs:31: [DxfCodeValue(74)]
+  > public bool Periodic { get; set; }
+Entities\Hatch.BoundaryPath.Spline.cs:37: [DxfCodeValue(95)]
+  > public List<double> Knots { get; set; } = new List<double>();
+Entities\Hatch.BoundaryPath.Spline.cs:43: [DxfCodeValue(96)]
+  > //42	Weights(optional, default = 1)	??
+Entities\Hatch.BoundaryPath.Spline.cs:50: [DxfCodeValue(97)]
+  > public List<XY> FitPoints { get; set; } = new List<XY>();
+Entities\Hatch.BoundaryPath.Spline.cs:56: [DxfCodeValue(12, 22)]
+  > public XY StartTangent { get; set; }
+Entities\Hatch.BoundaryPath.Spline.cs:62: [DxfCodeValue(13, 23)]
+  > public XY EndTangent { get; set; }
+Entities\Hatch.cs:31: [DxfCodeValue(30)]
+  > public double Elevation { get; set; }
+Entities\Hatch.cs:37: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Hatch.cs:46: [DxfCodeValue(DxfReferenceType.Name, 2)]
+  > public HatchPattern Pattern { get; set; } = HatchPattern.Solid;
+Entities\Hatch.cs:52: [DxfCodeValue(70)]
+  > public bool IsSolid { get; set; }
+Entities\Hatch.cs:60: [DxfCodeValue(71)]
+  > public bool IsAssociative { get; set; }
+Entities\Hatch.cs:66: [DxfCodeValue(75)]
+  > public HatchStyleType Style { get; set; }
+Entities\Hatch.cs:72: [DxfCodeValue(76)]
+  > public HatchPatternType PatternType { get; set; }
+Entities\Hatch.cs:78: [DxfCodeValue(DxfReferenceType.IsAngle, 52)]
+  > public double PatternAngle { get { return Pattern.Angle; } set { Pattern.Angle = value; } }
+Entities\Hatch.cs:84: [DxfCodeValue(41)]
+  > public double PatternScale { get { return Pattern.Scale; } set { Pattern.Scale = value; } }
+Entities\Hatch.cs:94: [DxfCodeValue(77)]
+  > public bool IsDouble { get; set; }
+Entities\Hatch.cs:104: [DxfCodeValue(47)]
+  > public double PixelSize { get; set; }
+Entities\Hatch.cs:114: [DxfCodeValue(DxfReferenceType.Count, 98)]
+  > [DxfCollectionCodeValue(10, 20)]
+Entities\Hatch.cs:121: [DxfCodeValue(DxfReferenceType.Name, 470)]
+  > public HatchGradientPattern GradientColor { get; set; } = new HatchGradientPattern();
+Entities\Hatch.cs:127: [DxfCodeValue(DxfReferenceType.Count, 91)]
+  > public List<BoundaryPath> Paths { get; set; } = new List<BoundaryPath>();
+Entities\HatchGradientPattern.cs:11: [DxfCodeValue(450)]
+  > public bool Enabled { get; set; } = false;
+Entities\HatchGradientPattern.cs:17: [DxfCodeValue(451)]
+  > internal int Reserved { get; set; }
+Entities\HatchGradientPattern.cs:23: [DxfCodeValue(460)]
+  > public double Angle { get; set; }
+Entities\HatchGradientPattern.cs:31: [DxfCodeValue(461)]
+  > public double Shift { get; set; }
+Entities\HatchGradientPattern.cs:41: [DxfCodeValue(452)]
+  > public bool IsSingleColorGradient { get; set; }
+Entities\HatchGradientPattern.cs:47: [DxfCodeValue(462)]
+  > public double ColorTint { get; set; }
+Entities\HatchGradientPattern.cs:57: [DxfCodeValue(453)]
+  > public List<GradientColor> Colors { get; set; } = new List<GradientColor>();
+Entities\HatchGradientPattern.cs:63: [DxfCodeValue(470)]
+  > public string Name { get; set; }
+Entities\HatchPattern.cs:16: [DxfCodeValue(DxfReferenceType.IsAngle, 53)]
+  > public double Angle { get; set; }
+Entities\HatchPattern.cs:22: [DxfCodeValue(43, 44)]
+  > public XY BasePoint { get; set; }
+Entities\HatchPattern.cs:28: [DxfCodeValue(45, 46)]
+  > public XY Offset { get; set; }
+Entities\HatchPattern.cs:41: [DxfCodeValue(2)]
+  > public string Name { get; set; }
+Entities\HatchPattern.cs:44: [DxfCodeValue(DxfReferenceType.IsAngle, 53)]
+  > public double Angle { get; set; }
+Entities\Insert.cs:46: [DxfCodeValue(DxfReferenceType.Name, 2)]
+  > public BlockRecord Block { get; internal set; }
+Entities\Insert.cs:52: [DxfCodeValue(10, 20, 30)]
+  > public XYZ InsertPoint { get; set; } = XYZ.Zero;
+Entities\Insert.cs:58: [DxfCodeValue(41)]
+  > public double XScale { get; set; } = 1;
+Entities\Insert.cs:64: [DxfCodeValue(42)]
+  > public double YScale { get; set; } = 1;
+Entities\Insert.cs:70: [DxfCodeValue(43)]
+  > public double ZScale { get; set; } = 1;
+Entities\Insert.cs:79: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation { get; set; } = 0.0;
+Entities\Insert.cs:85: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Insert.cs:91: [DxfCodeValue(70)]
+  > public ushort ColumnCount { get; set; } = 1;
+Entities\Insert.cs:97: [DxfCodeValue(71)]
+  > public ushort RowCount { get; set; } = 1;
+Entities\Insert.cs:103: [DxfCodeValue(44)]
+  > public double ColumnSpacing { get; set; } = 0;
+Entities\Insert.cs:109: [DxfCodeValue(45)]
+  > public double RowSpacing { get; set; } = 0;
+Entities\Insert.cs:115: [DxfCodeValue(DxfReferenceType.Ignored, 66)]
+  > public bool HasAttributes { get { return this.Attributes.Any(); } }
+Entities\Leader.cs:32: [DxfCodeValue(DxfReferenceType.Name, 3)]
+  > public DimensionStyle Style
+Entities\Leader.cs:57: [DxfCodeValue(71)]
+  > public bool ArrowHeadEnabled { get; set; }
+Entities\Leader.cs:67: [DxfCodeValue(72)]
+  > public LeaderPathType PathType { get; set; }
+Entities\Leader.cs:79: [DxfCodeValue(73)]
+  > public LeaderCreationType CreationType { get; set; } = LeaderCreationType.CreatedWithoutAnnotation;
+Entities\Leader.cs:89: [DxfCodeValue(74)]
+  > public bool HookLineDirection { get; set; }
+Entities\Leader.cs:95: [DxfCodeValue(75)]
+  > public bool HasHookline { get; set; }
+Entities\Leader.cs:101: [DxfCodeValue(40)]
+  > public double TextHeight { get; set; }
+Entities\Leader.cs:107: [DxfCodeValue(41)]
+  > public double TextWidth { get; set; }
+Entities\Leader.cs:113: [DxfCodeValue(DxfReferenceType.Count, 76)]
+  > [DxfCollectionCodeValue(10, 20, 30)]
+Entities\Leader.cs:122: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public Entity AssociatedAnnotation { get; internal set; }
+Entities\Leader.cs:128: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Leader.cs:134: [DxfCodeValue(211, 221, 231)]
+  > public XYZ HorizontalDirection { get; set; } = XYZ.AxisX;
+Entities\Leader.cs:140: [DxfCodeValue(212, 222, 232)]
+  > public XYZ BlockOffset { get; set; } = XYZ.Zero;
+Entities\Leader.cs:146: [DxfCodeValue(213, 223, 233)]
+  > public XYZ AnnotationOffset { get; set; } = XYZ.Zero;
+Entities\Line.cs:29: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\Line.cs:35: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Line.cs:41: [DxfCodeValue(10, 20, 30)]
+  > public XYZ StartPoint { get; set; } = XYZ.Zero;
+Entities\Line.cs:47: [DxfCodeValue(11, 21, 31)]
+  > public XYZ EndPoint { get; set; } = XYZ.Zero;
+Entities\LwPolyLine.cs:31: [DxfCodeValue(70)]
+  > public LwPolylineFlags Flags { get; set; }
+Entities\LwPolyLine.cs:40: [DxfCodeValue(43)]
+  > public double ConstantWidth { get; set; } = 0.0;
+Entities\LwPolyLine.cs:46: [DxfCodeValue(38)]
+  > public double Elevation { get; set; } = 0.0;
+Entities\LwPolyLine.cs:52: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\LwPolyLine.cs:58: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\LwPolyLine.cs:64: [DxfCodeValue(DxfReferenceType.Count, 90)]
+  > public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+Entities\LwPolyline.Vertex.cs:13: [DxfCodeValue(10, 20)]
+  > public XY Location { get; set; } = XY.Zero;
+Entities\LwPolyline.Vertex.cs:19: [DxfCodeValue(DxfReferenceType.Optional, 40)]
+  > public double StartWidth { get; set; } = 0.0;
+Entities\LwPolyline.Vertex.cs:25: [DxfCodeValue(DxfReferenceType.Optional, 41)]
+  > public double EndWidth { get; set; } = 0.0;
+Entities\LwPolyline.Vertex.cs:31: [DxfCodeValue(DxfReferenceType.Optional, 42)]
+  > public double Bulge { get; set; } = 0.0;
+Entities\LwPolyline.Vertex.cs:37: [DxfCodeValue(70)]
+  > public VertexFlags Flags { get; set; } = VertexFlags.Default;
+Entities\LwPolyline.Vertex.cs:43: [DxfCodeValue(50)]
+  > public double CurveTangent { get; set; } = 0;
+Entities\LwPolyline.Vertex.cs:49: [DxfCodeValue(91)]
+  > public int Id { get; set; } = 0;
+Entities\Mesh.cs:30: [DxfCodeValue(71)]
+  > public short Version { get; internal set; }
+Entities\Mesh.cs:36: [DxfCodeValue(72)]
+  > public bool BlendCrease { get; set; }
+Entities\Mesh.cs:42: [DxfCodeValue(91)]
+  > public int SubdivisionLevel { get; set; }
+Entities\Mesh.cs:48: [DxfCodeValue(DxfReferenceType.Count, 92)]
+  > [DxfCollectionCodeValue(10, 20, 30)]
+Entities\Mesh.cs:55: [DxfCodeValue(DxfReferenceType.Count, 93)]
+  > [DxfCollectionCodeValue(90)]
+Entities\Mesh.cs:62: [DxfCodeValue(DxfReferenceType.Count, 94)]
+  > [DxfCollectionCodeValue(90)]
+Entities\MLine.cs:37: [DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Name, 340)]
+  > public MLineStyle Style
+Entities\MLine.cs:62: [DxfCodeValue(40)]
+  > public double ScaleFactor { get; set; } = 1;
+Entities\MLine.cs:68: [DxfCodeValue(70)]
+  > public MLineJustification Justification { get; set; }
+Entities\MLine.cs:74: [DxfCodeValue(71)]
+  > public MLineFlags Flags { get; set; }
+Entities\MLine.cs:80: [DxfCodeValue(10, 20, 30)]
+  > public XYZ StartPoint { get; set; }
+Entities\MLine.cs:86: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\MLine.cs:92: [DxfCodeValue(DxfReferenceType.Count, 72)]
+  > public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+Entities\MLine.Vertex.cs:14: [DxfCodeValue(11, 21, 31)]
+  > public XYZ Position { get; set; }
+Entities\MLine.Vertex.cs:20: [DxfCodeValue(12, 22, 32)]
+  > public XYZ Direction { get; set; }
+Entities\MLine.Vertex.cs:26: [DxfCodeValue(13, 23, 33)]
+  > public XYZ Miter { get; set; }
+Entities\MLine.Vertex.cs:32: [DxfCodeValue(DxfReferenceType.Count, 73)]
+  > public List<Segment> Segments { get; set; } = new List<Segment>();
+Entities\MLine.Vertex.cs:56: [DxfCodeValue(DxfReferenceType.Count, 74)]
+  > [DxfCollectionCodeValue(41)]
+Entities\MLine.Vertex.cs:63: [DxfCodeValue(DxfReferenceType.Count, 75)]
+  > [DxfCollectionCodeValue(42)]
+Entities\MText.cs:31: [DxfCodeValue(10, 20, 30)]
+  > public XYZ InsertPoint { get; set; } = XYZ.Zero;
+Entities\MText.cs:37: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\MText.cs:41: [DxfCodeValue(40)]
+  > public double Height
+Entities\MText.cs:57: [DxfCodeValue(41)]
+  > public double RectangleWidth { get; set; }
+Entities\MText.cs:63: [DxfCodeValue(46)]
+  > public double RectangleHeight { get; set; }
+Entities\MText.cs:69: [DxfCodeValue(71)]
+  > public AttachmentPointType AttachmentPoint { get; set; } = AttachmentPointType.TopLeft;
+Entities\MText.cs:75: [DxfCodeValue(72)]
+  > public DrawingDirectionType DrawingDirection { get; set; }
+Entities\MText.cs:79: [DxfCodeValue(1)]
+  > public string Value { get; set; } = string.Empty;
+Entities\MText.cs:83: [DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
+  > public TextStyle Style
+Entities\MText.cs:111: [DxfCodeValue(11, 21, 31)]
+  > public XYZ AlignmentPoint
+Entities\MText.cs:129: [DxfCodeValue(DxfReferenceType.Ignored, 42)]
+  > public double HorizontalWidth { get; set; } = 0.9;
+Entities\MText.cs:138: [DxfCodeValue(DxfReferenceType.Ignored, 43)]
+  > public double VerticalHeight { get; set; } = 0.2;
+Entities\MText.cs:147: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation
+Entities\MText.cs:161: [DxfCodeValue(73)]
+  > public LineSpacingStyleType LineSpacingStyle { get; set; }
+Entities\MText.cs:170: [DxfCodeValue(44)]
+  > public double LineSpacing { get; set; } = 1.0;
+Entities\MText.cs:176: [DxfCodeValue(90)]
+  > public BackgroundFillFlags BackgroundFillFlags { get; set; } = BackgroundFillFlags.None;
+Entities\MText.cs:182: [DxfCodeValue(45)]
+  > public double BackgroundScale { get; set; } = 1.5;
+Entities\MText.cs:191: [DxfCodeValue(63, 420, 430)]
+  > public Color BackgroundColor { get; set; }
+Entities\MText.cs:197: [DxfCodeValue(441)]
+  > public Transparency BackgroundTransparency { get; set; }
+Entities\MText.TextColumn.cs:13: [DxfCodeValue(75)]
+  > public ColumnType ColumnType { get; set; } = ColumnType.NoColumns;
+Entities\MText.TextColumn.cs:19: [DxfCodeValue(76)]
+  > public int ColumnCount { get { return this.ColumnHeights.Count; } }
+Entities\MText.TextColumn.cs:25: [DxfCodeValue(78)]
+  > public bool ColumnFlowReversed { get; set; }
+Entities\MText.TextColumn.cs:31: [DxfCodeValue(79)]
+  > public bool ColumnAutoHeight { get; set; }
+Entities\MText.TextColumn.cs:37: [DxfCodeValue(48)]
+  > public double ColumnWidth { get; set; }
+Entities\MText.TextColumn.cs:43: [DxfCodeValue(49)]
+  > public double ColumnGutter { get; set; }
+Entities\MText.TextColumn.cs:49: [DxfCodeValue(50)]
+  > public List<double> ColumnHeights { get; } = new List<double>();
+Entities\MultiLeader.cs:50: [DxfCodeValue(94)]
+  > public int ArrowheadIndex { get; set; }
+Entities\MultiLeader.cs:58: [DxfCodeValue(345)]
+  > public BlockRecord Arrowhead { get; set; }
+Entities\MultiLeader.cs:72: [DxfCodeValue(330)]
+  > public AttributeDefinition AttributeDefinition { get; set; }
+Entities\MultiLeader.cs:78: [DxfCodeValue(177)]
+  > public short Index { get; set; }
+Entities\MultiLeader.cs:84: [DxfCodeValue(44)]
+  > public double Width { get; set; }
+Entities\MultiLeader.cs:90: [DxfCodeValue(302)]
+  > public string Text { get; set; }
+Entities\MultiLeader.cs:108: [DxfCodeValue(340)]
+  > public MultiLeaderStyle Style { get; set; }
+Entities\MultiLeader.cs:117: [DxfCodeValue(90)]
+  > public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; }
+Entities\MultiLeader.cs:127: [DxfCodeValue(170)]
+  > public MultiLeaderPathType PathType { get; set; }
+Entities\MultiLeader.cs:143: [DxfCodeValue(91)]
+  > public Color LineColor { get; set; }
+Entities\MultiLeader.cs:160: [DxfCodeValue(341)]
+  > public LineType LeaderLineType { get; set; }
+Entities\MultiLeader.cs:177: [DxfCodeValue(171)]
+  > public LineweightType LeaderLineWeight { get; set; }
+Entities\MultiLeader.cs:186: [DxfCodeValue(290)]
+  > public bool EnableLanding { get; set; }
+Entities\MultiLeader.cs:196: [DxfCodeValue(291)]
+  > public bool EnableDogleg { get; set; }
+Entities\MultiLeader.cs:212: [DxfCodeValue(41)]
+  > public double LandingDistance { get; set; }
+Entities\MultiLeader.cs:228: [DxfCodeValue(342)]
+  > public BlockRecord Arrowhead { get; set; }
+Entities\MultiLeader.cs:249: [DxfCodeValue(42)]
+  > public double ArrowheadSize { get; set; }
+Entities\MultiLeader.cs:256: [DxfCodeValue(172)]
+  > public LeaderContentType ContentType { get; set; }
+Entities\MultiLeader.cs:274: [DxfCodeValue(343)]
+  > public TextStyle TextStyle { get; set; }
+Entities\MultiLeader.cs:292: [DxfCodeValue(173)]
+  > public TextAttachmentType TextLeftAttachment { get; set; }
+Entities\MultiLeader.cs:310: [DxfCodeValue(95)]
+  > public TextAttachmentType TextRightAttachment { get; set; }
+Entities\MultiLeader.cs:320: [DxfCodeValue(174)]
+  > public TextAngleType TextAngle { get; set; }
+Entities\MultiLeader.cs:336: [DxfCodeValue(175)]
+  > public TextAlignmentType TextAlignment { get; set; }
+Entities\MultiLeader.cs:350: [DxfCodeValue(92)]
+  > public Color TextColor { get; set; }
+Entities\MultiLeader.cs:359: [DxfCodeValue(292)]
+  > public bool TextFrame { get; set; }
+Entities\MultiLeader.cs:377: [DxfCodeValue(344)]
+  > public BlockRecord BlockContent { get; set; }
+Entities\MultiLeader.cs:391: [DxfCodeValue(93)]
+  > public Color BlockContentColor { get; set; }
+Entities\MultiLeader.cs:405: [DxfCodeValue(10, 20, 30)]
+  > public XYZ BlockContentScale { get; set; }
+Entities\MultiLeader.cs:416: [DxfCodeValue(DxfReferenceType.IsAngle, 43)]
+  > public double BlockContentRotation { get; set; }
+Entities\MultiLeader.cs:430: [DxfCodeValue(176)]
+  > public BlockContentConnectionType BlockContentConnection { get; set; }
+Entities\MultiLeader.cs:438: [DxfCodeValue(293)]
+  > public bool EnableAnnotationScale { get; set; }
+Entities\MultiLeader.cs:468: [DxfCodeValue(294)]
+  > public bool TextDirectionNegative { get; set; }
+Entities\MultiLeader.cs:474: [DxfCodeValue(178)]
+  > public short TextAligninIPE { get; set; }
+Entities\MultiLeader.cs:491: [DxfCodeValue(179)]
+  > public TextAttachmentPointType TextAttachmentPoint { get; set; }
+Entities\MultiLeader.cs:506: [DxfCodeValue(45)]
+  > public double ScaleFactor { get; set; }
+Entities\MultiLeader.cs:529: [DxfCodeValue(271)]
+  > public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
+Entities\MultiLeader.cs:549: [DxfCodeValue(272)]
+  > public TextAttachmentType TextBottomAttachment { get; set; }
+Entities\MultiLeader.cs:569: [DxfCodeValue(273)]
+  > public TextAttachmentType TextTopAttachment { get; set; }
+Entities\Point.cs:30: [DxfCodeValue(10, 20, 30)]
+  > public XYZ Location { get; set; } = XYZ.Zero;
+Entities\Point.cs:36: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\Point.cs:42: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Point.cs:51: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation { get; set; } = 0.0;
+Entities\PolyLine.cs:20: [DxfCodeValue(30)]
+  > public double Elevation { get; set; } = 0.0;
+Entities\PolyLine.cs:24: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\PolyLine.cs:28: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\PolyLine.cs:34: [DxfCodeValue(70)]
+  > public PolylineFlags Flags { get; set; }
+Entities\PolyLine.cs:40: [DxfCodeValue(40)]
+  > public double StartWidth { get; set; } = 0.0;
+Entities\PolyLine.cs:46: [DxfCodeValue(41)]
+  > public double EndWidth { get; set; } = 0.0;
+Entities\PolyLine.cs:57: [DxfCodeValue(75)]
+  > public SmoothSurfaceType SmoothSurface { get; set; }
+Entities\Ray.cs:29: [DxfCodeValue(10, 20, 30)]
+  > public XYZ StartPoint { get; set; } = XYZ.Zero;
+Entities\Ray.cs:35: [DxfCodeValue(11, 21, 31)]
+  > public XYZ Direction { get; set; } = XYZ.Zero;
+Entities\Shape.cs:31: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\Shape.cs:37: [DxfCodeValue(10, 20, 30)]
+  > public XYZ InsertionPoint { get; set; }
+Entities\Shape.cs:43: [DxfCodeValue(40)]
+  > public double Size { get; set; } = 1.0;
+Entities\Shape.cs:49: [DxfCodeValue(DxfReferenceType.Name, 2)]
+  > public TextStyle ShapeStyle
+Entities\Shape.cs:74: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation { get; set; } = 0;
+Entities\Shape.cs:80: [DxfCodeValue(41)]
+  > public double RelativeXScale { get; set; } = 1;
+Entities\Shape.cs:86: [DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+  > public double ObliqueAngle { get; set; } = 0;
+Entities\Shape.cs:92: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Solid.cs:26: [DxfCodeValue(10, 20, 30)]
+  > public XYZ FirstCorner { get; set; }
+Entities\Solid.cs:29: [DxfCodeValue(11, 21, 31)]
+  > public XYZ SecondCorner { get; set; }
+Entities\Solid.cs:32: [DxfCodeValue(12, 22, 32)]
+  > public XYZ ThirdCorner { get; set; }
+Entities\Solid.cs:36: [DxfCodeValue(13, 23, 33)]
+  > public XYZ FourthCorner { get; set; }
+Entities\Solid.cs:42: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\Solid.cs:48: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Spline.cs:33: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Spline.cs:39: [DxfCodeValue(70)]
+  > public SplineFlags Flags { get; set; }
+Entities\Spline.cs:45: [DxfCodeValue(71)]
+  > public int Degree { get; set; }
+Entities\Spline.cs:51: [DxfCodeValue(DxfReferenceType.Count, 72)]
+  > [DxfCollectionCodeValue(40)]
+Entities\Spline.cs:58: [DxfCodeValue(DxfReferenceType.Count, 73)]
+  > [DxfCollectionCodeValue(10, 20, 30)]
+Entities\Spline.cs:65: [DxfCodeValue(DxfReferenceType.Count, 74)]
+  > [DxfCollectionCodeValue(11, 21, 31)]
+Entities\Spline.cs:72: [DxfCodeValue(42)]
+  > public double KnotTolerance { get; set; } = 0.0000001;
+Entities\Spline.cs:78: [DxfCodeValue(43)]
+  > public double ControlPointTolerance { get; set; } = 0.0000001;
+Entities\Spline.cs:84: [DxfCodeValue(44)]
+  > public double FitTolerance { get; set; } = 0.0000000001;
+Entities\Spline.cs:90: [DxfCodeValue(12, 22, 32)]
+  > public XYZ StartTangent { get; set; }
+Entities\Spline.cs:96: [DxfCodeValue(13, 23, 33)]
+  > public XYZ EndTangent { get; set; }
+Entities\Spline.cs:102: [DxfCodeValue(DxfReferenceType.Count, 41)]
+  > public List<double> Weights { get; } = new List<double>();
+Entities\TextEntity.cs:31: [DxfCodeValue(39)]
+  > public double Thickness { get; set; } = 0.0;
+Entities\TextEntity.cs:37: [DxfCodeValue(10, 20, 30)]
+  > public XYZ InsertPoint { get; set; } = XYZ.Zero;
+Entities\TextEntity.cs:41: [DxfCodeValue(40)]
+  > public double Height
+Entities\TextEntity.cs:58: [DxfCodeValue(1)]
+  > public string Value
+Entities\TextEntity.cs:80: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation { get; set; }
+Entities\TextEntity.cs:89: [DxfCodeValue(DxfReferenceType.Optional, 41)]
+  > public double WidthFactor { get; set; } = 1.0;
+Entities\TextEntity.cs:98: [DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+  > public double ObliqueAngle { get; set; } = 0.0;
+Entities\TextEntity.cs:102: [DxfCodeValue(DxfReferenceType.Name | DxfReferenceType.Optional, 7)]
+  > public TextStyle Style
+Entities\TextEntity.cs:127: [DxfCodeValue(71)]
+  > public TextMirrorFlag Mirror { get; set; } = TextMirrorFlag.None;
+Entities\TextEntity.cs:133: [DxfCodeValue(72)]
+  > public TextHorizontalAlignment HorizontalAlignment { get; set; } = TextHorizontalAlignment.Left;
+Entities\TextEntity.cs:142: [DxfCodeValue(DxfReferenceType.Optional, 11, 21, 31)]
+  > public XYZ AlignmentPoint { get; set; }
+Entities\TextEntity.cs:148: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\TextEntity.cs:154: [DxfCodeValue(DxfReferenceType.Optional, 73)]
+  > public virtual TextVerticalAlignmentType VerticalAlignment { get; set; } = TextVerticalAlignmentType.Baseline;
+Entities\Tolerance.cs:31: [DxfCodeValue(DxfReferenceType.Name, 3)]
+  > public DimensionStyle Style
+Entities\Tolerance.cs:56: [DxfCodeValue(10, 20, 30)]
+  > public XYZ InsertionPoint { get; set; }
+Entities\Tolerance.cs:62: [DxfCodeValue(11, 21, 31)]
+  > public XYZ Direction { get; set; }
+Entities\Tolerance.cs:68: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\Tolerance.cs:74: [DxfCodeValue(1)]
+  > public string Text { get; set; }
+Entities\UnderlayEntity.cs:20: [DxfCodeValue(210, 220, 230)]
+  > public XYZ Normal { get; set; } = XYZ.AxisZ;
+Entities\UnderlayEntity.cs:26: [DxfCodeValue(10, 20, 30)]
+  > public XYZ InsertPoint { get; set; }
+Entities\UnderlayEntity.cs:32: [DxfCodeValue(41)]
+  > public double XScale { get; set; } = 1;
+Entities\UnderlayEntity.cs:38: [DxfCodeValue(42)]
+  > public double YScale { get; set; } = 1;
+Entities\UnderlayEntity.cs:44: [DxfCodeValue(43)]
+  > public double ZScale { get; set; } = 1;
+Entities\UnderlayEntity.cs:53: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation { get; set; } = 0.0;
+Entities\UnderlayEntity.cs:59: [DxfCodeValue(280)]
+  > public UnderlayDisplayFlags Flags { get; set; }
+Entities\UnderlayEntity.cs:68: [DxfCodeValue(281)]
+  > public byte Contrast
+Entities\UnderlayEntity.cs:90: [DxfCodeValue(282)]
+  > public byte Fade
+Entities\UnderlayEntity.cs:105: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public UnderlayDefinition Definition { get; set; }
+Entities\Vertex.cs:18: [DxfCodeValue(10, 20, 30)]
+  > public XYZ Location { get; set; } = XYZ.Zero;
+Entities\Vertex.cs:24: [DxfCodeValue(DxfReferenceType.Optional, 40)]
+  > public double StartWidth { get; set; } = 0.0;
+Entities\Vertex.cs:30: [DxfCodeValue(DxfReferenceType.Optional, 41)]
+  > public double EndWidth { get; set; } = 0.0;
+Entities\Vertex.cs:34: [DxfCodeValue(DxfReferenceType.Optional, 42)]
+  > public double Bulge { get; set; } = 0.0;
+Entities\Vertex.cs:40: [DxfCodeValue(70)]
+  > public VertexFlags Flags { get; set; }
+Entities\Vertex.cs:46: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double CurveTangent { get; set; }
+Entities\Vertex.cs:52: [DxfCodeValue(DxfReferenceType.Ignored, 91)]    //TODO: for some versions this code is invalid
+  > public int Id { get; set; }
+Entities\VertexFaceRecord.cs:25: [DxfCodeValue(71)]
+  > public short Index1 { get; set; }
+Entities\VertexFaceRecord.cs:31: [DxfCodeValue(72)]
+  > public short Index2 { get; set; }
+Entities\VertexFaceRecord.cs:37: [DxfCodeValue(73)]
+  > public short Index3 { get; set; }
+Entities\VertexFaceRecord.cs:43: [DxfCodeValue(74)]
+  > public short Index4 { get; set; }
+Entities\Viewport.cs:41: [DxfCodeValue(10, 20, 30)]
+  > public XYZ Center { get; set; }
+Entities\Viewport.cs:47: [DxfCodeValue(40)]
+  > public double Width { get; set; }
+Entities\Viewport.cs:53: [DxfCodeValue(41)]
+  > public double Height { get; set; }
+Entities\Viewport.cs:62: [DxfCodeValue(69)]
+  > public short Id
+Entities\Viewport.cs:87: [DxfCodeValue(12, 22)]
+  > public XY ViewCenter { get; set; }
+Entities\Viewport.cs:93: [DxfCodeValue(13, 23)]
+  > public XY SnapBase { get; set; }
+Entities\Viewport.cs:99: [DxfCodeValue(14, 24)]
+  > public XY SnapSpacing { get; set; }
+Entities\Viewport.cs:105: [DxfCodeValue(15, 25)]
+  > public XY GridSpacing { get; set; }
+Entities\Viewport.cs:111: [DxfCodeValue(16, 26, 36)]
+  > public XYZ ViewDirection { get; set; }
+Entities\Viewport.cs:117: [DxfCodeValue(17, 27, 37)]
+  > public XYZ ViewTarget { get; set; }
+Entities\Viewport.cs:123: [DxfCodeValue(42)]
+  > public double LensLength { get; set; }
+Entities\Viewport.cs:129: [DxfCodeValue(43)]
+  > public double FrontClipPlane { get; set; }
+Entities\Viewport.cs:135: [DxfCodeValue(44)]
+  > public double BackClipPlane { get; set; }
+Entities\Viewport.cs:141: [DxfCodeValue(45)]
+  > public double ViewHeight { get; set; }
+Entities\Viewport.cs:158: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double SnapAngle { get; set; }
+Entities\Viewport.cs:164: [DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+  > public double TwistAngle { get; set; }
+Entities\Viewport.cs:170: [DxfCodeValue(72)]
+  > public short CircleZoomPercent { get; set; }
+Entities\Viewport.cs:176: [DxfCodeValue(DxfReferenceType.Ignored, 331)]   //TODO: explore how to write list values
+  > public List<Layer> FrozenLayers { get; private set; } = new List<Layer>();
+Entities\Viewport.cs:182: [DxfCodeValue(90)]
+  > public ViewportStatusFlags Status { get; set; }
+Entities\Viewport.cs:188: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public Entity Boundary { get; set; }
+Entities\Viewport.cs:194: [DxfCodeValue(1)]
+  > public string StyleSheetName { get; set; }
+Entities\Viewport.cs:200: [DxfCodeValue(281)]
+  > public RenderMode RenderMode { get; set; }
+Entities\Viewport.cs:210: [DxfCodeValue(71)]
+  > public bool UcsPerViewport { get; set; }
+Entities\Viewport.cs:219: [DxfCodeValue(74)]
+  > public bool DisplayUcsIcon { get; set; }
+Entities\Viewport.cs:225: [DxfCodeValue(110, 120, 130)]
+  > public XYZ UcsOrigin { get; set; }
+Entities\Viewport.cs:231: [DxfCodeValue(111, 121, 131)]
+  > public XYZ UcsXAxis { get; set; }
+Entities\Viewport.cs:237: [DxfCodeValue(112, 122, 132)]
+  > public XYZ UcsYAxis { get; set; }
+Entities\Viewport.cs:251: [DxfCodeValue(79)]
+  > public OrthographicType UcsOrthographicType { get; set; }
+Entities\Viewport.cs:257: [DxfCodeValue(146)]
+  > public double Elevation { get; set; }
+Entities\Viewport.cs:263: [DxfCodeValue(170)]
+  > public ShadePlotMode ShadePlotMode { get; set; }
+Entities\Viewport.cs:269: [DxfCodeValue(61)]
+  > public short MajorGridLineFrequency { get; set; }
+Entities\Viewport.cs:279: [DxfCodeValue(DxfReferenceType.Handle, 348)]
+  > public VisualStyle VisualStyle { get; set; }
+Entities\Viewport.cs:285: [DxfCodeValue(292)]
+  > public bool UseDefaultLighting { get; set; }
+Entities\Viewport.cs:295: [DxfCodeValue(282)]
+  > public LightingType DefaultLightingType { get; set; }
+Entities\Viewport.cs:301: [DxfCodeValue(141)]
+  > public double Brightness { get; set; }
+Entities\Viewport.cs:307: [DxfCodeValue(142)]
+  > public double Contrast { get; set; }
+Entities\Viewport.cs:313: [DxfCodeValue(63, 421, 431)]
+  > public Color AmbientLightColor { get; set; }
+Entities\XLine.cs:29: [DxfCodeValue(10, 20, 30)]
+  > public XYZ FirstPoint { get; set; }
+Entities\XLine.cs:35: [DxfCodeValue(11, 21, 31)]
+  > public XYZ Direction { get; set; }
+Objects\BookColor.cs:38: [DxfCodeValue(62, 420)]
+  > public Color Color { get; set; }
+Objects\CadDictionary.cs:120: [DxfCodeValue(280)]
+  > public bool HardOwnerFlag { get; set; }
+Objects\CadDictionary.cs:126: [DxfCodeValue(281)]
+  > public DictionaryCloningFlags ClonningFlags { get; set; }
+Objects\CadDictionary.cs:132: [DxfCodeValue(3)]
+  > public string[] EntryNames { get { return this._entries.Keys.ToArray(); } }
+Objects\CadDictionary.cs:138: [DxfCodeValue(350)]
+  > public ulong[] EntryHandles { get { return this._entries.Values.Select(c => c.Handle).ToArray(); } }
+Objects\CadDictionaryWithDefault.cs:28: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public CadObject DefaultEntry { get; set; }
+Objects\DictionaryVariable.cs:28: [DxfCodeValue(1)]
+  > public string Value { get; set; }
+Objects\DictionaryVariable.cs:34: [DxfCodeValue(280)]
+  > public int ObjectSchemaNumber { get; internal set; }
+Objects\DimensionAssociativity.cs:88: [DxfCodeValue(90)]
+  > public DimassocAssociativityPoint AssociativityFlag { get; set; }
+Objects\DimensionAssociativity.cs:94: [DxfCodeValue(70)]
+  > public bool TransSpaceFlag { get; set; }
+Objects\DimensionAssociativity.cs:97: [DxfCodeValue(71)]
+  > public RotatedDimensionTypes RotatedDimensionFlag { get; set; }
+Objects\Evaluations\BlockVisibilityParameter.cs:34: [DxfCodeValue(331)]
+  > public IList<Entity> Entities { get; private set; } = new List<Entity>();
+Objects\Evaluations\BlockVisibilityParameter.cs:48: [DxfCodeValue(1010, 1020, 1030)]
+  > public XYZ BasePosition { get; internal set; }
+Objects\Evaluations\BlockVisibilityParameter.cs:54: [DxfCodeValue(300)]
+  > public string ParameterType { get; internal set; }
+Objects\Evaluations\BlockVisibilityParameter.cs:60: [DxfCodeValue(301)]
+  > public string Name { get; internal set; }
+Objects\Evaluations\BlockVisibilityParameter.cs:66: [DxfCodeValue(302)]
+  > public string Description { get; internal set; }
+Objects\Evaluations\BlockVisibilityParameter.cs:72: [DxfCodeValue(91)]
+  > public int L91 { get; internal set; }
+Objects\Evaluations\BlockVisibilityParameter.cs:86: [DxfCodeValue(303)]
+  > public string Name { get; set; }
+Objects\Evaluations\BlockVisibilityParameter.cs:92: [DxfCodeValue(332)]
+  > public IList<Entity> Entities { get; private set; } = new List<Entity>();
+Objects\Evaluations\EvaluationExpression.cs:34: [DxfCodeValue(90)]
+  > public int Value90 { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:37: [DxfCodeValue(98)]
+  > public int Value98 { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:40: [DxfCodeValue(99)]
+  > public int Value99 { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:52: [DxfCodeValue(300)]
+  > public string ElementName { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:63: [DxfCodeValue(280)]
+  > public bool Value280 { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:66: [DxfCodeValue(281)]
+  > public bool Value281 { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:75: [DxfCodeValue(1010, 1020, 1030)]
+  > public XYZ Start { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:78: [DxfCodeValue(1011, 1021, 1031)]
+  > public XYZ End { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:81: [DxfCodeValue(DxfReferenceType.Count, 170)]
+  > [DxfCollectionCodeValue(91)]
+Objects\Evaluations\EvaluationExpression.cs:85: [DxfCodeValue(171)]
+  > //Follows a list of:
+Objects\Evaluations\EvaluationExpression.cs:107: [DxfCodeValue(305)]
+  > public string Label { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:110: [DxfCodeValue(306)]
+  > public string Description { get; set; }
+Objects\Evaluations\EvaluationExpression.cs:113: [DxfCodeValue(140)]
+  > public double LabelOffset { get; set; }
+Objects\Evaluations\EvaluationGraph.cs:23: [DxfCodeValue(96)]
+  > public int Value96 { get; set; }
+Objects\Evaluations\EvaluationGraph.cs:26: [DxfCodeValue(97)]
+  > public int Value97 { get; set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:27: [DxfCodeValue(91)]
+  > public int Index { get; set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:34: [DxfCodeValue(95)]
+  > internal int NextNodeIndex { get; set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:46: [DxfCodeValue(93)]
+  > public int Flags { get; set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:52: [DxfCodeValue(92)]
+  > public int Data1 { get; internal set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:58: [DxfCodeValue(92)]
+  > public int Data2 { get; internal set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:64: [DxfCodeValue(92)]
+  > public int Data3 { get; internal set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:70: [DxfCodeValue(92)]
+  > public int Data4 { get; internal set; }
+Objects\Evaluations\EvaluationGraph.GraphNode.cs:76: [DxfCodeValue(360)]
+  > public CadObject NodeObject { get; internal set; }
+Objects\Group.cs:30: [DxfCodeValue(300)]
+  > public string Description { get; set; }
+Objects\Group.cs:36: [DxfCodeValue(71)]
+  > public bool IsUnnamed { get; set; }
+Objects\Group.cs:42: [DxfCodeValue(71)]
+  > public bool Selectable { get; set; }
+Objects\ImageDefinition.cs:29: [DxfCodeValue(90)]
+  > public int ClassVersion { get; set; }
+Objects\ImageDefinition.cs:35: [DxfCodeValue(1)]
+  > public string FileName { get; set; }
+Objects\ImageDefinition.cs:41: [DxfCodeValue(10, 20)]
+  > public XY Size { get; set; }
+Objects\ImageDefinition.cs:47: [DxfCodeValue(11, 21)]
+  > public XY DefaultSize { get; set; } = new XY(1, 1);
+Objects\ImageDefinition.cs:53: [DxfCodeValue(280)]
+  > public bool IsLoaded { get; set; } = false;
+Objects\ImageDefinition.cs:59: [DxfCodeValue(281)]
+  > public ResolutionUnit Units { get; set; }
+Objects\ImageDefinitionReactor.cs:28: [DxfCodeValue(90)]
+  > public int ClassVersion { get; set; }
+Objects\ImageDefinitionReactor.cs:34: [DxfCodeValue(DxfReferenceType.Handle, 330)]
+  > public ImageDefinition Definition { get; set; }
+Objects\Layout.cs:38: [DxfCodeValue(1)]
+  > public override string Name
+Objects\Layout.cs:54: [DxfCodeValue(70)]
+  > public LayoutFlags LayoutFlags { get; set; }
+Objects\Layout.cs:60: [DxfCodeValue(71)]
+  > public int TabOrder { get; set; }
+Objects\Layout.cs:66: [DxfCodeValue(10, 20)]
+  > public XY MinLimits { get; set; } = new XY(-20.0, -7.5);
+Objects\Layout.cs:72: [DxfCodeValue(11, 21)]
+  > public XY MaxLimits { get; set; } = new XY(277.0, 202.5);
+Objects\Layout.cs:78: [DxfCodeValue(12, 22, 32)]
+  > public XYZ InsertionBasePoint { get; set; }
+Objects\Layout.cs:84: [DxfCodeValue(14, 24, 34)]
+  > public XYZ MinExtents { get; set; } = new XYZ(25.7, 19.5, 0.0);
+Objects\Layout.cs:90: [DxfCodeValue(15, 25, 35)]
+  > public XYZ MaxExtents { get; set; } = new XYZ(231.3, 175.5, 0.0);
+Objects\Layout.cs:96: [DxfCodeValue(146)]
+  > public double Elevation { get; set; }
+Objects\Layout.cs:102: [DxfCodeValue(13, 23, 33)]
+  > public XYZ Origin { get; set; } = XYZ.Zero;
+Objects\Layout.cs:108: [DxfCodeValue(16, 26, 36)]
+  > public XYZ XAxis { get; set; } = XYZ.AxisX;
+Objects\Layout.cs:114: [DxfCodeValue(17, 27, 37)]
+  > public XYZ YAxis { get; set; } = XYZ.AxisY;
+Objects\Layout.cs:120: [DxfCodeValue(76)]
+  > public OrthographicType UcsOrthographicType { get; set; }
+Objects\Layout.cs:126: [DxfCodeValue(DxfReferenceType.Handle, 330)]
+  > public BlockRecord AssociatedBlock
+Objects\Layout.cs:145: [DxfCodeValue(DxfReferenceType.Handle, 331)]
+  > public Viewport Viewport
+Objects\Layout.cs:167: [DxfCodeValue(DxfReferenceType.Handle, 345)]
+  > public UCS UCS { get; set; }
+Objects\Layout.cs:176: [DxfCodeValue(DxfReferenceType.Handle, 346)]
+  > public UCS BaseUCS { get; set; }
+Objects\MLineStyle.cs:39: [DxfCodeValue(2)]
+  > public override string Name
+Objects\MLineStyle.cs:55: [DxfCodeValue(70)]
+  > public MLineStyleFlags Flags { get; set; }
+Objects\MLineStyle.cs:64: [DxfCodeValue(3)]
+  > public string Description { get; set; }
+Objects\MLineStyle.cs:70: [DxfCodeValue(62)]
+  > public Color FillColor { get; set; } = Color.ByLayer;
+Objects\MLineStyle.cs:76: [DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+  > public double StartAngle { get; set; } = System.Math.PI / 2;
+Objects\MLineStyle.cs:82: [DxfCodeValue(DxfReferenceType.IsAngle, 52)]
+  > public double EndAngle { get; set; } = System.Math.PI / 2;
+Objects\MLineStyle.cs:88: [DxfCodeValue(DxfReferenceType.Count, 71)]
+  > public List<MLineStyle.Element> Elements { get; } = new List<Element>();
+Objects\MLineStyle.Element.cs:13: [DxfCodeValue(49)]
+  > public double Offset { get; set; }
+Objects\MLineStyle.Element.cs:19: [DxfCodeValue(62)]
+  > public Color Color { get; set; } = Color.ByBlock;
+Objects\MLineStyle.Element.cs:25: [DxfCodeValue(6)]
+  > public LineType LineType { get; set; } = LineType.ByLayer;
+Objects\MultiLeaderAnnotContext.cs:54: [DxfCodeValue(40)]
+  > public double ScaleFactor { get; set; }
+Objects\MultiLeaderAnnotContext.cs:65: [DxfCodeValue(10, 20, 30)]
+  > public XYZ ContentBasePoint { get; set; }
+Objects\MultiLeaderAnnotContext.cs:78: [DxfCodeValue(41)]
+  > public double TextHeight { get; set; }
+Objects\MultiLeaderAnnotContext.cs:103: [DxfCodeValue(140)]
+  > public double ArrowheadSize { get; set; }
+Objects\MultiLeaderAnnotContext.cs:112: [DxfCodeValue(145)]
+  > public double LandingGap { get; set; }
+Objects\MultiLeaderAnnotContext.cs:130: [DxfCodeValue(174)]
+  > public TextAttachmentType TextLeftAttachment { get; set; }
+Objects\MultiLeaderAnnotContext.cs:148: [DxfCodeValue(175)]
+  > public TextAttachmentType TextRightAttachment { get; set; }
+Objects\MultiLeaderAnnotContext.cs:167: [DxfCodeValue(176)]
+  > public TextAlignmentType TextAlignment { get; set; }
+Objects\MultiLeaderAnnotContext.cs:182: [DxfCodeValue(177)]
+  > public BlockContentConnectionType BlockContentConnection { get; set; }
+Objects\MultiLeaderAnnotContext.cs:189: [DxfCodeValue(290)]
+  > public bool HasTextContents { get; set; }
+Objects\MultiLeaderAnnotContext.cs:199: [DxfCodeValue(304)]
+  > public string TextLabel { get; set; }
+Objects\MultiLeaderAnnotContext.cs:205: [DxfCodeValue(11, 21, 31)]
+  > public XYZ TextNormal { get; set; }
+Objects\MultiLeaderAnnotContext.cs:220: [DxfCodeValue(340)]
+  > public TextStyle TextStyle { get; set; }
+Objects\MultiLeaderAnnotContext.cs:229: [DxfCodeValue(12, 22, 32)]
+  > public XYZ TextLocation { get; set; }
+Objects\MultiLeaderAnnotContext.cs:235: [DxfCodeValue(13, 23, 33)]
+  > public XYZ Direction { get; set; }
+Objects\MultiLeaderAnnotContext.cs:244: [DxfCodeValue(DxfReferenceType.IsAngle, 42)]
+  > public double TextRotation { get; set; }
+Objects\MultiLeaderAnnotContext.cs:252: [DxfCodeValue(43)]
+  > public double BoundaryWidth { get; set; }
+Objects\MultiLeaderAnnotContext.cs:260: [DxfCodeValue(44)]
+  > public double BoundaryHeight { get; set; }
+Objects\MultiLeaderAnnotContext.cs:266: [DxfCodeValue(45)]
+  > public double LineSpacingFactor { get; set; }
+Objects\MultiLeaderAnnotContext.cs:272: [DxfCodeValue(170)]
+  > public LineSpacingStyle LineSpacing { get; set; }
+Objects\MultiLeaderAnnotContext.cs:278: [DxfCodeValue(90)]
+  > public Color TextColor { get; set; }
+Objects\MultiLeaderAnnotContext.cs:295: [DxfCodeValue(171)]
+  > public TextAttachmentPointType TextAttachmentPoint { get; set; }
+Objects\MultiLeaderAnnotContext.cs:304: [DxfCodeValue(172)]
+  > public FlowDirectionType FlowDirection { get; set; }
+Objects\MultiLeaderAnnotContext.cs:311: [DxfCodeValue(91)]
+  > public Color BackgroundFillColor { get; set; }
+Objects\MultiLeaderAnnotContext.cs:318: [DxfCodeValue(141)]
+  > public double BackgroundScaleFactor { get; set; }
+Objects\MultiLeaderAnnotContext.cs:325: [DxfCodeValue(92)]
+  > public int BackgroundTransparency { get; set; }
+Objects\MultiLeaderAnnotContext.cs:332: [DxfCodeValue(291)]
+  > public bool BackgroundFillEnabled { get; set; }
+Objects\MultiLeaderAnnotContext.cs:339: [DxfCodeValue(292)]
+  > public bool BackgroundMaskFillOn { get; set; }
+Objects\MultiLeaderAnnotContext.cs:346: [DxfCodeValue(173)]
+  > public short ColumnType { get; set; }
+Objects\MultiLeaderAnnotContext.cs:353: [DxfCodeValue(293)]
+  > public bool TextHeightAutomatic { get; set; }
+Objects\MultiLeaderAnnotContext.cs:360: [DxfCodeValue(142)]
+  > public double ColumnWidth { get; set; }
+Objects\MultiLeaderAnnotContext.cs:367: [DxfCodeValue(143)]
+  > public double ColumnGutter { get; set; }
+Objects\MultiLeaderAnnotContext.cs:374: [DxfCodeValue(294)]
+  > public bool ColumnFlowReversed { get; set; }
+Objects\MultiLeaderAnnotContext.cs:381: [DxfCodeValue(144)]
+  > public IList<double> ColumnSizes { get; } = new List<double>();
+Objects\MultiLeaderAnnotContext.cs:388: [DxfCodeValue(295)]
+  > public bool WordBreak { get; set; }
+Objects\MultiLeaderAnnotContext.cs:395: [DxfCodeValue(296)]
+  > public bool HasContentsBlock { get; set; }
+Objects\MultiLeaderAnnotContext.cs:402: [DxfCodeValue(341)]
+  > public BlockRecord BlockContent { get; set; }
+Objects\MultiLeaderAnnotContext.cs:408: [DxfCodeValue(14, 24, 34)]
+  > public XYZ BlockContentNormal { get; set; }
+Objects\MultiLeaderAnnotContext.cs:417: [DxfCodeValue(15, 25, 35)]
+  > public XYZ BlockContentLocation { get; set; }
+Objects\MultiLeaderAnnotContext.cs:431: [DxfCodeValue(16, 26, 36)]
+  > public XYZ BlockContentScale { get; set; }
+Objects\MultiLeaderAnnotContext.cs:445: [DxfCodeValue(DxfReferenceType.IsAngle, 46)]
+  > public double BlockContentRotation { get; set; }
+Objects\MultiLeaderAnnotContext.cs:459: [DxfCodeValue(93)]
+  > public Color BlockContentColor { get; set; }
+Objects\MultiLeaderAnnotContext.cs:477: [DxfCodeValue(93)]
+  > public Matrix4 TransformationMatrix { get; set; }
+Objects\MultiLeaderAnnotContext.cs:483: [DxfCodeValue(110, 120, 130)]
+  > public XYZ BasePoint { get; set; }
+Objects\MultiLeaderAnnotContext.cs:489: [DxfCodeValue(111, 121, 131)]
+  > public XYZ BaseDirection { get; set; }
+Objects\MultiLeaderAnnotContext.cs:495: [DxfCodeValue(112, 122, 132)]
+  > public XYZ BaseVertical { get; set; }
+Objects\MultiLeaderAnnotContext.cs:501: [DxfCodeValue(297)]
+  > public bool NormalReversed { get; set; }
+Objects\MultiLeaderAnnotContext.cs:521: [DxfCodeValue(273)]
+  > public TextAttachmentType TextTopAttachment { get; set; }
+Objects\MultiLeaderAnnotContext.cs:541: [DxfCodeValue(272)]
+  > public TextAttachmentType TextBottomAttachment { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:31: [DxfCodeValue(290)]
+  > public bool ContentValid { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:37: [DxfCodeValue(291)]
+  > public bool Unknown { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:43: [DxfCodeValue(10, 20, 30)]
+  > public XYZ ConnectionPoint { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:49: [DxfCodeValue(11, 21, 31)]
+  > public XYZ Direction { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:60: [DxfCodeValue(90)]
+  > public int LeaderIndex { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:66: [DxfCodeValue(40)]
+  > public double LandingDistance { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:80: [DxfCodeValue(271)]
+  > public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:116: [DxfCodeValue(12, 22, 32)]
+  > public XYZ StartPoint { get; private set; }
+Objects\MultiLeaderAnnotContextClasses.cs:122: [DxfCodeValue(13, 23, 33)]
+  > public XYZ EndPoint { get; private set; }
+Objects\MultiLeaderAnnotContextClasses.cs:155: [DxfCodeValue(90)]
+  > public int SegmentIndex { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:166: [DxfCodeValue(91)]
+  > public int Index { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:173: [DxfCodeValue(170)]
+  > public MultiLeaderPathType PathType { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:179: [DxfCodeValue(92)]
+  > public Color LineColor { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:185: [DxfCodeValue(340)]
+  > public LineType LineType { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:191: [DxfCodeValue(171)]
+  > public LineweightType LineWeight { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:197: [DxfCodeValue(40)]
+  > public double ArrowheadSize { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:204: [DxfCodeValue(341)]
+  > public BlockRecord Arrowhead { get; set; }
+Objects\MultiLeaderAnnotContextClasses.cs:210: [DxfCodeValue(93)]
+  > public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
+Objects\MultiLeaderStyle.cs:48: [DxfCodeValue(170)]
+  > public LeaderContentType ContentType { get; set; }
+Objects\MultiLeaderStyle.cs:55: [DxfCodeValue(171)]
+  > public MultiLeaderDrawOrderType MultiLeaderDrawOrder { get; set; }
+Objects\MultiLeaderStyle.cs:62: [DxfCodeValue(172)]
+  > public LeaderDrawOrderType LeaderDrawOrder { get; set; }
+Objects\MultiLeaderStyle.cs:72: [DxfCodeValue(90)]
+  > public int MaxLeaderSegmentsPoints { get; set; }
+Objects\MultiLeaderStyle.cs:86: [DxfCodeValue(40)]
+  > public double FirstSegmentAngleConstraint { get; set; }
+Objects\MultiLeaderStyle.cs:100: [DxfCodeValue(41)]
+  > public double SecondSegmentAngleConstraint { get; set; }
+Objects\MultiLeaderStyle.cs:120: [DxfCodeValue(173)]
+  > public MultiLeaderPathType PathType { get; set; }
+Objects\MultiLeaderStyle.cs:138: [DxfCodeValue(91)]
+  > public Color LineColor { get; set; }
+Objects\MultiLeaderStyle.cs:157: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public LineType LeaderLineType { get; set; }
+Objects\MultiLeaderStyle.cs:175: [DxfCodeValue(92)]
+  > public LineweightType LeaderLineWeight { get; set; }
+Objects\MultiLeaderStyle.cs:192: [DxfCodeValue(290)]
+  > public bool EnableLanding { get; set; }
+Objects\MultiLeaderStyle.cs:206: [DxfCodeValue(42)]
+  > public double LandingGap { get; set; }
+Objects\MultiLeaderStyle.cs:222: [DxfCodeValue(291)]
+  > public bool EnableDogleg { get; set; }
+Objects\MultiLeaderStyle.cs:235: [DxfCodeValue(43)]
+  > public double LandingDistance { get; set; }
+Objects\MultiLeaderStyle.cs:241: [DxfCodeValue(3)]
+  > public string Description { get; set; }
+Objects\MultiLeaderStyle.cs:260: [DxfCodeValue(DxfReferenceType.Handle, 341)]
+  > public BlockRecord Arrowhead { get; set; }
+Objects\MultiLeaderStyle.cs:278: [DxfCodeValue(44)]
+  > public double ArrowheadSize { get; set; }
+Objects\MultiLeaderStyle.cs:285: [DxfCodeValue(300)]
+  > public string DefaultTextContents { get; set; }
+Objects\MultiLeaderStyle.cs:299: [DxfCodeValue(DxfReferenceType.Handle, 342)]
+  > public TextStyle TextStyle { get; set; }
+Objects\MultiLeaderStyle.cs:322: [DxfCodeValue(174)]
+  > public TextAttachmentType TextLeftAttachment { get; set; }
+Objects\MultiLeaderStyle.cs:336: [DxfCodeValue(175)]
+  > public TextAngleType TextAngle { get; set; }
+Objects\MultiLeaderStyle.cs:350: [DxfCodeValue(176)]
+  > public TextAlignmentType TextAlignment { get; set; }
+Objects\MultiLeaderStyle.cs:373: [DxfCodeValue(178)]
+  > public TextAttachmentType TextRightAttachment { get; set; }
+Objects\MultiLeaderStyle.cs:386: [DxfCodeValue(93)]
+  > public Color TextColor { get; set; }
+Objects\MultiLeaderStyle.cs:399: [DxfCodeValue(45)]
+  > public double TextHeight { get; set; }
+Objects\MultiLeaderStyle.cs:412: [DxfCodeValue(292)]
+  > public bool TextFrame { get; set; }
+Objects\MultiLeaderStyle.cs:419: [DxfCodeValue(297)]
+  > public bool TextAlignAlwaysLeft { get; set; }
+Objects\MultiLeaderStyle.cs:426: [DxfCodeValue(46)]
+  > public double AlignSpace { get; set; }
+Objects\MultiLeaderStyle.cs:440: [DxfCodeValue(DxfReferenceType.Handle, 343)]
+  > public BlockRecord BlockContent { get; set; }
+Objects\MultiLeaderStyle.cs:453: [DxfCodeValue(94)]
+  > public Color BlockContentColor { get; set; }
+Objects\MultiLeaderStyle.cs:466: [DxfCodeValue(47, 49, 140)]
+  > public XYZ BlockContentScale { get; set; }
+Objects\MultiLeaderStyle.cs:473: [DxfCodeValue(293)]
+  > public bool EnableBlockContentScale { get; set; }
+Objects\MultiLeaderStyle.cs:486: [DxfCodeValue(DxfReferenceType.IsAngle, 141)]
+  > public double BlockContentRotation { get; set; }
+Objects\MultiLeaderStyle.cs:493: [DxfCodeValue(294)]
+  > public bool EnableBlockContentRotation { get; set; }
+Objects\MultiLeaderStyle.cs:507: [DxfCodeValue(177)]
+  > public BlockContentConnectionType BlockContentConnection { get; set; }
+Objects\MultiLeaderStyle.cs:521: [DxfCodeValue(142)]
+  > public double ScaleFactor { get; set; }
+Objects\MultiLeaderStyle.cs:533: [DxfCodeValue(295)]
+  > public bool OverwritePropertyValue { get; set; }
+Objects\MultiLeaderStyle.cs:539: [DxfCodeValue(296)]
+  > public bool IsAnnotative { get; set; }
+Objects\MultiLeaderStyle.cs:546: [DxfCodeValue(143)]
+  > public double BreakGapSize { get; set; }
+Objects\MultiLeaderStyle.cs:572: [DxfCodeValue(271)]
+  > public TextAttachmentDirectionType TextAttachmentDirection { get; set; }
+Objects\MultiLeaderStyle.cs:597: [DxfCodeValue(272)]
+  > public TextAttachmentType TextBottomAttachment { get; set; }
+Objects\MultiLeaderStyle.cs:622: [DxfCodeValue(273)]
+  > public TextAttachmentType TextTopAttachment { get; set; }
+Objects\PdfUnderlayDefinition.cs:22: [DxfCodeValue(2)]
+  > public string Page
+Objects\PlotSettings.cs:30: [DxfCodeValue(1)]
+  > public string PageName { get; set; } = "none_device";
+Objects\PlotSettings.cs:36: [DxfCodeValue(2)]
+  > public string SystemPrinterName { get; set; }
+Objects\PlotSettings.cs:42: [DxfCodeValue(4)]
+  > public string PaperSize { get; set; } = "ISO_A4_(210.00_x_297.00_MM)";
+Objects\PlotSettings.cs:48: [DxfCodeValue(6)]
+  > public string PlotViewName { get; set; }
+Objects\PlotSettings.cs:54: [DxfCodeValue(40, 41, 42, 43)]
+  > public PaperMargin UnprintableMargin { get; set; }
+Objects\PlotSettings.cs:60: [DxfCodeValue(44)]
+  > public double PaperWidth { get; set; }
+Objects\PlotSettings.cs:66: [DxfCodeValue(45)]
+  > public double PaperHeight { get; set; }
+Objects\PlotSettings.cs:72: [DxfCodeValue(46)]
+  > public double PlotOriginX { get; set; }
+Objects\PlotSettings.cs:78: [DxfCodeValue(47)]
+  > public double PlotOriginY { get; set; }
+Objects\PlotSettings.cs:84: [DxfCodeValue(48)]
+  > public double WindowLowerLeftX { get; set; }
+Objects\PlotSettings.cs:90: [DxfCodeValue(49)]
+  > public double WindowLowerLeftY { get; set; }
+Objects\PlotSettings.cs:96: [DxfCodeValue(140)]
+  > public double WindowUpperLeftX { get; set; }
+Objects\PlotSettings.cs:102: [DxfCodeValue(141)]
+  > public double WindowUpperLeftY { get; set; }
+Objects\PlotSettings.cs:116: [DxfCodeValue(142)]
+  > public double NumeratorScale
+Objects\PlotSettings.cs:134: [DxfCodeValue(143)]
+  > public double DenominatorScale
+Objects\PlotSettings.cs:152: [DxfCodeValue(70)]
+  > public PlotFlags Flags { get; set; } = PlotFlags.DrawViewportsFirst | PlotFlags.PrintLineweights | PlotFlags.PlotPlotStyles | PlotFlags.UseStandardScale;
+Objects\PlotSettings.cs:158: [DxfCodeValue(72)]
+  > public PlotPaperUnits PaperUnits { get; set; } = PlotPaperUnits.Milimeters;
+Objects\PlotSettings.cs:164: [DxfCodeValue(73)]
+  > public PlotRotation PaperRotation { get; set; }
+Objects\PlotSettings.cs:170: [DxfCodeValue(74)]
+  > public PlotType PlotType { get; set; } = PlotType.DrawingExtents;
+Objects\PlotSettings.cs:176: [DxfCodeValue(7)]
+  > public string StyleSheet { get; set; }
+Objects\PlotSettings.cs:182: [DxfCodeValue(75)]
+  > public ScaledType ScaledFit { get; set; }
+Objects\PlotSettings.cs:188: [DxfCodeValue(76)]
+  > public ShadePlotMode ShadePlotMode { get; set; }
+Objects\PlotSettings.cs:194: [DxfCodeValue(77)]
+  > public ShadePlotResolutionMode ShadePlotResolutionMode { get; set; }
+Objects\PlotSettings.cs:206: [DxfCodeValue(78)]
+  > public short ShadePlotDPI
+Objects\PlotSettings.cs:221: [DxfCodeValue(147)]
+  > public double StandardScale { get; set; } = 1.0d;
+Objects\PlotSettings.cs:232: [DxfCodeValue(148)]
+  > public double PaperImageOriginX { get; set; }
+Objects\PlotSettings.cs:238: [DxfCodeValue(149)]
+  > public double PaperImageOriginY { get; set; }
+Objects\PlotSettings.cs:244: [DxfCodeValue(DxfReferenceType.Ignored, 333)]
+  > public ulong ShadePlotIDHandle { get; set; }
+Objects\Scale.cs:31: [DxfCodeValue(300)]
+  > public override string Name
+Objects\Scale.cs:47: [DxfCodeValue(140)]
+  > public double PaperUnits { get; set; }
+Objects\Scale.cs:53: [DxfCodeValue(141)]
+  > public double DrawingUnits { get; set; }
+Objects\Scale.cs:59: [DxfCodeValue(290)]
+  > public bool IsUnitScale { get; set; }
+Objects\SortEntitiesTable.cs:37: [DxfCodeValue(330)]
+  > public BlockRecord BlockOwner { get; internal set; }
+Objects\SortEntitiesTable.Sorter.cs:14: [DxfCodeValue(5)]
+  > public ulong Handle
+Objects\SortEntitiesTable.Sorter.cs:34: [DxfCodeValue(331)]
+  > public Entity Entity { get; set; }
+Objects\UnderlayDefinition.cs:23: [DxfCodeValue(1)]
+  > public string File { get; set; }
+Objects\VisualStyle.cs:28: [DxfCodeValue(1)]
+  > public string RasterFile { get; set; }
+Objects\VisualStyle.cs:34: [DxfCodeValue(2)]
+  > public string Description { get; set; }
+Objects\VisualStyle.cs:40: [DxfCodeValue(70)]
+  > public int Type { get; set; }
+Objects\VisualStyle.cs:48: [DxfCodeValue(71)]
+  > public FaceLightingModelType FaceLightingModel { get; set; }
+Objects\VisualStyle.cs:55: [DxfCodeValue(72)]
+  > public FaceLightingQualityType FaceLightingQuality { get; set; }
+Objects\VisualStyle.cs:66: [DxfCodeValue(73)]
+  > public FaceColorMode FaceColorMode { get; set; }
+Objects\VisualStyle.cs:74: [DxfCodeValue(90)]
+  > public FaceModifierType FaceModifiers { get; set; }
+Objects\VisualStyle.cs:80: [DxfCodeValue(40)]
+  > public double FaceOpacityLevel { get; set; }
+Objects\VisualStyle.cs:86: [DxfCodeValue(41)]
+  > public double FaceSpecularLevel { get; set; }
+Objects\VisualStyle.cs:92: [DxfCodeValue(62, 63)]
+  > public Color Color { get; set; }
+Objects\VisualStyle.cs:98: [DxfCodeValue(421)]
+  > public Color FaceStyleMonoColor { get; set; }
+Objects\VisualStyle.cs:186: [DxfCodeValue(290)]
+  > public bool PrecisionFlag { get; set; }
+Objects\VisualStyle.cs:192: [DxfCodeValue(291)]
+  > public bool InternalFlag { get; internal set; }
+Objects\XRecrod.cs:32: [DxfCodeValue(280)]
+  > public DictionaryCloningFlags CloningFlags { get; set; }
+Tables\BlockRecord.cs:79: // [DxfCodeValue(70)]	//Table entry uses flags and has the same code but dwg saves also the block record flags
+  > public UnitsType Units { get; set; }
+Tables\BlockRecord.cs:88: [DxfCodeValue(DxfReferenceType.Optional, 280)]
+  > public bool IsExplodable { get; set; }
+Tables\BlockRecord.cs:94: [DxfCodeValue(DxfReferenceType.Optional, 281)]
+  > public bool CanScale { get; set; } = true;
+Tables\BlockRecord.cs:103: [DxfCodeValue(DxfReferenceType.Optional, 310)]
+  > public byte[] Preview { get; set; }
+Tables\BlockRecord.cs:109: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public Layout Layout
+Tables\Collections\Table.cs:26: [DxfCodeValue(DxfReferenceType.Count, 70)]
+  > public int Count => this.entries.Count;
+Tables\DimensionStyle.cs:52: [DxfCodeValue(3)]
+  > public string PostFix { get; set; } = "<>";
+Tables\DimensionStyle.cs:69: [DxfCodeValue(4)]
+  > public string AlternateDimensioningSuffix { get; set; } = "[]";
+Tables\DimensionStyle.cs:79: [DxfCodeValue(71)]
+  > public bool GenerateTolerances { get; set; } = false;
+Tables\DimensionStyle.cs:89: [DxfCodeValue(72)]
+  > public bool LimitsGeneration { get; set; } = false;
+Tables\DimensionStyle.cs:99: [DxfCodeValue(73)]
+  > public bool TextInsideHorizontal { get; set; } = false;
+Tables\DimensionStyle.cs:108: [DxfCodeValue(74)]
+  > public bool TextOutsideHorizontal { get; set; } = false;
+Tables\DimensionStyle.cs:117: [DxfCodeValue(75)]
+  > public bool SuppressFirstExtensionLine { get; set; } = false;
+Tables\DimensionStyle.cs:126: [DxfCodeValue(76)]
+  > public bool SuppressSecondExtensionLine { get; set; } = false;
+Tables\DimensionStyle.cs:133: [DxfCodeValue(77)]
+  > public DimensionTextVerticalAlignment TextVerticalAlignment { get; set; } = DimensionTextVerticalAlignment.Above;
+Tables\DimensionStyle.cs:140: [DxfCodeValue(78)]
+  > public ZeroHandling ZeroHandling { get; set; } = ZeroHandling.SuppressDecimalTrailingZeroes;
+Tables\DimensionStyle.cs:149: [DxfCodeValue(170)]
+  > public bool AlternateUnitDimensioning { get; set; } = false;
+Tables\DimensionStyle.cs:161: [DxfCodeValue(171)]
+  > public short AlternateUnitDecimalPlaces { get; set; } = 3;
+Tables\DimensionStyle.cs:182: [DxfCodeValue(172)]
+  > public bool TextOutsideExtensions { get; set; }
+Tables\DimensionStyle.cs:194: [DxfCodeValue(173)]
+  > public bool SeparateArrowBlocks { get; set; } = true;
+Tables\DimensionStyle.cs:211: [DxfCodeValue(174)]
+  > public bool TextInsideExtensions { get; set; } = false;
+Tables\DimensionStyle.cs:221: [DxfCodeValue(175)]
+  > public bool SuppressOutsideExtensions { get; set; } = false;
+Tables\DimensionStyle.cs:236: [DxfCodeValue(179)]
+  > public short AngularDimensionDecimalPlaces { get; set; } = 0;
+Tables\DimensionStyle.cs:243: [DxfCodeValue(280)]
+  > public DimensionTextHorizontalAlignment TextHorizontalAlignment { get; set; } = DimensionTextHorizontalAlignment.Centered;
+Tables\DimensionStyle.cs:253: [DxfCodeValue(281)]
+  > public bool SuppressFirstDimensionLine { get; set; } = false;
+Tables\DimensionStyle.cs:263: [DxfCodeValue(282)]
+  > public bool SuppressSecondDimensionLine { get; set; } = false;
+Tables\DimensionStyle.cs:270: [DxfCodeValue(283)]
+  > public ToleranceAlignment ToleranceAlignment { get; set; } = ToleranceAlignment.Bottom;
+Tables\DimensionStyle.cs:280: [DxfCodeValue(284)]
+  > public ZeroHandling ToleranceZeroHandling { get; set; } = ZeroHandling.SuppressDecimalTrailingZeroes;
+Tables\DimensionStyle.cs:287: [DxfCodeValue(285)]
+  > public ZeroHandling AlternateUnitZeroHandling { get; set; } = ZeroHandling.SuppressZeroFeetAndInches;
+Tables\DimensionStyle.cs:295: [DxfCodeValue(287)]
+  > public short DimensionFit { get; set; }  //Obsolete in the documentation
+Tables\DimensionStyle.cs:309: [DxfCodeValue(288)]
+  > public bool CursorUpdate { get; set; } = false;
+Tables\DimensionStyle.cs:316: [DxfCodeValue(286)]
+  > public ZeroHandling AlternateUnitToleranceZeroHandling { get; set; } = ZeroHandling.SuppressZeroFeetAndInches;
+Tables\DimensionStyle.cs:322: [DxfCodeValue(270)]
+  > public short DimensionUnit { get; set; } = 2;
+Tables\DimensionStyle.cs:329: [DxfCodeValue(275)]
+  > public AngularUnitFormat AngularUnit { get; set; } = AngularUnitFormat.DecimalDegrees;
+Tables\DimensionStyle.cs:337: [DxfCodeValue(271)]
+  > public short DecimalPlaces { get; set; } = 2;
+Tables\DimensionStyle.cs:345: [DxfCodeValue(272)]
+  > public short ToleranceDecimalPlaces { get; set; } = 2;
+Tables\DimensionStyle.cs:353: [DxfCodeValue(273)]
+  > public LinearUnitFormat AlternateUnitFormat { get; set; } = LinearUnitFormat.Decimal;
+Tables\DimensionStyle.cs:361: [DxfCodeValue(274)]
+  > public short AlternateUnitToleranceDecimalPlaces { get; set; } = 3;
+Tables\DimensionStyle.cs:397: [DxfCodeValue(40)]
+  > public double ScaleFactor
+Tables\DimensionStyle.cs:416: [DxfCodeValue(41)]
+  > public double ArrowSize
+Tables\DimensionStyle.cs:437: [DxfCodeValue(42)]
+  > public double ExtensionLineOffset { get; set; } = 0.6250d;
+Tables\DimensionStyle.cs:449: [DxfCodeValue(43)]
+  > public double DimensionLineIncrement { get; set; } = 3.75d;
+Tables\DimensionStyle.cs:456: [DxfCodeValue(44)]
+  > public double ExtensionLineExtension { get; set; } = 1.2500d;
+Tables\DimensionStyle.cs:475: [DxfCodeValue(45)]
+  > public double Rounding { get; set; } = 0.0d;
+Tables\DimensionStyle.cs:483: [DxfCodeValue(46)]
+  > public double DimensionLineExtension { get; set; } = 0.0d;
+Tables\DimensionStyle.cs:491: [DxfCodeValue(47)]
+  > public double PlusTolerance { get; set; } = 0.0d;
+Tables\DimensionStyle.cs:514: [DxfCodeValue(48)]
+  > public double MinusTolerance { get; set; } = 0.0d;
+Tables\DimensionStyle.cs:522: [DxfCodeValue(49)]
+  > public double FixedExtensionLineLength { get; set; } = 1.0d;
+Tables\DimensionStyle.cs:532: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double JoggedRadiusDimensionTransverseSegmentAngle
+Tables\DimensionStyle.cs:554: [DxfCodeValue(69)]
+  > public DimensionTextBackgroundFillMode TextBackgroundFillMode { get; set; } = DimensionTextBackgroundFillMode.NoBackground;
+Tables\DimensionStyle.cs:561: //[DxfCodeValue(70)]	//Not present in the dxf documentation
+  > public Color TextBackgroundColor { get; set; } = Color.ByBlock;
+Tables\DimensionStyle.cs:568: [DxfCodeValue(79)]
+  > public ZeroHandling AngularZeroHandling { get; set; } = ZeroHandling.SuppressZeroFeetAndInches;
+Tables\DimensionStyle.cs:575: [DxfCodeValue(90)]
+  > public ArcLengthSymbolPosition ArcLengthSymbolPosition { get; set; } = ArcLengthSymbolPosition.BeforeDimensionText;
+Tables\DimensionStyle.cs:582: [DxfCodeValue(140)]
+  > public double TextHeight
+Tables\DimensionStyle.cs:621: [DxfCodeValue(141)]
+  > public double CenterMarkSize { get; set; } = 2.5;
+Tables\DimensionStyle.cs:642: [DxfCodeValue(142)]
+  > public double TickSize { get; set; } = 0.0d;
+Tables\DimensionStyle.cs:655: [DxfCodeValue(143)]
+  > public double AlternateUnitScaleFactor { get; set; } = 25.4;
+Tables\DimensionStyle.cs:677: [DxfCodeValue(144)]
+  > public double LinearScaleFactor { get; set; } = 1.0;
+Tables\DimensionStyle.cs:691: [DxfCodeValue(145)]
+  > public double TextVerticalPosition { get; set; } = 0.0d;
+Tables\DimensionStyle.cs:705: [DxfCodeValue(146)]
+  > public double ToleranceScaleFactor { get; set; } = 1.0;
+Tables\DimensionStyle.cs:726: [DxfCodeValue(147)]
+  > public double DimensionLineGap { get; set; } = 0.6250;
+Tables\DimensionStyle.cs:733: [DxfCodeValue(148)]
+  > public double AlternateUnitRounding { get; set; } = 0.0d;
+Tables\DimensionStyle.cs:743: [DxfCodeValue(176)]
+  > public Color DimensionLineColor { get; set; } = Color.ByBlock;
+Tables\DimensionStyle.cs:751: [DxfCodeValue(177)]
+  > public Color ExtensionLineColor { get; set; } = Color.ByBlock;
+Tables\DimensionStyle.cs:761: [DxfCodeValue(178)]
+  > public Color TextColor { get; set; } = Color.ByBlock;
+Tables\DimensionStyle.cs:768: [DxfCodeValue(276)]
+  > public FractionFormat FractionFormat { get; set; } = FractionFormat.Horizontal;
+Tables\DimensionStyle.cs:775: [DxfCodeValue(277)]
+  > public LinearUnitFormat LinearUnitFormat { get; set; } = LinearUnitFormat.Decimal;
+Tables\DimensionStyle.cs:789: [DxfCodeValue(278)]
+  > public char DecimalSeparator { get; set; } = '.';
+Tables\DimensionStyle.cs:796: [DxfCodeValue(279)]
+  > public TextMovement TextMovement { get; set; } = TextMovement.MoveLineWithText;
+Tables\DimensionStyle.cs:807: [DxfCodeValue(290)]
+  > public bool IsExtensionLineLengthFixed { get; set; } = false;
+Tables\DimensionStyle.cs:814: [DxfCodeValue(295)]
+  > public TextDirection TextDirection { get; set; } = TextDirection.LeftToRight;
+Tables\DimensionStyle.cs:825: [DxfCodeValue(371)]
+  > public LineweightType DimensionLineWeight { get; set; } = LineweightType.ByBlock;
+Tables\DimensionStyle.cs:836: [DxfCodeValue(372)]
+  > public LineweightType ExtensionLineWeight { get; set; } = LineweightType.ByBlock;
+Tables\DimensionStyle.cs:848: [DxfCodeValue(289)]
+  > public TextArrowFitType DimensionTextArrowFit { get; set; } = TextArrowFitType.BestFit;
+Tables\DimensionStyle.cs:855: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public TextStyle TextStyle
+Tables\DimensionStyle.cs:881: [DxfCodeValue(DxfReferenceType.Handle, 341)]
+  > public BlockRecord LeaderArrow { get; set; }
+Tables\DimensionStyle.cs:897: [DxfCodeValue(DxfReferenceType.Handle, 342)]
+  > public BlockRecord ArrowBlock { get; set; }
+Tables\DimensionStyle.cs:920: [DxfCodeValue(DxfReferenceType.Handle, 343)]
+  > public BlockRecord DimArrow1 { get; set; }
+Tables\DimensionStyle.cs:937: [DxfCodeValue(DxfReferenceType.Handle, 344)]
+  > public BlockRecord DimArrow2 { get; set; }
+Tables\Layer.cs:48: [DxfCodeValue(62, 420, 430)]
+  > public Color Color
+Tables\Layer.cs:66: [DxfCodeValue(DxfReferenceType.Name, 430)]
+  > public BookColor BookColor
+Tables\Layer.cs:75: [DxfCodeValue(DxfReferenceType.Name, 6)]
+  > public LineType LineType
+Tables\Layer.cs:100: [DxfCodeValue(290)]
+  > public bool PlotFlag { get; set; } = true;
+Tables\Layer.cs:106: [DxfCodeValue(370)]
+  > public LineweightType LineWeight { get; set; } = LineweightType.Default;
+Tables\Layer.cs:112: [DxfCodeValue(DxfReferenceType.Unprocess, 390)]
+  > public ulong PlotStyleName { get; internal set; } = 0;   //Note: The handle points to an ACDBPLACEHOLDER
+Tables\Layer.cs:118: [DxfCodeValue(DxfReferenceType.Handle, 347)]
+  > public Material Material { get; set; }    //TODO: Implement ulong handles, change to internal or private, implement the material class
+Tables\LineType.cs:43: [DxfCodeValue(3)]
+  > public string Description { get; set; }
+Tables\LineType.cs:49: [DxfCodeValue(40)]
+  > public double PatternLen
+Tables\LineType.cs:64: [DxfCodeValue(72)]
+  > public char Alignment { get; internal set; } = 'A';
+Tables\LineType.cs:70: [DxfCodeValue(DxfReferenceType.Count, 73)]
+  > public IEnumerable<Segment> Segments { get { return this._segments; } }
+Tables\LineType.cs:76: //[DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > //public TextStyle Style { get; set; }
+Tables\LineTypeSegment.cs:13: [DxfCodeValue(49)]
+  > public double Length { get; set; }
+Tables\LineTypeSegment.cs:19: [DxfCodeValue(74)]
+  > public LinetypeShapeFlags Shapeflag { get; set; }
+Tables\LineTypeSegment.cs:25: [DxfCodeValue(75)]
+  > public short ShapeNumber { get; set; }
+Tables\LineTypeSegment.cs:31: [DxfCodeValue(44, 45)]
+  > public XY Offset { get; set; }
+Tables\LineTypeSegment.cs:37: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Rotation { get; set; }
+Tables\LineTypeSegment.cs:43: [DxfCodeValue(46)]
+  > public double Scale { get; set; } = 1.0d;
+Tables\LineTypeSegment.cs:52: [DxfCodeValue(9)]
+  > public string Text
+Tables\LineTypeSegment.cs:65: [DxfCodeValue(DxfReferenceType.Handle, 340)]
+  > public TextStyle Style { get; set; }
+Tables\TableEntry.cs:20: [DxfCodeValue(2)]
+  > public virtual string Name
+Tables\TableEntry.cs:39: [DxfCodeValue(70)]
+  > public StandardFlags Flags { get; set; }
+Tables\TextStyle.cs:65: [DxfCodeValue(3)]
+  > public string Filename { get; set; } = string.Empty;
+Tables\TextStyle.cs:71: [DxfCodeValue(4)]
+  > public string BigFontFilename { get; set; }
+Tables\TextStyle.cs:77: [DxfCodeValue(40)]
+  > public double Height { get; set; }
+Tables\TextStyle.cs:83: [DxfCodeValue(41)]
+  > public double Width { get; set; } = 1.0;
+Tables\TextStyle.cs:89: [DxfCodeValue(42)]
+  > public double LastHeight { get; set; }
+Tables\TextStyle.cs:98: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double ObliqueAngle { get; set; } = 0.0;
+Tables\TextStyle.cs:104: [DxfCodeValue(71)]
+  > public TextMirrorFlag MirrorFlag { get; set; } = TextMirrorFlag.None;
+Tables\TextStyle.cs:110: [DxfCodeValue(DxfReferenceType.Optional, 1071)]
+  > public FontFlags TrueType { get; set; } = FontFlags.Regular;
+Tables\UCS.cs:29: [DxfCodeValue(10, 20, 30)]
+  > public XYZ Origin { get; set; } = XYZ.Zero;
+Tables\UCS.cs:35: [DxfCodeValue(11, 21, 31)]
+  > public XYZ XAxis { get; set; } = XYZ.AxisX;
+Tables\UCS.cs:41: [DxfCodeValue(12, 22, 32)]
+  > public XYZ YAxis { get; set; } = XYZ.AxisY;
+Tables\UCS.cs:47: [DxfCodeValue(71)]
+  > public OrthographicType OrthographicType { get; set; }
+Tables\UCS.cs:53: [DxfCodeValue(79)]
+  > public OrthographicType OrthographicViewType { get; set; }
+Tables\UCS.cs:59: [DxfCodeValue(146)]
+  > public double Elevation { get; set; }
+Tables\View.cs:30: [DxfCodeValue(40)]
+  > public double Height { get; set; }
+Tables\View.cs:36: [DxfCodeValue(41)]
+  > public double Width { get; set; }
+Tables\View.cs:42: [DxfCodeValue(42)]
+  > public double LensLength { get; set; }
+Tables\View.cs:48: [DxfCodeValue(43)]
+  > public double FrontClipping { get; set; }
+Tables\View.cs:54: [DxfCodeValue(44)]
+  > public double BackClipping { get; set; }
+Tables\View.cs:60: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double Angle { get; set; }
+Tables\View.cs:66: [DxfCodeValue(71)]
+  > public ViewModeType ViewMode { get; set; }
+Tables\View.cs:72: [DxfCodeValue(72)]
+  > public bool IsUcsAssociated { get; set; } = false;
+Tables\View.cs:78: [DxfCodeValue(73)]
+  > public bool IsPlottable { get; set; }
+Tables\View.cs:84: [DxfCodeValue(281)]
+  > public RenderMode RenderMode { get; set; }
+Tables\View.cs:90: [DxfCodeValue(10, 20)]
+  > public XY Center { get; set; }
+Tables\View.cs:96: [DxfCodeValue(11, 21, 31)]
+  > public XYZ Direction { get; set; }
+Tables\View.cs:102: [DxfCodeValue(12, 22, 32)]
+  > public XYZ Target { get; set; }
+Tables\View.cs:108: [DxfCodeValue(DxfReferenceType.Handle, 348)]
+  > public VisualStyle VisualStyle { get; set; }
+Tables\View.cs:114: [DxfCodeValue(110, 120, 130)]
+  > public XYZ UcsOrigin { get; set; }
+Tables\View.cs:120: [DxfCodeValue(111, 121, 131)]
+  > public XYZ UcsXAxis { get; set; }
+Tables\View.cs:126: [DxfCodeValue(112, 122, 132)]
+  > public XYZ UcsYAxis { get; set; }
+Tables\View.cs:132: [DxfCodeValue(146)]
+  > public double UcsElevation { get; set; }
+Tables\View.cs:138: [DxfCodeValue(79)]
+  > public OrthographicType UcsOrthographicType { get; set; }
+Tables\VPort.cs:37: [DxfCodeValue(10, 20)]
+  > public XY BottomLeft { get; set; } = XY.Zero;
+Tables\VPort.cs:43: [DxfCodeValue(11, 21)]
+  > public XY TopRight { get; set; } = new XY(1, 1);
+Tables\VPort.cs:49: [DxfCodeValue(12, 22)]
+  > public XY Center { get; set; } = XY.Zero;
+Tables\VPort.cs:55: [DxfCodeValue(13, 23)]
+  > public XY SnapBasePoint { get; set; }
+Tables\VPort.cs:61: [DxfCodeValue(14, 24)]
+  > public XY SnapSpacing { get; set; } = new XY(0.5, 0.5);
+Tables\VPort.cs:67: [DxfCodeValue(15, 25)]
+  > public XY GridSpacing { get; set; } = new XY(10, 10);
+Tables\VPort.cs:73: [DxfCodeValue(16, 26, 36)]
+  > public XYZ Direction
+Tables\VPort.cs:86: [DxfCodeValue(17, 27, 37)]
+  > public XYZ Target { get; set; } = XYZ.Zero;
+Tables\VPort.cs:92: [DxfCodeValue(40)]  //In the web docs the value is 45
+  > public double ViewHeight { get; set; } = 10;
+Tables\VPort.cs:98: [DxfCodeValue(41)]
+  > public double AspectRatio { get; set; } = 1.0d;
+Tables\VPort.cs:104: [DxfCodeValue(42)]
+  > public double LensLength { get; set; } = 50.0d;
+Tables\VPort.cs:110: [DxfCodeValue(43)]
+  > public double FrontClippingPlane { get; set; } = 0.0d;
+Tables\VPort.cs:116: [DxfCodeValue(44)]
+  > public double BackClippingPlane { get; set; }
+Tables\VPort.cs:122: [DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+  > public double SnapRotation { get; set; }
+Tables\VPort.cs:128: [DxfCodeValue(DxfReferenceType.IsAngle, 51)]
+  > public double TwistAngle { get; set; }
+Tables\VPort.cs:134: [DxfCodeValue(72)]
+  > public short CircleZoomPercent { get; set; } = 1000;
+Tables\VPort.cs:146: [DxfCodeValue(281)]
+  > public RenderMode RenderMode { get; set; }
+Tables\VPort.cs:152: [DxfCodeValue(71)]
+  > public ViewModeType ViewMode { get; set; }
+Tables\VPort.cs:158: [DxfCodeValue(74)]
+  > public UscIconType UcsIconDisplay { get; set; } = UscIconType.OnOrigin;
+Tables\VPort.cs:164: [DxfCodeValue(75)]
+  > public bool SnapOn { get; set; }
+Tables\VPort.cs:170: [DxfCodeValue(76)]
+  > public bool ShowGrid { get; set; } = true;
+Tables\VPort.cs:176: [DxfCodeValue(77)]
+  > public bool IsometricSnap { get; set; }
+Tables\VPort.cs:182: [DxfCodeValue(78)]
+  > public short SnapIsoPair { get; set; }
+Tables\VPort.cs:188: [DxfCodeValue(110, 120, 130)]
+  > public XYZ Origin { get; set; } = XYZ.Zero;
+Tables\VPort.cs:194: [DxfCodeValue(111, 121, 131)]
+  > public XYZ XAxis { get; set; } = XYZ.AxisX;
+Tables\VPort.cs:200: [DxfCodeValue(112, 122, 132)]
+  > public XYZ YAxis { get; set; } = XYZ.AxisY;
+Tables\VPort.cs:209: [DxfCodeValue(DxfReferenceType.Handle, 345)]
+  > public UCS NamedUcs { get; set; }
+Tables\VPort.cs:219: [DxfCodeValue(DxfReferenceType.Handle, 346)]
+  > public UCS BaseUcs { get; set; }
+Tables\VPort.cs:225: [DxfCodeValue(79)]
+  > public OrthographicType OrthographicType { get; set; }
+Tables\VPort.cs:231: [DxfCodeValue(146)]
+  > public double Elevation { get; set; }
+Tables\VPort.cs:239: [DxfCodeValue(60)]
+  > public GridFlags GridFlags { get; set; } = GridFlags._1 | GridFlags._2;
+Tables\VPort.cs:245: [DxfCodeValue(61)]
+  > public short MinorGridLinesPerMajorGridLine { get; set; } = 5;
+Tables\VPort.cs:259: [DxfCodeValue(DxfReferenceType.Handle | DxfReferenceType.Optional, 348)]
+  > public VisualStyle VisualStyle { get; set; }
+Tables\VPort.cs:265: [DxfCodeValue(292)]
+  > public bool UseDefaultLighting { get; set; } = true;
+Tables\VPort.cs:271: [DxfCodeValue(282)]
+  > public DefaultLightingType DefaultLighting { get; set; } = DefaultLightingType.TwoDistantLights;
+Tables\VPort.cs:277: [DxfCodeValue(141)]
+  > public double Brightness { get; set; }
+Tables\VPort.cs:283: [DxfCodeValue(142)]
+  > public double Contrast { get; set; }
+Tables\VPort.cs:289: [DxfCodeValue(63, 421, 431)]
+  > public Color AmbientColor { get; set; }
+
+== Header System Variables ==
+Header\CadHeader.cs:22: [CadSystemVariable("$ACADVER", DxfCode.Text)]
+  > public string VersionString
+Header\CadHeader.cs:40: [CadSystemVariable(DxfReferenceType.Ignored, "$ACADMAINTVER", 70)]
+  > public short MaintenanceVersion { get; internal set; } = 0;
+Header\CadHeader.cs:49: [CadSystemVariable("$DWGCODEPAGE", 3)]
+  > public string CodePage { get; set; } = "ANSI_1252";
+Header\CadHeader.cs:58: [CadSystemVariable(DxfReferenceType.Ignored, "$LASTSAVEDBY", 3)]
+  > public string LastSavedBy { get; set; } = "SmartCAD 2D";
+Header\CadHeader.cs:69: [CadSystemVariable(DxfReferenceType.Ignored, "$REQUIREDVERSIONS", 70)]
+  > public long RequiredVersions { get; set; }
+Header\CadHeader.cs:78: [CadSystemVariable("$DIMASO", 70)]
+  > public bool AssociatedDimensions { get; set; } = true;
+Header\CadHeader.cs:84: [CadSystemVariable("$DIMSHO", 70)]
+  > public bool UpdateDimensionsWhileDragging { get; set; } = true;
+Header\CadHeader.cs:101: [CadSystemVariable("$MEASUREMENT", 70)]
+  > public MeasurementUnits MeasurementUnits { get; set; }
+Header\CadHeader.cs:112: [CadSystemVariable("$PLINEGEN", 70)]
+  > public bool PolylineLineTypeGeneration { get; set; } = false;
+Header\CadHeader.cs:119: [CadSystemVariable("$ORTHOMODE", 70)]
+  > public bool OrthoMode { get; set; }
+Header\CadHeader.cs:126: [CadSystemVariable("$REGENMODE", 70)]
+  > public bool RegenerationMode { get; set; }
+Header\CadHeader.cs:135: [CadSystemVariable("$FILLMODE", 70)]
+  > public bool FillMode { get; set; } = true;
+Header\CadHeader.cs:144: [CadSystemVariable("$QTEXTMODE", 70)]
+  > public bool QuickTextMode { get; set; }
+Header\CadHeader.cs:153: [CadSystemVariable("$PSLTSCALE", 70)]
+  > public SpaceLineTypeScaling PaperSpaceLineTypeScaling { get; set; } = SpaceLineTypeScaling.Normal;
+Header\CadHeader.cs:160: [CadSystemVariable("$LIMCHECK", 70)]
+  > public bool LimitCheckingOn { get; set; }
+Header\CadHeader.cs:166: [CadSystemVariable("$BLIPMODE", 70)]
+  > public bool BlipMode { get; set; }
+Header\CadHeader.cs:173: [CadSystemVariable("$USRTIMER", 70)]
+  > public bool UserTimer { get; set; }
+Header\CadHeader.cs:180: [CadSystemVariable("$SKPOLY", 70)]
+  > public bool SketchPolylines { get; set; }
+Header\CadHeader.cs:187: [CadSystemVariable("$ANGDIR", 70)]
+  > public AngularDirection AngularDirection { get; set; } = AngularDirection.ClockWise;
+Header\CadHeader.cs:194: [CadSystemVariable("$SPLFRAME", 70)]
+  > public bool ShowSplineControlPoints { get; set; }
+Header\CadHeader.cs:201: [CadSystemVariable("$MIRRTEXT", 70)]
+  > public bool MirrorText { get; set; } = false;
+Header\CadHeader.cs:208: [CadSystemVariable("$WORLDVIEW", 70)]
+  > public bool WorldView { get; set; }
+Header\CadHeader.cs:215: [CadSystemVariable("$TILEMODE", 70)]
+  > public bool ShowModelSpace { get; set; }
+Header\CadHeader.cs:222: [CadSystemVariable("$PLIMCHECK", 70)]
+  > public bool PaperSpaceLimitsChecking { get; set; }
+Header\CadHeader.cs:231: [CadSystemVariable("$VISRETAIN", 70)]
+  > public bool RetainXRefDependentVisibilitySettings { get; set; }
+Header\CadHeader.cs:240: [CadSystemVariable("$DISPSILH", 70)]
+  > public bool DisplaySilhouetteCurves { get; set; }
+Header\CadHeader.cs:258: [CadSystemVariable("$PROXYGRAPHICS", 70)]
+  > public bool ProxyGraphics { get; set; }
+Header\CadHeader.cs:267: [CadSystemVariable("$TREEDEPTH", 70)]
+  > public short SpatialIndexMaxTreeDepth { get; set; } = 3020;
+Header\CadHeader.cs:276: [CadSystemVariable("$LUNITS", 70)]
+  > public LinearUnitFormat LinearUnitFormat { get; set; } = LinearUnitFormat.Decimal;
+Header\CadHeader.cs:285: [CadSystemVariable("$LUPREC", 70)]
+  > public short LinearUnitPrecision { get; set; } = 4;
+Header\CadHeader.cs:294: [CadSystemVariable("$AUNITS", 70)]
+  > public AngularUnitFormat AngularUnit { get; set; }
+Header\CadHeader.cs:303: [CadSystemVariable("$AUPREC", 70)]
+  > public short AngularUnitPrecision { get; set; }
+Header\CadHeader.cs:320: [CadSystemVariable("$ATTMODE", 70)]
+  > public AttributeVisibilityMode AttributeVisibility { get; set; } = AttributeVisibilityMode.Normal;
+Header\CadHeader.cs:329: [CadSystemVariable("$PDMODE", 70)]
+  > public short PointDisplayMode { get; set; }
+Header\CadHeader.cs:338: [CadSystemVariable("$USERI1", 70)]
+  > public short UserShort1 { get; set; }
+Header\CadHeader.cs:347: [CadSystemVariable("$USERI2", 70)]
+  > public short UserShort2 { get; set; }
+Header\CadHeader.cs:356: [CadSystemVariable("$USERI3", 70)]
+  > public short UserShort3 { get; set; }
+Header\CadHeader.cs:365: [CadSystemVariable("$USERI4", 70)]
+  > public short UserShort4 { get; set; }
+Header\CadHeader.cs:374: [CadSystemVariable("$USERI5", 70)]
+  > public short UserShort5 { get; set; }
+Header\CadHeader.cs:383: [CadSystemVariable("$SPLINESEGS", 70)]
+  > public short NumberOfSplineSegments { get; set; } = 8;
+Header\CadHeader.cs:392: [CadSystemVariable("$SURFU", 70)]
+  > public short SurfaceDensityU { get; set; } = 6;
+Header\CadHeader.cs:401: [CadSystemVariable("$SURFV", 70)]
+  > public short SurfaceDensityV { get; set; } = 6;
+Header\CadHeader.cs:410: [CadSystemVariable("$SURFTYPE", 70)]
+  > public short SurfaceType { get; set; } = 6;
+Header\CadHeader.cs:419: [CadSystemVariable("$SURFTAB1", 70)]
+  > public short SurfaceMeshTabulationCount1 { get; set; } = 6;
+Header\CadHeader.cs:428: [CadSystemVariable("$SURFTAB2", 70)]
+  > public short SurfaceMeshTabulationCount2 { get; set; } = 6;
+Header\CadHeader.cs:437: [CadSystemVariable("$SPLINETYPE", 70)]
+  > public SplineType SplineType { get; set; } = SplineType.CubicBSpline;
+Header\CadHeader.cs:446: [CadSystemVariable("$SHADEDGE", 70)]
+  > public ShadeEdgeType ShadeEdge { get; set; }
+Header\CadHeader.cs:458: [CadSystemVariable("$SHADEDIF", 70)]
+  > public short ShadeDiffuseToAmbientPercentage { get; set; } = 70;
+Header\CadHeader.cs:467: [CadSystemVariable("$UNITMODE", 70)]
+  > public short UnitMode { get; set; }
+Header\CadHeader.cs:476: [CadSystemVariable("$MAXACTVP", 70)]
+  > public short MaxViewportCount { get; set; } = 64;
+Header\CadHeader.cs:493: [CadSystemVariable("$CMLJUST", 70)]
+  > public VerticalAlignmentType CurrentMultilineJustification { get; set; } = VerticalAlignmentType.Top;
+Header\CadHeader.cs:510: [CadSystemVariable("$LTSCALE", 40)]
+  > public double LineTypeScale { get; set; } = 1.0d;
+Header\CadHeader.cs:519: [CadSystemVariable("$TEXTSIZE", 40)]
+  > public double TextHeightDefault { get; set; } = 2.5d;
+Header\CadHeader.cs:528: [CadSystemVariable("$TEXTSTYLE", true, 7)]
+  > public string TextStyleName
+Header\CadHeader.cs:551: [CadSystemVariable("$CLAYER", true, 8)]
+  > public string CurrentLayerName
+Header\CadHeader.cs:574: [CadSystemVariable("$CELTYPE", true, 6)]
+  > public string CurrentLineTypeName
+Header\CadHeader.cs:597: [CadSystemVariable("$CMLSTYLE", true, 2)]
+  > public string MultiLineStyleName { get; internal set; } = "Standard";
+Header\CadHeader.cs:624: [CadSystemVariable("$TRACEWID", 40)]
+  > public double TraceWidthDefault { get; set; }
+Header\CadHeader.cs:633: [CadSystemVariable("$SKETCHINC", 40)]
+  > public double SketchIncrement { get; set; }
+Header\CadHeader.cs:642: [CadSystemVariable("$FILLETRAD", 40)]
+  > public double FilletRadius { get; set; }
+Header\CadHeader.cs:651: [CadSystemVariable("$THICKNESS", 40)]
+  > public double ThicknessDefault { get; set; }
+Header\CadHeader.cs:660: [CadSystemVariable("$ANGBASE", 50)]
+  > public double AngleBase { get; set; } = 0.0;
+Header\CadHeader.cs:669: [CadSystemVariable("$PDSIZE", 40)]
+  > public double PointDisplaySize { get; set; } = 0.0d;
+Header\CadHeader.cs:678: [CadSystemVariable("$PLINEWID", 40)]
+  > public double PolylineWidthDefault { get; set; }
+Header\CadHeader.cs:687: [CadSystemVariable("$USERR1", 40)]
+  > public double UserDouble1 { get; set; }
+Header\CadHeader.cs:696: [CadSystemVariable("$USERR2", 40)]
+  > public double UserDouble2 { get; set; }
+Header\CadHeader.cs:705: [CadSystemVariable("$USERR3", 40)]
+  > public double UserDouble3 { get; set; }
+Header\CadHeader.cs:714: [CadSystemVariable("$USERR4", 40)]
+  > public double UserDouble4 { get; set; }
+Header\CadHeader.cs:723: [CadSystemVariable("$USERR5", 40)]
+  > public double UserDouble5 { get; set; }
+Header\CadHeader.cs:732: [CadSystemVariable("$CHAMFERA", 40)]
+  > public double ChamferDistance1 { get; set; }
+Header\CadHeader.cs:741: [CadSystemVariable("$CHAMFERB", 40)]
+  > public double ChamferDistance2 { get; set; }
+Header\CadHeader.cs:750: [CadSystemVariable("$CHAMFERC", 40)]
+  > public double ChamferLength { get; set; }
+Header\CadHeader.cs:759: [CadSystemVariable("$CHAMFERD", 40)]
+  > public double ChamferAngle { get; set; }
+Header\CadHeader.cs:776: [CadSystemVariable("$CMLSCALE", 40)]
+  > public double CurrentMultilineScale { get; set; } = 20.0d;
+Header\CadHeader.cs:785: [CadSystemVariable("$CELTSCALE", 40)]
+  > public double CurrentEntityLinetypeScale { get; set; } = 1.0d;
+Header\CadHeader.cs:794: [CadSystemVariable("$MENU", 1)]
+  > public string MenuFileName { get; set; } = ".";
+Header\CadHeader.cs:803: [CadSystemVariable("$HANDSEED", 5)]
+  > public ulong HandleSeed { get; internal set; } = 0x0;
+Header\CadHeader.cs:812: [CadSystemVariable("$TDCREATE", 40)]
+  > public DateTime CreateDateTime { get; set; } = DateTime.Now;
+Header\CadHeader.cs:821: [CadSystemVariable("$TDUCREATE", 40)]
+  > public DateTime UniversalCreateDateTime { get; set; } = DateTime.UtcNow;
+Header\CadHeader.cs:830: [CadSystemVariable("$TDUPDATE", 40)]
+  > public DateTime UpdateDateTime { get; set; } = DateTime.Now;
+Header\CadHeader.cs:839: [CadSystemVariable("$TDUUPDATE", 40)]
+  > public DateTime UniversalUpdateDateTime { get; set; } = DateTime.UtcNow;
+Header\CadHeader.cs:848: [CadSystemVariable("$TDINDWG", 40)]
+  > public TimeSpan TotalEditingTime { get; set; } = new TimeSpan();
+Header\CadHeader.cs:857: [CadSystemVariable("$TDUSRTIMER", 40)]
+  > public TimeSpan UserElapsedTimeSpan { get; set; }
+Header\CadHeader.cs:866: [CadSystemVariable("$CECOLOR", 62)]
+  > public Color CurrentEntityColor { get; set; } = Color.ByLayer;
+Header\CadHeader.cs:875: [CadSystemVariable("$PSVPSCALE", 40)]
+  > public double ViewportDefaultViewScaleFactor { get; set; }
+Header\CadHeader.cs:884: [CadSystemVariable("$PINSBASE", 10, 20, 30)]
+  > public XYZ PaperSpaceInsertionBase { get; set; } = XYZ.Zero;
+Header\CadHeader.cs:893: [CadSystemVariable("$PEXTMIN", 10, 20, 30)]
+  > public XYZ PaperSpaceExtMin { get; set; }
+Header\CadHeader.cs:902: [CadSystemVariable("$PEXTMAX", 10, 20, 30)]
+  > public XYZ PaperSpaceExtMax { get; set; }
+Header\CadHeader.cs:911: [CadSystemVariable("$PLIMMIN", 10, 20)]
+  > public XY PaperSpaceLimitsMin { get; set; }
+Header\CadHeader.cs:920: [CadSystemVariable("$PLIMMAX", 10, 20)]
+  > public XY PaperSpaceLimitsMax { get; set; }
+Header\CadHeader.cs:929: [CadSystemVariable("$PELEVATION", 40)]
+  > public double PaperSpaceElevation
+Header\CadHeader.cs:945: [CadSystemVariable("$PUCSBASE", true, 2)]
+  > public string PaperSpaceBaseName
+Header\CadHeader.cs:961: [CadSystemVariable("$PUCSNAME", true, 2)]
+  > public string PaperSpaceName
+Header\CadHeader.cs:977: [CadSystemVariable("$PUCSORG", 10, 20, 30)]
+  > public XYZ PaperSpaceUcsOrigin
+Header\CadHeader.cs:993: [CadSystemVariable("$PUCSXDIR", 10, 20, 30)]
+  > public XYZ PaperSpaceUcsXAxis
+Header\CadHeader.cs:1009: [CadSystemVariable("$PUCSYDIR", 10, 20, 30)]
+  > public XYZ PaperSpaceUcsYAxis
+Header\CadHeader.cs:1025: [CadSystemVariable("$PUCSORGTOP", 10, 20, 30)]
+  > public XYZ PaperSpaceOrthographicTopDOrigin { get; set; }
+Header\CadHeader.cs:1034: [CadSystemVariable("$PUCSORGBOTTOM", 10, 20, 30)]
+  > public XYZ PaperSpaceOrthographicBottomDOrigin { get; set; }
+Header\CadHeader.cs:1043: [CadSystemVariable("$PUCSORGLEFT", 10, 20, 30)]
+  > public XYZ PaperSpaceOrthographicLeftDOrigin { get; set; }
+Header\CadHeader.cs:1052: [CadSystemVariable("$PUCSORGRIGHT", 10, 20, 30)]
+  > public XYZ PaperSpaceOrthographicRightDOrigin { get; set; }
+Header\CadHeader.cs:1061: [CadSystemVariable("$PUCSORGFRONT", 10, 20, 30)]
+  > public XYZ PaperSpaceOrthographicFrontDOrigin { get; set; }
+Header\CadHeader.cs:1070: [CadSystemVariable("$PUCSORGBACK", 10, 20, 30)]
+  > public XYZ PaperSpaceOrthographicBackDOrigin { get; set; }
+Header\CadHeader.cs:1079: [CadSystemVariable("$UCSORGTOP", 10, 20, 30)]
+  > public XYZ ModelSpaceOrthographicTopDOrigin { get; set; }
+Header\CadHeader.cs:1088: [CadSystemVariable("$UCSORGBOTTOM", 10, 20, 30)]
+  > public XYZ ModelSpaceOrthographicBottomDOrigin { get; set; }
+Header\CadHeader.cs:1097: [CadSystemVariable("$UCSORGLEFT", 10, 20, 30)]
+  > public XYZ ModelSpaceOrthographicLeftDOrigin { get; set; }
+Header\CadHeader.cs:1106: [CadSystemVariable("$UCSORGRIGHT", 10, 20, 30)]
+  > public XYZ ModelSpaceOrthographicRightDOrigin { get; set; }
+Header\CadHeader.cs:1115: [CadSystemVariable("$UCSORGFRONT", 10, 20, 30)]
+  > public XYZ ModelSpaceOrthographicFrontDOrigin { get; set; }
+Header\CadHeader.cs:1124: [CadSystemVariable("$UCSORGBACK", 10, 20, 30)]
+  > public XYZ ModelSpaceOrthographicBackDOrigin { get; set; }
+Header\CadHeader.cs:1133: [CadSystemVariable("$INSBASE", 10, 20, 30)]
+  > public XYZ ModelSpaceInsertionBase { get; set; } = XYZ.Zero;
+Header\CadHeader.cs:1142: [CadSystemVariable("$EXTMIN", 10, 20, 30)]
+  > public XYZ ModelSpaceExtMin { get; set; }
+Header\CadHeader.cs:1151: [CadSystemVariable("$EXTMAX", 10, 20, 30)]
+  > public XYZ ModelSpaceExtMax { get; set; }
+Header\CadHeader.cs:1160: [CadSystemVariable("$LIMMIN", 10, 20)]
+  > public XY ModelSpaceLimitsMin { get; set; }
+Header\CadHeader.cs:1169: [CadSystemVariable("$LIMMAX", 10, 20)]
+  > public XY ModelSpaceLimitsMax { get; set; }
+Header\CadHeader.cs:1178: [CadSystemVariable("$UCSBASE", true, 2)]
+  > public string UcsBaseName
+Header\CadHeader.cs:1194: [CadSystemVariable("$UCSNAME", true, 2)]
+  > public string UcsName
+Header\CadHeader.cs:1210: [CadSystemVariable("$ELEVATION", 40)]
+  > public double Elevation
+Header\CadHeader.cs:1226: [CadSystemVariable("$UCSORG", 10, 20, 30)]
+  > public XYZ ModelSpaceOrigin
+Header\CadHeader.cs:1242: [CadSystemVariable("$UCSXDIR", 10, 20, 30)]
+  > public XYZ ModelSpaceXAxis
+Header\CadHeader.cs:1258: [CadSystemVariable("$UCSYDIR", 10, 20, 30)]
+  > public XYZ ModelSpaceYAxis
+Header\CadHeader.cs:1274: [CadSystemVariable("$DIMBLK", 1)]
+  > public string DimensionBlockName { get; set; } = string.Empty;
+Header\CadHeader.cs:1283: [CadSystemVariable("$DIMLDRBLK", 1)]
+  > public string ArrowBlockName { get; set; } = string.Empty;
+Header\CadHeader.cs:1292: [CadSystemVariable("$DIMBLK1", 1)]
+  > public string DimensionBlockNameFirst { get; set; }
+Header\CadHeader.cs:1301: [CadSystemVariable("$DIMBLK2", 1)]
+  > public string DimensionBlockNameSecond { get; set; }
+Header\CadHeader.cs:1320: [CadSystemVariable("$HYPERLINKBASE", 1)]
+  > public string HyperLinkBase { get; set; }
+Header\CadHeader.cs:1329: [CadSystemVariable("$CELWEIGHT", 370)]
+  > public LineweightType CurrentEntityLineWeight { get; set; } = LineweightType.ByLayer;
+Header\CadHeader.cs:1338: [CadSystemVariable("$ENDCAPS", 280)]
+  > public short EndCaps { get; set; }
+Header\CadHeader.cs:1347: [CadSystemVariable("$JOINSTYLE", 280)]
+  > public short JoinStyle { get; set; }
+Header\CadHeader.cs:1358: [CadSystemVariable("$LWDISPLAY", 290)]
+  > public bool DisplayLineWeight { get; set; } = false;
+Header\CadHeader.cs:1367: [CadSystemVariable("$XEDIT", 290)]
+  > public bool XEdit { get; set; }
+Header\CadHeader.cs:1376: [CadSystemVariable("$EXTNAMES", 290)]
+  > public bool ExtendedNames { get; set; } = true;
+Header\CadHeader.cs:1385: [CadSystemVariable("$PSTYLEMODE", 290)]
+  > public short PlotStyleMode { get; set; }
+Header\CadHeader.cs:1391: //[CadSystemVariable("$OLESTARTUP", 290)]
+  > public bool LoadOLEObject { get; set; }
+Header\CadHeader.cs:1400: [CadSystemVariable("$INSUNITS", 70)]
+  > public UnitsType InsUnits { get; set; } = UnitsType.Unitless;
+Header\CadHeader.cs:1409: [CadSystemVariable("$CEPSNTYPE", 380)]
+  > public EntityPlotStyleType CurrentEntityPlotStyle { get; set; }
+Header\CadHeader.cs:1418: [CadSystemVariable("$FINGERPRINTGUID", 2)]
+  > public string FingerPrintGuid { get; internal set; } = Guid.NewGuid().ToString();
+Header\CadHeader.cs:1427: [CadSystemVariable("$VERSIONGUID", 2)]
+  > public string VersionGuid { get; internal set; } = Guid.NewGuid().ToString();
+Header\CadHeader.cs:1436: [CadSystemVariable("$SORTENTS", 280)]
+  > public ObjectSortingFlags EntitySortingFlags { get; set; }
+Header\CadHeader.cs:1445: [CadSystemVariable("$INDEXCTL", 280)]
+  > public IndexCreationFlags IndexCreationFlags { get; set; }
+Header\CadHeader.cs:1454: [CadSystemVariable("$HIDETEXT", 280)]   //note: mismatch with docs, code 290
+  > public byte HideText { get; set; }
+Header\CadHeader.cs:1463: [CadSystemVariable("$XCLIPFRAME", 280)] //note: mismatch with docs, code 290
+  > public byte ExternalReferenceClippingBoundaryType { get; set; }
+Header\CadHeader.cs:1472: [CadSystemVariable("$DIMASSOC", 280)]
+  > public DimensionAssociation DimensionAssociativity { get; set; } = DimensionAssociation.CreateExplodedDimensions;
+Header\CadHeader.cs:1481: [CadSystemVariable("$HALOGAP", 280)]
+  > public byte HaloGapPercentage { get; set; }
+Header\CadHeader.cs:1492: [CadSystemVariable("$INTERFERECOLOR", 62)]
+  > public Color InterfereColor { get; set; }
+Header\CadHeader.cs:1505: [CadSystemVariable("$PROJECTNAME", 1)]
+  > public string ProjectName { get; set; }
+Header\CadHeader.cs:1531: [CadSystemVariable("$LATITUDE", 40)]
+  > public double Latitude { get; set; } = 37.7950d;
+Header\CadHeader.cs:1540: [CadSystemVariable("$LONGITUDE", 40)]
+  > public double Longitude { get; set; } = -122.394d;
+Header\CadHeader.cs:1546: [CadSystemVariable("$NORTHDIRECTION", 40)]
+  > public double NorthDirection { get; set; }
+Header\CadHeader.cs:1552: [CadSystemVariable("$TIMEZONE", 70)]
+  > public int TimeZone { get; set; }
+Header\CadHeader.cs:1560: [CadSystemVariable("$DWFFRAME", 280)]
+  > public char DwgUnderlayFramesVisibility { get; set; }
+Header\CadHeader.cs:1566: [CadSystemVariable("$DGNFRAME", 280)]
+  > public char DgnUnderlayFramesVisibility { get; set; }
+Header\CadHeader.cs:1575: [CadSystemVariable("$CSHADOW", 280)]
+  > public ShadowMode ShadowMode { get; set; }
+Header\CadHeader.cs:1584: [CadSystemVariable("$SHADOWPLANELOCATION", 40)]
+  > public double ShadowPlaneLocation { get; set; }
+Header\CadHeader.cs:1595: [CadSystemVariable("$DIMTXSTY", true, 7)]
+  > public string DimensionTextStyleName
+Header\CadHeader.cs:1618: [CadSystemVariable("$DIMSTYLE", true, 2)]
+  > public string DimensionStyleOverridesName
+Header\CadHeader.cs:1641: [CadSystemVariable("$DIMADEC", 70)]
+  > public short DimensionAngularDimensionDecimalPlaces
+Header\CadHeader.cs:1657: [CadSystemVariable("$DIMDEC", 70)]
+  > public short DimensionDecimalPlaces
+Header\CadHeader.cs:1673: [CadSystemVariable("$DIMTDEC", 70)]
+  > public short DimensionToleranceDecimalPlaces
+Header\CadHeader.cs:1689: [CadSystemVariable("$DIMALT", 70)]
+  > public bool DimensionAlternateUnitDimensioning
+Header\CadHeader.cs:1705: [CadSystemVariable("$DIMALTU", 70)]
+  > public LinearUnitFormat DimensionAlternateUnitFormat
+Header\CadHeader.cs:1721: [CadSystemVariable("$DIMALTF", 40)]
+  > public double DimensionAlternateUnitScaleFactor
+Header\CadHeader.cs:1737: [CadSystemVariable("$DIMEXO", 40)]
+  > public double DimensionExtensionLineOffset
+Header\CadHeader.cs:1753: [CadSystemVariable("$DIMSCALE", 40)]
+  > public double DimensionScaleFactor
+Header\CadHeader.cs:1769: [CadSystemVariable("$DIMALTD", 70)]
+  > public short DimensionAlternateUnitDecimalPlaces
+Header\CadHeader.cs:1785: [CadSystemVariable("$DIMALTTD", 70)]
+  > public short DimensionAlternateUnitToleranceDecimalPlaces
+Header\CadHeader.cs:1801: [CadSystemVariable("$DIMAUNIT", 70)]
+  > public AngularUnitFormat DimensionAngularUnit
+Header\CadHeader.cs:1817: [CadSystemVariable("$DIMFRAC", 70)]
+  > public FractionFormat DimensionFractionFormat
+Header\CadHeader.cs:1833: [CadSystemVariable("$DIMLUNIT", 70)]
+  > public LinearUnitFormat DimensionLinearUnitFormat
+Header\CadHeader.cs:1849: [CadSystemVariable("$DIMDSEP", 70)]
+  > public char DimensionDecimalSeparator
+Header\CadHeader.cs:1865: [CadSystemVariable("$DIMTMOVE", 70)]
+  > public TextMovement DimensionTextMovement
+Header\CadHeader.cs:1881: [CadSystemVariable("$DIMJUST", 70)]
+  > public DimensionTextHorizontalAlignment DimensionTextHorizontalAlignment
+Header\CadHeader.cs:1897: [CadSystemVariable("$DIMSD1", 70)]
+  > public bool DimensionSuppressFirstDimensionLine
+Header\CadHeader.cs:1913: [CadSystemVariable("$DIMSD2", 70)]
+  > public bool DimensionSuppressSecondDimensionLine
+Header\CadHeader.cs:1929: [CadSystemVariable("$DIMTOL", 70)]
+  > public bool DimensionGenerateTolerances
+Header\CadHeader.cs:1945: [CadSystemVariable("$DIMTOLJ", 70)]
+  > public ToleranceAlignment DimensionToleranceAlignment
+Header\CadHeader.cs:1961: [CadSystemVariable("$DIMZIN", 70)]
+  > public ZeroHandling DimensionZeroHandling
+Header\CadHeader.cs:1977: [CadSystemVariable("$DIMTZIN", 70)]
+  > public ZeroHandling DimensionToleranceZeroHandling
+Header\CadHeader.cs:1990: [CadSystemVariable("$DIMFIT", 70)]
+  > public short DimensionFit
+Header\CadHeader.cs:2006: [CadSystemVariable("$DIMALTZ", 70)]
+  > public ZeroHandling DimensionAlternateUnitZeroHandling
+Header\CadHeader.cs:2022: [CadSystemVariable("$DIMALTTZ", 70)]
+  > public ZeroHandling DimensionAlternateUnitToleranceZeroHandling
+Header\CadHeader.cs:2038: [CadSystemVariable("$DIMUPT", 70)]
+  > public bool DimensionCursorUpdate
+Header\CadHeader.cs:2054: [CadSystemVariable("$DIMATFIT", 70)]
+  > public TextArrowFitType DimensionDimensionTextArrowFit
+Header\CadHeader.cs:2070: [CadSystemVariable("$DIMALTRND", 40)]
+  > public double DimensionAlternateUnitRounding
+Header\CadHeader.cs:2086: [CadSystemVariable("$DIMAPOST", 1)]
+  > public string DimensionAlternateDimensioningSuffix
+Header\CadHeader.cs:2102: [CadSystemVariable("$DIMASZ", 40)]
+  > public double DimensionArrowSize
+Header\CadHeader.cs:2118: [CadSystemVariable("$DIMAZIN", 70)]
+  > public ZeroHandling DimensionAngularZeroHandling
+Header\CadHeader.cs:2134: [CadSystemVariable("$DIMARCSYM", 70)]
+  > public ArcLengthSymbolPosition DimensionArcLengthSymbolPosition
+Header\CadHeader.cs:2150: [CadSystemVariable("$DIMSAH", 70)]
+  > public bool DimensionSeparateArrowBlocks
+Header\CadHeader.cs:2166: [CadSystemVariable("$DIMCEN", 40)]
+  > public double DimensionCenterMarkSize
+Header\CadHeader.cs:2182: [CadSystemVariable("$DIMTSZ", 40)]
+  > public double DimensionTickSize
+Header\CadHeader.cs:2198: [CadSystemVariable("$DIMCLRD", 70)]
+  > public Color DimensionLineColor
+Header\CadHeader.cs:2214: [CadSystemVariable("$DIMCLRE", 70)]
+  > public Color DimensionExtensionLineColor
+Header\CadHeader.cs:2230: [CadSystemVariable("$DIMCLRT", 70)]
+  > public Color DimensionTextColor
+Header\CadHeader.cs:2246: [CadSystemVariable("$DIMDLE", 40)]
+  > public double DimensionLineExtension
+Header\CadHeader.cs:2262: [CadSystemVariable("$DIMDLI", 40)]
+  > public double DimensionLineIncrement
+Header\CadHeader.cs:2278: [CadSystemVariable("$DIMEXE", 40)]
+  > public double DimensionExtensionLineExtension
+Header\CadHeader.cs:2294: [CadSystemVariable("$DIMFXLON", 70)]
+  > public bool DimensionIsExtensionLineLengthFixed
+Header\CadHeader.cs:2310: [CadSystemVariable("$DIMFXL", 40)]
+  > public double DimensionFixedExtensionLineLength
+Header\CadHeader.cs:2326: [CadSystemVariable("$DIMJOGANG", 40)]
+  > public double DimensionJoggedRadiusDimensionTransverseSegmentAngle
+Header\CadHeader.cs:2342: [CadSystemVariable("$DIMTFILL", 70)]
+  > public DimensionTextBackgroundFillMode DimensionTextBackgroundFillMode
+Header\CadHeader.cs:2358: [CadSystemVariable(DxfReferenceType.Ignored, "$DIMTFILLCLR", 62)]
+  > public Color DimensionTextBackgroundColor
+Header\CadHeader.cs:2374: [CadSystemVariable("$DIMGAP", 40)]
+  > public double DimensionLineGap
+Header\CadHeader.cs:2390: [CadSystemVariable("$DIMLFAC", 40)]
+  > public double DimensionLinearScaleFactor
+Header\CadHeader.cs:2406: [CadSystemVariable("$DIMTVP", 40)]
+  > public double DimensionTextVerticalPosition
+Header\CadHeader.cs:2422: [CadSystemVariable("$DIMLWD", 70)]
+  > public LineweightType DimensionLineWeight
+Header\CadHeader.cs:2438: [CadSystemVariable("$DIMLWE", 70)]
+  > public LineweightType ExtensionLineWeight
+Header\CadHeader.cs:2454: [CadSystemVariable("$DIMPOST", 1)]
+  > public string DimensionPostFix
+Header\CadHeader.cs:2470: [CadSystemVariable("$DIMRND", 40)]
+  > public double DimensionRounding
+Header\CadHeader.cs:2486: [CadSystemVariable("$DIMSE1", 70)]
+  > public bool DimensionSuppressFirstExtensionLine
+Header\CadHeader.cs:2502: [CadSystemVariable("$DIMSE2", 70)]
+  > public bool DimensionSuppressSecondExtensionLine
+Header\CadHeader.cs:2518: [CadSystemVariable("$DIMSOXD", 70)]
+  > public bool DimensionSuppressOutsideExtensions
+Header\CadHeader.cs:2534: [CadSystemVariable("$DIMTAD", 70)]
+  > public DimensionTextVerticalAlignment DimensionTextVerticalAlignment
+Header\CadHeader.cs:2550: [CadSystemVariable("$DIMUNIT", 70)]
+  > public short DimensionUnit
+Header\CadHeader.cs:2566: [CadSystemVariable("$DIMTFAC", 40)]
+  > public double DimensionToleranceScaleFactor
+Header\CadHeader.cs:2582: [CadSystemVariable("$DIMTIH", 70)]
+  > public bool DimensionTextInsideHorizontal
+Header\CadHeader.cs:2598: [CadSystemVariable("$DIMTIX", 70)]
+  > public bool DimensionTextInsideExtensions
+Header\CadHeader.cs:2614: [CadSystemVariable("$DIMTM", 40)]
+  > public double DimensionMinusTolerance
+Header\CadHeader.cs:2630: [CadSystemVariable("$DIMTOFL", 70)]
+  > public bool DimensionTextOutsideExtensions
+Header\CadHeader.cs:2646: [CadSystemVariable("$DIMTOH", 70)]
+  > public bool DimensionTextOutsideHorizontal
+Header\CadHeader.cs:2662: [CadSystemVariable("$DIMLIM", 70)]
+  > public bool DimensionLimitsGeneration
+Header\CadHeader.cs:2678: [CadSystemVariable("$DIMTP", 40)]
+  > public double DimensionPlusTolerance
+Header\CadHeader.cs:2694: [CadSystemVariable("$DIMTXT", 40)]
+  > public double DimensionTextHeight
+Header\CadHeader.cs:2710: [CadSystemVariable("$DIMTXTDIRECTION", 70)]
+  > public TextDirection DimensionTextDirection
+Header\CadHeader.cs:2726: [CadSystemVariable("$DIMALTMZF", 40)]
+  > public double DimensionAltMzf
+Header\CadHeader.cs:2742: [CadSystemVariable("$DIMALTMZS", 6)]
+  > public string DimensionAltMzs
+Header\CadHeader.cs:2758: [CadSystemVariable("$DIMMZF", 40)]
+  > public double DimensionMzf
+Header\CadHeader.cs:2774: [CadSystemVariable("$DIMMZS", 6)]
+  > public string DimensionMzs
+Header\CadHeader.cs:2790: [CadSystemVariable("$DIMLTYPE", 6)]
+  > public string DimensionLineType { get; set; } = "ByBlock";
+Header\CadHeader.cs:2799: [CadSystemVariable("$DIMLTEX1", 6)]
+  > public string DimensionTex1 { get; set; } = "ByBlock";
+Header\CadHeader.cs:2808: [CadSystemVariable("$DIMLTEX2", 6)]
+  > public string DimensionTex2 { get; set; } = "ByBlock";

@@ -5,11 +5,16 @@
 		<Authors>Mozibur Rahman</Authors>
 		<LangVersion>11.0</LangVersion>
 		<PackageId>ACadSharp</PackageId>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<PackageReference Include="System.Memory" Version="4.5.5" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ACadSharp.Generators\ACadSharp.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 
 </Project>

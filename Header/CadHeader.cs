@@ -6,8 +6,6 @@ using CSMath;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace ACadSharp.Header
 {
@@ -2917,7 +2915,7 @@ namespace ACadSharp.Header
 		/// </summary>
 		public CadDocument Document { get; internal set; }
 
-		private readonly static PropertyExpression<CadHeader, CadSystemVariableAttribute> _propertyCache;
+		private static readonly Dictionary<string, CadSystemVariable> _sysVarCache = DxfMetadataRegistry.GetHeaderMap();
 
 		private Layer _currentLayer = Layer.Default;
 
@@ -2928,12 +2926,6 @@ namespace ACadSharp.Header
 		private DimensionStyle _dimensionStyleOverrides = DimensionStyle.Default;
 
 		private LineType _currentLineType = LineType.ByLayer;
-
-		static CadHeader()
-		{
-			_propertyCache = new PropertyExpression<CadHeader, CadSystemVariableAttribute>(
-				(info, attribute) => attribute.Name);
-		}
 
 		public CadHeader() : this(ACadVersion.AC1018) { }
 
@@ -2953,17 +2945,8 @@ namespace ACadSharp.Header
 		/// <returns></returns>
 		public static Dictionary<string, CadSystemVariable> GetHeaderMap()
 		{
-			Dictionary<string, CadSystemVariable> map = new Dictionary<string, CadSystemVariable>();
-			foreach (PropertyInfo p in typeof(CadHeader).GetProperties())
-			{
-				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
-				if (att == null)
-					continue;
-
-				map.Add(att.Name, new CadSystemVariable(p));
-			}
-
-			return map;
+			// Use generated registry (no reflection)
+			return DxfMetadataRegistry.GetHeaderMap();
 		}
 
 		/// <summary>
@@ -2973,51 +2956,63 @@ namespace ACadSharp.Header
 		/// <param name="values">parameters for the constructor of the value</param>
 		public void SetValue(string systemvar, params object[] values)
 		{
-			PropertyExpression<CadHeader, CadSystemVariableAttribute>.Prop prop = _propertyCache.GetProperty(systemvar);
+			if (!_sysVarCache.TryGetValue(systemvar, out var sysVar))
+				return;
 
-			ConstructorInfo constr = prop.Property.PropertyType.GetConstructor(values.Select(o => o.GetType()).ToArray());
+			if (values == null || values.Length == 0)
+				return;
 
-			if (prop.Property.PropertyType.IsEnum)
-			{
-				int v = Convert.ToInt32(values.First());
-				prop.Setter(this, Enum.ToObject(prop.Property.PropertyType, v));
-			}
-			else if (prop.Property.PropertyType.IsEquivalentTo(typeof(DateTime)))
-			{
-				double jvalue = (double)values.First();
+			Type propertyType = sysVar.PropertyType;
 
-				prop.Setter(this, CadUtils.FromJulianCalendar((double)values.First()));
-			}
-			else if (prop.Property.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
+			if (propertyType == typeof(XY) && values.Length >= 2)
 			{
-				double jvalue = (double)values.First();
+				sysVar.SetValue(this, new XY(Convert.ToDouble(values[0]), Convert.ToDouble(values[1])));
+				return;
+			}
 
-				prop.Setter(this, CadUtils.EditingTime((double)values.First()));
-			}
-			else if (constr == null)
+			if (propertyType == typeof(XYZ) && values.Length >= 3)
 			{
-				if (prop.Attribute.IsName && values.First() is string name)
-				{
-					if (!name.IsNullOrEmpty())
-					{
-						prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
-					}
-				}
-				else
-				{
-					prop.Setter(this, Convert.ChangeType(values.First(), prop.Property.PropertyType));
-				}
+				sysVar.SetValue(this, new XYZ(Convert.ToDouble(values[0]), Convert.ToDouble(values[1]), Convert.ToDouble(values[2])));
+				return;
 			}
-			else
+
+			object v0 = values[0];
+
+			if (propertyType.IsEnum)
 			{
-				prop.Setter(this, Activator.CreateInstance(prop.Property.PropertyType, values));
+				sysVar.SetValue(this, Enum.ToObject(propertyType, Convert.ToInt32(v0)));
+				return;
 			}
+
+			if (propertyType == typeof(DateTime))
+			{
+				sysVar.SetValue(this, CadUtils.FromJulianCalendar(Convert.ToDouble(v0)));
+				return;
+			}
+
+			if (propertyType == typeof(TimeSpan))
+			{
+				sysVar.SetValue(this, CadUtils.EditingTime(Convert.ToDouble(v0)));
+				return;
+			}
+
+			if (propertyType == typeof(Color))
+			{
+				sysVar.SetValue(this, new Color(Convert.ToInt16(v0)));
+				return;
+			}
+
+			if (sysVar.Attribute.IsName && v0 is string sname && sname.IsNullOrEmpty())
+				return;
+
+			sysVar.SetValue(this, Convert.ChangeType(v0, propertyType));
 		}
 
 		public object GetValue(string systemvar)
 		{
-			var prop = _propertyCache.GetProperty(systemvar);
-			return prop.Getter(this);
+			if (!_sysVarCache.TryGetValue(systemvar, out var sysVar))
+				return null;
+			return sysVar.GetValue(this);
 		}
 
 		/// <summary>
@@ -3027,32 +3022,23 @@ namespace ACadSharp.Header
 		/// <returns>dictionary with the codes and values</returns>
 		public Dictionary<DxfCode, object> GetValues(string systemvar)
 		{
-			Dictionary<DxfCode, object> value = null;
+			if (!_sysVarCache.TryGetValue(systemvar, out var sysVar))
+				return null;
 
-			foreach (PropertyInfo p in this.GetType().GetProperties())
+			var value = new Dictionary<DxfCode, object>();
+			int[] codes = sysVar.DxfCodes;
+			object rawValue = sysVar.GetValue(this);
+
+			if (codes.Length == 1)
 			{
-				CadSystemVariableAttribute att = p.GetCustomAttribute<CadSystemVariableAttribute>();
-				if (att == null)
-					continue;
-
-				if (att.Name == systemvar)
+				value.Add((DxfCode)codes[0], rawValue);
+			}
+			else
+			{
+				IVector vector = (IVector)rawValue;
+				for (int i = 0; i < codes.Length; i++)
 				{
-					value = new Dictionary<DxfCode, object>();
-
-					if (att.ValueCodes.Length == 1)
-					{
-						value.Add(att.ValueCodes[0], p.GetValue(this));
-					}
-					else
-					{
-						IVector vector = (IVector)p.GetValue(this);
-						for (int i = 0; i < vector.Dimension; i++)
-						{
-							value.Add(att.ValueCodes[i], vector[i]);
-						}
-					}
-
-					break;
+					value.Add((DxfCode)codes[i], vector[i]);
 				}
 			}
 

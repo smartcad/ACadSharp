@@ -16,6 +16,10 @@ namespace ACadSharp
 	{
 		public DxfReferenceType ReferenceType { get { return this._attributeData.ReferenceType; } }
 
+		public T Attribute { get { return this._attributeData; } }
+
+		public Type PropertyType { get { return this._propertyType; } }
+
 		public int AssignedCode
 		{
 			get
@@ -38,6 +42,14 @@ namespace ACadSharp
 
 		protected T _attributeData;
 
+		protected Type _propertyType;
+
+		protected string _propertyName;
+
+		protected Func<object, object> _getter;
+
+		protected Action<object, object> _setter;
+
 		protected DxfPropertyBase(PropertyInfo property)
 		{
 			this._attributeData = property.GetCustomAttribute<T>();
@@ -46,6 +58,19 @@ namespace ACadSharp
 				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
 
 			this._property = property;
+			this._propertyType = property.PropertyType;
+			this._propertyName = property.Name;
+			this._getter = property.GetValue;
+			this._setter = property.SetValue;
+		}
+
+		internal DxfPropertyBase(T attributeData, Type propertyType, string propertyName, Func<object, object> getter, Action<object, object> setter)
+		{
+			this._attributeData = attributeData;
+			this._propertyType = propertyType;
+			this._propertyName = propertyName;
+			this._getter = getter;
+			this._setter = setter;
 		}
 
 		/// <summary>
@@ -67,44 +92,44 @@ namespace ACadSharp
 		public void SetValue<TCadObject>(int code, TCadObject obj, object value)
 			where TCadObject : CadObject
 		{
-			if (this._property.PropertyType.IsEquivalentTo(typeof(XY)))
+			if (this._propertyType.IsEquivalentTo(typeof(XY)))
 			{
-				XY vector = (XY)this._property.GetValue(obj);
+				XY vector = (XY)this._getter(obj);
 
 				int index = (code / 10) % 10 - 1;
 				vector[index] = Convert.ToDouble(value);
 
-				this._property.SetValue(obj, vector);
+				this._setter(obj, vector);
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(XYZ)))
+			else if (this._propertyType.IsEquivalentTo(typeof(XYZ)))
 			{
-				XYZ vector = (XYZ)this._property.GetValue(obj);
+				XYZ vector = (XYZ)this._getter(obj);
 
 				int index = (code / 10) % 10 - 1;
 				vector[index] = Convert.ToDouble(value);
 
-				this._property.SetValue(obj, vector);
+				this._setter(obj, vector);
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(Color)))
+			else if (this._propertyType.IsEquivalentTo(typeof(Color)))
 			{
 				switch (code)
 				{
 					case 62:
-						this._property.SetValue(obj, new Color((short)value));
+						this._setter(obj, new Color((short)value));
 						break;
 					case 420:
 						byte[] b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
-						this._property.SetValue(obj, new Color(b[0], b[1], b[2]));
+						this._setter(obj, new Color(b[0], b[1], b[2]));
 						break;
 					case 430:
 						// dictionary color
 						break;
 				}
 			}
-			else if (_property.PropertyType.IsEquivalentTo(typeof(PaperMargin)))
+			else if (_propertyType.IsEquivalentTo(typeof(PaperMargin)))
 			{
-				PaperMargin margin = (PaperMargin)_property.GetValue(obj);
+				PaperMargin margin = (PaperMargin)_getter(obj);
 
 				switch (code)
 				{
@@ -126,35 +151,35 @@ namespace ACadSharp
 						break;
 				}
 
-				this._property.SetValue(obj, margin);
+				this._setter(obj, margin);
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
+			else if (this._propertyType.IsEquivalentTo(typeof(Transparency)))
 			{
-				this._property.SetValue(obj, Transparency.FromAlphaValue((int)value));
+				this._setter(obj, Transparency.FromAlphaValue((int)value));
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(bool)))
+			else if (this._propertyType.IsEquivalentTo(typeof(bool)))
 			{
-				this._property.SetValue(obj, Convert.ToBoolean(value));
+				this._setter(obj, Convert.ToBoolean(value));
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(char)))
+			else if (this._propertyType.IsEquivalentTo(typeof(char)))
 			{
-				this._property.SetValue(obj, Convert.ToChar(value));
+				this._setter(obj, Convert.ToChar(value));
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(byte)))
+			else if (this._propertyType.IsEquivalentTo(typeof(byte)))
 			{
-				this._property.SetValue(obj, Convert.ToByte(value));
+				this._setter(obj, Convert.ToByte(value));
 			}
-			else if (this._property.PropertyType.IsEnum)
+			else if (this._propertyType.IsEnum)
 			{
-				this._property.SetValue(obj, Enum.ToObject(this._property.PropertyType, value));
+				this._setter(obj, Enum.ToObject(this._propertyType, value));
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(ushort)))
+			else if (this._propertyType.IsEquivalentTo(typeof(ushort)))
 			{
-				this._property.SetValue(obj, Convert.ToUInt16(value));
+				this._setter(obj, Convert.ToUInt16(value));
 			}
 			else
 			{
-				this._property.SetValue(obj, value);
+				this._setter(obj, value);
 			}
 		}
 
@@ -163,7 +188,7 @@ namespace ACadSharp
 			switch (this._attributeData.ReferenceType)
 			{
 				case DxfReferenceType.Unprocess:
-					return this._property.GetValue(obj);
+					return this._getter(obj);
 				case DxfReferenceType.Handle:
 					return this.getHandledValue(obj);
 				case DxfReferenceType.Name:
@@ -178,30 +203,30 @@ namespace ACadSharp
 
 		private ulong? getHandledValue<TCadObject>(TCadObject obj)
 		{
-			if (!this._property.PropertyType.HasInterface<IHandledCadObject>())
-				throw new ArgumentException($"Property {this._property.Name} for type : {obj.GetType().FullName} does not implement IHandledCadObject");
+			if (!this._propertyType.HasInterface<IHandledCadObject>())
+				throw new ArgumentException($"Property {this._propertyName} for type : {obj.GetType().FullName} does not implement IHandledCadObject");
 
-			IHandledCadObject handled = (IHandledCadObject)this._property.GetValue(obj);
+			IHandledCadObject handled = (IHandledCadObject)this._getter(obj);
 
 			return handled?.Handle;
 		}
 
 		private string getNamedValue<TCadObject>(TCadObject obj)
 		{
-			if (!this._property.PropertyType.HasInterface<INamedCadObject>())
-				throw new ArgumentException($"Property {this._property.Name} for type : {obj.GetType().FullName} does not implement INamedCadObject");
+			if (!this._propertyType.HasInterface<INamedCadObject>())
+				throw new ArgumentException($"Property {this._propertyName} for type : {obj.GetType().FullName} does not implement INamedCadObject");
 
-			INamedCadObject handled = (INamedCadObject)this._property.GetValue(obj);
+			INamedCadObject handled = (INamedCadObject)this._getter(obj);
 
 			return handled?.Name;
 		}
 
 		private int getCounterValue<TCadObject>(TCadObject obj)
 		{
-			if (!this._property.PropertyType.HasInterface<IEnumerable>())
+			if (!this._propertyType.HasInterface<IEnumerable>())
 				throw new ArgumentException();
 
-			IEnumerable collection = (IEnumerable)this._property.GetValue(obj);
+			IEnumerable collection = (IEnumerable)this._getter(obj);
 			if (collection == null)
 				return 0;
 
@@ -226,25 +251,25 @@ namespace ACadSharp
 					return this.getHandledValue<TCadObject>(obj);
 			}
 
-			if (this._property.PropertyType.HasInterface<IVector>())
+			if (this._propertyType.HasInterface<IVector>())
 			{
-				IVector vector = (IVector)this._property.GetValue(obj);
+				IVector vector = (IVector)this._getter(obj);
 
 				int index = (code / 10) % 10 - 1;
 				return vector[index];
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(DateTime)))
+			else if (this._propertyType.IsEquivalentTo(typeof(DateTime)))
 			{
-				return CadUtils.ToJulianCalendar((DateTime)this._property.GetValue(obj));
+				return CadUtils.ToJulianCalendar((DateTime)this._getter(obj));
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
+			else if (this._propertyType.IsEquivalentTo(typeof(TimeSpan)))
 			{
-				return ((TimeSpan)this._property.GetValue(obj)).TotalDays;
+				return ((TimeSpan)this._getter(obj)).TotalDays;
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(Color)))
+			else if (this._propertyType.IsEquivalentTo(typeof(Color)))
 			{
 				//TODO: Implement color getter
-				Color color = (Color)this._property.GetValue(obj);
+				Color color = (Color)this._getter(obj);
 
 				switch (code)
 				{
@@ -261,31 +286,31 @@ namespace ACadSharp
 
 				return null;
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(PaperMargin)))
+			else if (this._propertyType.IsEquivalentTo(typeof(PaperMargin)))
 			{
 				switch (code)
 				{
 					case 40:
-						return ((PaperMargin)this._property.GetValue(obj)).Left;
+						return ((PaperMargin)this._getter(obj)).Left;
 					case 41:
-						return ((PaperMargin)this._property.GetValue(obj)).Bottom;
+						return ((PaperMargin)this._getter(obj)).Bottom;
 					case 42:
-						return ((PaperMargin)this._property.GetValue(obj)).Right;
+						return ((PaperMargin)this._getter(obj)).Right;
 					case 43:
-						return ((PaperMargin)this._property.GetValue(obj)).Top;
+						return ((PaperMargin)this._getter(obj)).Top;
 					default:
 						throw new Exception();
 				}
 			}
-			else if (this._property.PropertyType.IsEquivalentTo(typeof(Transparency)))
+			else if (this._propertyType.IsEquivalentTo(typeof(Transparency)))
 			{
 				//TODO: Implement transparency getter
-				//return this._property.GetValue(obj);
+				//return this._getter(obj);
 				return null;
 			}
 			else
 			{
-				return this._property.GetValue(obj);
+				return this._getter(obj);
 			}
 		}
 	}

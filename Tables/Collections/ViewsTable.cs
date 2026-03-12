@@ -12,6 +12,8 @@ namespace ACadSharp.Tables.Collections
 
 		protected override string[] defaultEntries { get { return new string[] { }; } }
 
+		protected override View CreateDefaultEntry(string name) => throw new System.NotSupportedException();
+
 		internal ViewsTable() : base() { }
 
 		internal ViewsTable(CadDocument document) : base(document) { }

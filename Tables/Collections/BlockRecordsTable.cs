@@ -10,6 +10,8 @@
 
 		protected override string[] defaultEntries { get { return new string[] { BlockRecord.ModelSpaceName, BlockRecord.PaperSpaceName }; } }
 
+		protected override BlockRecord CreateDefaultEntry(string name) => throw new System.NotSupportedException();
+
 		internal BlockRecordsTable() { }
 
 		internal BlockRecordsTable(CadDocument document) : base(document) { }

@@ -7,6 +7,8 @@ namespace ACadSharp
 {
 	public class DxfProperty : DxfPropertyBase<DxfCodeValueAttribute>
 	{
+		private DxfCode[] _collectionCodes;
+
 		/// <summary>
 		/// Creates a dxf property referenced to an object property
 		/// </summary>
@@ -34,15 +36,26 @@ namespace ACadSharp
 			this._assignedCode = code;
 		}
 
+		internal DxfProperty(int assignedCode, DxfCodeValueAttribute attributeData, Type propertyType, string propertyName,
+			Func<object, object> getter, Action<object, object> setter, DxfCode[] collectionCodes)
+			: base(attributeData, propertyType, propertyName, getter, setter)
+		{
+			this._assignedCode = assignedCode;
+			this._collectionCodes = collectionCodes;
+		}
+
 		public object GetValue<TCadObject>(TCadObject obj)
 			where TCadObject : CadObject
 		{
-			return this._property.GetValue(obj);
+			return this._getter(obj);
 		}
 
 		public DxfCode[] GetCollectionCodes()
 		{
-			return this._property.GetCustomAttribute<DxfCollectionCodeValueAttribute>()?.ValueCodes;
+			if (this._collectionCodes != null)
+				return this._collectionCodes;
+
+			return this._property?.GetCustomAttribute<DxfCollectionCodeValueAttribute>()?.ValueCodes;
 		}
 
 		public override string ToString()
@@ -54,7 +67,7 @@ namespace ACadSharp
 				str += $"{code}:";
 			}
 
-			str += this._property.Name;
+			str += this._propertyName;
 
 			return str;
 		}

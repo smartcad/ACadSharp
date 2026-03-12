@@ -1,7 +1,5 @@
-﻿using ACadSharp.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace ACadSharp
 {
@@ -19,33 +17,14 @@ namespace ACadSharp
 
 		protected static void addClassProperties(DxfMapBase map, Type type)
 		{
-			foreach (var item in cadObjectMapDxf(type))
-			{
-				if(!map.DxfProperties.ContainsKey(item.Key))
-					map.DxfProperties.Add(item.Key, item.Value);
-			}
+			throw new NotSupportedException(
+				"Reflection-based DXF map building is not supported. Use the generated DxfMetadataRegistry instead.");
 		}
 
 		protected static IEnumerable<KeyValuePair<int, DxfProperty>> cadObjectMapDxf(Type type)
 		{
-			foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public
-														| BindingFlags.Instance
-														| BindingFlags.DeclaredOnly))
-			{
-				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
-				if (att == null)
-					continue;
-
-				if (att.ReferenceType == DxfReferenceType.Count)
-				{
-
-				}
-
-				foreach (var item in att.ValueCodes)
-				{
-					yield return new KeyValuePair<int, DxfProperty>((int)item, new DxfProperty((int)item, p));
-				}
-			}
+			throw new NotSupportedException(
+				"Reflection-based DXF map building is not supported. Use the generated DxfMetadataRegistry instead.");
 		}
 	}
 }

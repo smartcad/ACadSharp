@@ -1,11 +1,6 @@
-﻿using ACadSharp.Attributes;
-using ACadSharp.Entities;
-using ACadSharp.Tables;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace ACadSharp
 {
@@ -16,7 +11,7 @@ namespace ACadSharp
 		/// </summary>
 		private static readonly ConcurrentDictionary<Type, DxfMap> _cache = new ConcurrentDictionary<Type, DxfMap>();
 
-		public Dictionary<string, DxfClassMap> SubClasses { get; private set; } = new Dictionary<string, DxfClassMap>();
+		public Dictionary<string, DxfClassMap> SubClasses { get; internal set; } = new Dictionary<string, DxfClassMap>();
 
 		/// <summary>
 		/// Creates a dxf map for an <see cref="Entity"/> or a <see cref="TableEntry"/>
@@ -38,68 +33,20 @@ namespace ACadSharp
 				return map;
 			}
 
-			map = new DxfMap();
-			bool isDimensionStyle = false;
-
-			DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
-
-			map.Name = dxf?.Name;
-
-			for (Type t = type; t != null; t = t.BaseType)
+			// Try generated registry first (no reflection)
+			if (DxfMetadataRegistry.TryCreateMap(type, out map))
 			{
-				DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
-
-				if (t.Equals(typeof(DimensionStyle)))
+				_cache.TryAdd(type, map);
+				if (tryGetFromCache(type, out map))
 				{
-					isDimensionStyle = true;
+					return map;
 				}
-
-				if (t.Equals(typeof(CadObject)))
-				{
-					addClassProperties(map, t);
-					break;
-				}
-				else if (subclass != null && subclass.IsEmpty)
-				{
-					DxfClassMap classMap = map.SubClasses.Last().Value;
-
-					addClassProperties(classMap, t);
-
-					if (subclass.ClassName != null)
-					{
-						map.SubClasses.Add(subclass.ClassName, new DxfClassMap(subclass.ClassName));
-					}
-				}
-				else if (t.GetCustomAttribute<DxfSubClassAttribute>() != null)
-				{
-					DxfClassMap classMap = new DxfClassMap();
-					classMap.Name = subclass.ClassName;
-
-					addClassProperties(classMap, t);
-
-					map.SubClasses.Add(classMap.Name, classMap);
-				}
-			}
-
-			if (isDimensionStyle)
-			{
-				//TODO: Dimensions use the 105 instead of the 5... try to find a better fix
-				map.DxfProperties.Add(105, map.DxfProperties[5]);
-				map.DxfProperties.Remove(5);
-			}
-
-			map.SubClasses =
-				new Dictionary<string, DxfClassMap>(map.SubClasses.Reverse()
-					.ToDictionary(o => o.Key, o => o.Value));
-
-			_cache.TryAdd(type, map);
-
-			if (tryGetFromCache(type, out map))
-			{
 				return map;
 			}
 
-			return map;
+			throw new NotSupportedException(
+				$"No DXF map is available for type '{type.FullName}'. " +
+				"Ensure the type has the [DxfName] attribute and the source generator has run.");
 		}
 
 		/// <summary>

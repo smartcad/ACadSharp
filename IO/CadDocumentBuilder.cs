@@ -261,14 +261,9 @@ namespace ACadSharp.IO
 			where T : Table<R>
 			where R : TableEntry
 		{
-			if (table == null)
-			{
-				this.DocumentToBuild.RegisterCollection((T)Activator.CreateInstance(typeof(T)));
-			}
-			else
-			{
-				this.DocumentToBuild.RegisterCollection(table);
-			}
+			this.DocumentToBuild.RegisterCollection(
+				table ?? throw new System.ArgumentNullException(nameof(table),
+					"Table instance must be provided; default construction is not supported in AOT-compatible mode."));
 		}
 
 		protected void buildDictionaries()

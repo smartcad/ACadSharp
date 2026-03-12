@@ -12,6 +12,8 @@ namespace ACadSharp.Tables.Collections
 
 		protected override string[] defaultEntries { get { return new string[] { DimensionStyle.DefaultName }; } }
 
+		protected override DimensionStyle CreateDefaultEntry(string name) => new DimensionStyle(name);
+
 		internal DimensionStylesTable() : base() { }
 
 		internal DimensionStylesTable(CadDocument document) : base(document) { }

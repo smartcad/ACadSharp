@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Header;
+using System;
 using System.Reflection;
 
 namespace ACadSharp
@@ -12,10 +13,21 @@ namespace ACadSharp
 		{
 		}
 
+		internal CadSystemVariable(CadSystemVariableAttribute attributeData, Type propertyType, string propertyName,
+			Func<object, object> getter, Action<object, object> setter)
+			: base(attributeData, propertyType, propertyName, getter, setter)
+		{
+		}
+
 		public object GetValue<THeader>(THeader obj)
 			where THeader : CadHeader
 		{
-			return this._property.GetValue(obj);
+			return this._getter(obj);
+		}
+
+		internal void SetValue(CadHeader header, object value)
+		{
+			this._setter?.Invoke(header, value);
 		}
 	}
 }
