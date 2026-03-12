@@ -201,7 +201,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityXline:
 					return this.readEntityCodes<XLine>(new CadEntityTemplate<XLine>(), this.readEntitySubclassMap);
 				default:
-					DxfMap map = DxfMap.Create<Entity>();
+					DxfMap map = null;
 					CadUnknownEntityTemplate unknownEntityTemplate = null;
 					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
 					{
@@ -240,8 +240,8 @@ namespace ACadSharp.IO.DXF
 			DxfMap map = DxfMap.Create<T>();
 
 			while (this._reader.DxfCode != DxfCode.Start)
-			{
-				if (!readEntity(template, map))
+            {
+                if (!readEntity(template, map))
 				{
 					this.readCommonEntityCodes(template, out bool isExtendedData, map);
 					if (isExtendedData)
@@ -279,7 +279,7 @@ namespace ACadSharp.IO.DXF
 					template.MaterialHandle = this._reader.ValueAsHandle;
 					break;
 				default:
-					if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Entity]))
+					if (map == null || !this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Entity]))
 					{
 						this.readCommonCodes(template, out isExtendedData, map);
 					}

@@ -74,7 +74,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectXRecord:
 					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
 				default:
-					DxfMap map = DxfMap.Create<CadObject>();
+					DxfMap map = null;
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
 					if (this._builder.DocumentToBuild.Classes.TryGetByName(this._reader.ValueAsString, out Classes.DxfClass dxfClass))
 					{

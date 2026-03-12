@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Classes;
-using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;

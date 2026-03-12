@@ -19,7 +19,6 @@ namespace ACadSharp.IO.DXF
 			while (this._reader.ValueAsString != DxfFileToken.EndSection)
 			{
 				CadEntityTemplate template = null;
-
 				try
 				{
 					template = this.readEntity();

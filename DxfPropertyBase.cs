@@ -177,6 +177,34 @@ namespace ACadSharp
 			{
 				this._setter(obj, Convert.ToUInt16(value));
 			}
+			else if (this._propertyType.IsEquivalentTo(typeof(short)))
+			{
+				this._setter(obj, Convert.ToInt16(value));
+			}
+			else if (this._propertyType.IsEquivalentTo(typeof(int)))
+			{
+				this._setter(obj, Convert.ToInt32(value));
+			}
+			else if (this._propertyType.IsEquivalentTo(typeof(uint)))
+			{
+				this._setter(obj, Convert.ToUInt32(value));
+			}
+			else if (this._propertyType.IsEquivalentTo(typeof(long)))
+			{
+				this._setter(obj, Convert.ToInt64(value));
+			}
+			else if (this._propertyType.IsEquivalentTo(typeof(ulong)))
+			{
+				this._setter(obj, Convert.ToUInt64(value));
+			}
+			else if (this._propertyType.IsEquivalentTo(typeof(float)))
+			{
+				this._setter(obj, Convert.ToSingle(value));
+			}
+			else if (this._propertyType.IsEquivalentTo(typeof(double)))
+			{
+				this._setter(obj, Convert.ToDouble(value));
+			}
 			else
 			{
 				this._setter(obj, value);
