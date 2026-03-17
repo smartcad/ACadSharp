@@ -5758,14 +5758,14 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readDimAssoc()
 		{
-			DimensionAssociativity dimassoc = new DimensionAssociativity();
+            DimensionAssociativity dimassoc = new DimensionAssociativity();
 			DimAssocTemplate template = new DimAssocTemplate(dimassoc);
 
 			this.readCommonNonEntityData(template);
 			template.DimensionHandle = this.handleReference();
 
 			//BS	90	Associativity flag
-			dimassoc.AssociativityFlag = (DimensionAssociativity.DimassocAssociativityPoint)this._objectReader.ReadBitShort();
+			dimassoc.AssociativityFlag = (DimensionAssociativity.DimassocAssociativityPoint)this._objectReader.ReadBitLong();
 			//B		70	trans space flag
 			dimassoc.TransSpaceFlag = this._objectReader.ReadBit();
 			//BD	71	rotated dimesion type
@@ -5792,16 +5792,16 @@ namespace ACadSharp.IO.DWG
 				var classname = this._textReader.ReadVariableText();
 				var snap_type = (DimensionAssociativity.ObjectOSnapTypes)this._objectReader.ReadByte();
 				template.MainGeometryHandle[i] = this.handleReference();
-				var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why. usually = 1
+				//var bl1 = this._objectReader.ReadBitLong(); // its needed, but don't know why. usually = 1
 
-				var SubentType = this._objectReader.ReadBitShort();
-				var GsMarker = this._objectReader.ReadBitLong();
+				//var SubentType = this._objectReader.ReadBitShort();
+				//var GsMarker = this._objectReader.ReadBitLong();
 
-				var b21 = this._objectReader.Read2Bits(); // needed, still don't know why. usually 2
-				var param = this._objectReader.ReadBitDouble();
-				var osnap_point = this._objectReader.Read3BitDouble();
-				var hasLastPointReference = this._objectReader.ReadBit();
-				var pointref = new DimensionAssociativity.ObjectSnapPointReference(snap_type, SubentType, GsMarker, param, osnap_point, hasLastPointReference);
+				//var b21 = this._objectReader.Read2Bits(); // needed, still don't know why. usually 2
+				//var param = this._objectReader.ReadBitDouble();
+				//var osnap_point = this._objectReader.Read3BitDouble();
+				//var hasLastPointReference = this._objectReader.ReadBit();
+				var pointref = new DimensionAssociativity.ObjectSnapPointReference(snap_type, default, default, default, default, default);
 
 				dimassoc.PointRefs[i] = pointref;
 			}
