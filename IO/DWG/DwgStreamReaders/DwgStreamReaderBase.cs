@@ -18,19 +18,44 @@ namespace ACadSharp.IO.DWG
         internal static byte[] ByteArray4 = new byte[4];
 		internal static byte[] ByteArray2 = new byte[2];
 
+		// Direct byte buffer for bypassing virtual Stream.ReadByte() dispatch.
+		// On Mono runtime (MacCatalyst), virtual dispatch per byte is extremely slow.
+		private readonly byte[] _buf;
+		private int _bufPos;
+		private readonly int _bufEnd;
+		private readonly bool _hasBuf;
+
 		/// <inheritdoc/>
 		public int BitShift { get; set; }
 
 		/// <inheritdoc/>
 		public override long Position
 		{
-			get => this._stream.Position;
+			get => _hasBuf ? _bufPos : this._stream.Position;
 			set
 			{
-				this._stream.Position = value;
+				if (_hasBuf)
+					_bufPos = (int)value;
+				else
+					this._stream.Position = value;
 				this.BitShift = 0;
 			}
 		}
+
+		/// <summary>
+		/// Returns the underlying stream with its Position synced to the reader's current position.
+		/// </summary>
+		Stream IDwgStreamReader.Stream
+		{
+			get
+			{
+				if (_hasBuf)
+					this._stream.Position = _bufPos;
+				return _stream;
+			}
+		}
+
+		public override long Length => _hasBuf ? _bufEnd : this._stream.Length;
 
 		public bool IsEmpty { get; private set; } = false;
 
@@ -38,6 +63,20 @@ namespace ACadSharp.IO.DWG
 
 		public DwgStreamReaderBase(Stream stream, bool resetPosition) : base(stream, resetPosition)
 		{
+			if (this.RawBuffer != null)
+			{
+				_buf = this.RawBuffer;
+				_bufPos = this.RawBufferOffset + (int)this._stream.Position;
+				_bufEnd = this.RawBufferOffset + (int)this._stream.Length;
+				_hasBuf = true;
+			}
+			else if (stream is MemoryStream ms && ms.TryGetBuffer(out ArraySegment<byte> seg))
+			{
+				_buf = seg.Array;
+				_bufPos = seg.Offset + (int)ms.Position;
+				_bufEnd = seg.Offset + seg.Count;
+				_hasBuf = true;
+			}
 		}
 
 		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding = null, bool resetPositon = false)
@@ -91,6 +130,18 @@ namespace ACadSharp.IO.DWG
 
 		public override byte ReadByte()
 		{
+			if (_hasBuf)
+			{
+				if (this.BitShift == 0)
+				{
+					_lastByte = _buf[_bufPos++];
+					return _lastByte;
+				}
+				byte lastValues = (byte)((uint)_lastByte << BitShift);
+				_lastByte = _buf[_bufPos++];
+				return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
+			}
+
 			if (this.BitShift == 0)
 			{
 				//No need to apply the shift
@@ -100,11 +151,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Get the last bits from the last readed byte
-			byte lastValues = (byte)((uint)_lastByte << BitShift);
+			byte lastValues2 = (byte)((uint)_lastByte << BitShift);
 
 			_lastByte = base.ReadByte();
 
-			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
+			return (byte)(lastValues2 | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
 		}
 
 		public byte[] ReadBytes(int length)
@@ -118,6 +169,115 @@ namespace ACadSharp.IO.DWG
 		{
 			this.applyShiftToArr(length, numArray);
 		}
+
+		#region Inline numeric reads — bypass converter allocation on Mono
+
+		// These 'new' methods hide StreamIO's generic Read*<T>() methods to eliminate
+		// per-call 'new T()' converter allocation. DWG is always little-endian and
+		// macOS/x86 are little-endian, so BitConverter gives the correct result directly.
+
+		public new short ReadShort<T>() where T : IEndianConverter, new()
+		{
+			if (_hasBuf && BitShift == 0)
+			{
+				short val = BitConverter.ToInt16(_buf, _bufPos);
+				_bufPos += 2;
+				return val;
+			}
+			byte[] buffer = ByteArray2;
+			applyShiftToArr(2, buffer);
+			return BitConverter.ToInt16(buffer, 0);
+		}
+
+		public new ushort ReadUShort<T>() where T : IEndianConverter, new()
+		{
+			if (_hasBuf && BitShift == 0)
+			{
+				ushort val = BitConverter.ToUInt16(_buf, _bufPos);
+				_bufPos += 2;
+				return val;
+			}
+			byte[] buffer = ByteArray2;
+			applyShiftToArr(2, buffer);
+			return BitConverter.ToUInt16(buffer, 0);
+		}
+
+		public new int ReadInt<T>() where T : IEndianConverter, new()
+		{
+			if (_hasBuf && BitShift == 0)
+			{
+				int val = BitConverter.ToInt32(_buf, _bufPos);
+				_bufPos += 4;
+				return val;
+			}
+			byte[] buffer = ByteArray4;
+			applyShiftToArr(4, buffer);
+			return BitConverter.ToInt32(buffer, 0);
+		}
+
+		public new uint ReadUInt<T>() where T : IEndianConverter, new()
+		{
+			if (_hasBuf && BitShift == 0)
+			{
+				uint val = BitConverter.ToUInt32(_buf, _bufPos);
+				_bufPos += 4;
+				return val;
+			}
+			byte[] buffer = ByteArray4;
+			applyShiftToArr(4, buffer);
+			return BitConverter.ToUInt32(buffer, 0);
+		}
+
+		public new double ReadDouble<T>() where T : IEndianConverter, new()
+		{
+			if (_hasBuf && BitShift == 0)
+			{
+				double val = BitConverter.ToDouble(_buf, _bufPos);
+				_bufPos += 8;
+				return val;
+			}
+			byte[] buffer = ByteArray8;
+			applyShiftToArr(8, buffer);
+			return BitConverter.ToDouble(buffer, 0);
+		}
+
+		public new long ReadLong<T>() where T : IEndianConverter, new()
+		{
+			if (_hasBuf && BitShift == 0)
+			{
+				long val = BitConverter.ToInt64(_buf, _bufPos);
+				_bufPos += 8;
+				return val;
+			}
+			byte[] buffer = ByteArray8;
+			applyShiftToArr(8, buffer);
+			return BitConverter.ToInt64(buffer, 0);
+		}
+
+		public new ulong ReadULong<T>() where T : IEndianConverter, new()
+		{
+			if (_hasBuf && BitShift == 0)
+			{
+				ulong val = BitConverter.ToUInt64(_buf, _bufPos);
+				_bufPos += 8;
+				return val;
+			}
+			byte[] buffer = ByteArray8;
+			applyShiftToArr(8, buffer);
+			return BitConverter.ToUInt64(buffer, 0);
+		}
+
+		// Non-generic wrappers that route through our optimized generic methods
+		// (StreamIO's non-generic versions would call StreamIO's generic versions, bypassing our optimization)
+		public new short ReadShort() => this.ReadShort<DefaultEndianConverter>();
+		public new ushort ReadUShort() => this.ReadUShort<DefaultEndianConverter>();
+		public new int ReadInt() => this.ReadInt<DefaultEndianConverter>();
+		public new uint ReadUInt() => this.ReadUInt<DefaultEndianConverter>();
+		public new double ReadDouble() => this.ReadDouble<DefaultEndianConverter>();
+		public new long ReadLong() => this.ReadLong<DefaultEndianConverter>();
+		public new ulong ReadULong() => this.ReadULong<DefaultEndianConverter>();
+
+		#endregion
 
 		public long SetPositionByFlag(long position)
 		{
@@ -566,7 +726,17 @@ namespace ACadSharp.IO.DWG
 			var raw = ArrayPool<byte>.Shared.Rent(length);
 			var arr = ByteArray8;
 
-			if (this.Stream.Read(raw, 0, length) < length)
+			if (_hasBuf)
+			{
+				if (_bufPos + length > _bufEnd)
+				{
+					ArrayPool<byte>.Shared.Return(raw);
+					throw new EndOfStreamException();
+				}
+				System.Buffer.BlockCopy(_buf, _bufPos, raw, 0, length);
+				_bufPos += length;
+			}
+			else if (this.Stream.Read(raw, 0, length) < length)
 			{
 				ArrayPool<byte>.Shared.Return(raw);
 				throw new EndOfStreamException();
@@ -838,7 +1008,7 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public long PositionInBits()
 		{
-			long bitPosition = this.Stream.Position * 8L;
+			long bitPosition = this.Position * 8L;
 
 			if ((uint)this.BitShift > 0U)
 				bitPosition += this.BitShift - 8;
@@ -861,14 +1031,22 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public void AdvanceByte()
 		{
-			this._lastByte = base.ReadByte();
+			if (_hasBuf)
+				this._lastByte = _buf[_bufPos++];
+			else
+				this._lastByte = base.ReadByte();
 		}
 
 		/// <inheritdoc/>
 		public void Advance(int offset)
 		{
 			if (offset > 1)
-				this.Stream.Position += offset - 1;
+			{
+				if (_hasBuf)
+					_bufPos += offset - 1;
+				else
+					this.Stream.Position += offset - 1;
+			}
 
 			this.ReadByte();
 		}
@@ -933,9 +1111,20 @@ namespace ACadSharp.IO.DWG
 
 		private void applyShiftToArr(int length, byte[] arr)
 		{
-			//Empty Stream
-			if (this.Stream.Read(arr, 0, length) != length)
-				throw new EndOfStreamException();
+			if (_hasBuf)
+			{
+				//Read directly from buffer
+				if (_bufPos + length > _bufEnd)
+					throw new EndOfStreamException();
+				System.Buffer.BlockCopy(_buf, _bufPos, arr, 0, length);
+				_bufPos += length;
+			}
+			else
+			{
+				//Read from stream
+				if (this.Stream.Read(arr, 0, length) != length)
+					throw new EndOfStreamException();
+			}
 
 			if ((uint)this.BitShift <= 0U)
 				return;

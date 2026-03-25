@@ -1027,17 +1027,16 @@ namespace ACadSharp.IO
 				return null;
 
 			//get the total size of the page
-			MemoryStream memoryStream = new MemoryStream((int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+			int totalSize = (int)descriptor.DecompressedSize * descriptor.LocalSections.Count;
+			byte[] resultBuffer = new byte[totalSize];
+			int resultPos = 0;
 
 			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
 			{
 				if (section.IsEmpty)
 				{
-					//Page is empty, fill the gap with 0s
-					for (int index = 0; index < (int)section.DecompressedSize; ++index)
-					{
-						memoryStream.WriteByte(0);
-					}
+					//Page is empty, fill the gap with 0s (array is already zero-initialized)
+					resultPos += (int)section.DecompressedSize;
 				}
 				else
 				{
@@ -1049,22 +1048,33 @@ namespace ACadSharp.IO
 
 					if (descriptor.IsCompressed)
 					{
-						//Page is compressed
-						DwgLZ77AC18Decompressor.DecompressToDest(this._fileStream.Stream, memoryStream);
+						//Page is compressed - use buffered path when source is MemoryStream
+						var srcStream = sreader.Stream;
+						if (srcStream is MemoryStream srcMs && srcMs.TryGetBuffer(out ArraySegment<byte> srcSeg))
+						{
+							int srcPos = srcSeg.Offset + (int)srcMs.Position;
+							DwgLZ77AC18Decompressor.DecompressBuffered(srcSeg.Array, ref srcPos, resultBuffer, ref resultPos);
+							srcMs.Position = srcPos - srcSeg.Offset;
+						}
+						else
+						{
+							// Fallback: decompress to a temp MemoryStream wrapper
+							var tempMs = new MemoryStream(resultBuffer, resultPos, resultBuffer.Length - resultPos, true);
+							DwgLZ77AC18Decompressor.DecompressToDest(srcStream, tempMs);
+							resultPos = (int)tempMs.Position;
+						}
 					}
 					else
 					{
 						//Read the stream normally
-						byte[] buffer = new byte[section.CompressedSize];
-						sreader.Stream.Read(buffer, 0, (int)section.CompressedSize);
-						memoryStream.Write(buffer, 0, (int)section.CompressedSize);
+						int count = (int)section.CompressedSize;
+						sreader.Stream.Read(resultBuffer, resultPos, count);
+						resultPos += count;
 					}
 				}
 			}
 
-			//Reset the stream
-			memoryStream.Position = 0L;
-			return memoryStream;
+			return new MemoryStream(resultBuffer, 0, resultBuffer.Length, false, true);
 		}
 
 		private void decryptDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)

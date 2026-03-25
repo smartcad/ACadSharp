@@ -143,9 +143,10 @@ namespace ACadSharp.IO.DWG
 			}
 
 			// Pre-allocate reusable streams for per-entity reading
-			this._objectStream = new MemoryStream(this._crcStreamBuffer);
-			this._handlesStream = new MemoryStream(this._crcStreamBuffer);
-			this._textStream = new MemoryStream(this._crcStreamBuffer);
+			// publiclyVisible=true so TryGetBuffer() succeeds and DwgStreamReaderBase can use direct byte[] access
+			this._objectStream = new MemoryStream(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length, true, true);
+			this._handlesStream = new MemoryStream(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length, true, true);
+			this._textStream = new MemoryStream(this._crcStreamBuffer, 0, this._crcStreamBuffer.Length, true, true);
 
 			//Setup the entity handler
 			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._crcStream);

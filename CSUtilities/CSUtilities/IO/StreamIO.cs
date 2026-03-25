@@ -38,6 +38,13 @@ namespace CSUtilities.IO
 		protected Stream _stream = null;
 
 		/// <summary>
+		/// Direct access to the underlying byte buffer when available.
+		/// Avoids virtual Stream.ReadByte() dispatch on Mono runtime.
+		/// </summary>
+		internal byte[] RawBuffer { get; private set; }
+		internal int RawBufferOffset { get; private set; }
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="StreamIO" /> class.
 		/// </summary>
 		/// <param name="filename">File to read/write.</param>
@@ -72,10 +79,13 @@ namespace CSUtilities.IO
 				byte[] buffer = new byte[stream.Length];
 				stream.Read(buffer, 0, buffer.Length);
 				_stream = (Stream)new MemoryStream(buffer);
+				RawBuffer = buffer;
+				RawBufferOffset = 0;
 			}
 			else
 			{
 				this._stream = stream;
+				TryExtractBuffer(stream);
 			}
 
 			if (resetPosition)
@@ -89,7 +99,9 @@ namespace CSUtilities.IO
 		
 		public StreamIO(byte[] buffer)
 		{
-            _stream = new MemoryStream(buffer);
+            _stream = new MemoryStream(buffer, 0, buffer.Length, false, true);
+			RawBuffer = buffer;
+			RawBufferOffset = 0;
         }
 
 		/// <summary>
@@ -101,6 +113,15 @@ namespace CSUtilities.IO
 		/// Initializes a new instance of the <see cref="StreamIO" /> class.
 		/// </summary>
 		public StreamIO(Stream stream) : this(stream, false, false) { }
+
+		protected void TryExtractBuffer(Stream stream)
+		{
+			if (stream is MemoryStream ms && ms.TryGetBuffer(out ArraySegment<byte> seg))
+			{
+				RawBuffer = seg.Array;
+				RawBufferOffset = seg.Offset;
+			}
+		}
 
 		public async Task<byte[]> GetBytesAsync(int offset, int length)
 		{
