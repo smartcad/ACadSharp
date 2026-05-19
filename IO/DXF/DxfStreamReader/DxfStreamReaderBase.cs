@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using System;
 using System.IO;
 
@@ -18,35 +18,50 @@ namespace ACadSharp.IO.DXF
 
 		public string ValueRaw { get; protected set; }
 
+		protected string _stringValue;
+		protected double _doubleValue;
+		protected short _shortValue;
+		protected int _intValue;
+		protected long _longValue;
+		protected ulong _handleValue;
+		protected bool _boolValue;
+		protected byte[] _binaryValue;
+
 		public string ValueAsString
 		{
 			get
 			{
-				return this.Value.ToString()
-					.Replace("^J", "\n")
-					.Replace("^M", "\r")
-					.Replace("^I", "\t")
-					.Replace("^ ", "^");
+				if (this.GroupCodeValue == GroupCodeValueType.String || 
+					this.GroupCodeValue == GroupCodeValueType.Comment || 
+					this.GroupCodeValue == GroupCodeValueType.ExtendedDataString)
+				{
+					return this._stringValue?
+						.Replace("^J", "\n")
+						.Replace("^M", "\r")
+						.Replace("^I", "\t")
+						.Replace("^ ", "^") ?? string.Empty;
+				}
+				return this.Value?.ToString() ?? string.Empty;
 			}
 		}
 
-		public bool ValueAsBool { get { return Convert.ToBoolean(this.Value); } }
+		public bool ValueAsBool { get { return this._boolValue; } }
 
-		public short ValueAsShort { get { return Convert.ToInt16(this.Value); } }
+		public short ValueAsShort { get { return this._shortValue; } }
 
-		public ushort ValueAsUShort { get { return Convert.ToUInt16(this.Value); } }
+		public ushort ValueAsUShort { get { return (ushort)this._shortValue; } }
 
-		public int ValueAsInt { get { return Convert.ToInt32(this.Value); } }
+		public int ValueAsInt { get { return this._intValue; } }
 
-		public long ValueAsLong { get { return Convert.ToInt64(this.Value); } }
+		public long ValueAsLong { get { return this._longValue; } }
 
-		public double ValueAsDouble { get { return Convert.ToDouble(this.Value); } }
+		public double ValueAsDouble { get { return this._doubleValue; } }
 
-		public double ValueAsAngle { get { return (double)(Convert.ToDouble(this.Value) * MathUtils.RadToDegFactor); } }
+		public double ValueAsAngle { get { return this._doubleValue * MathUtils.RadToDegFactor; } }
 
-		public ulong ValueAsHandle { get { return (ulong)this.Value; } }
+		public ulong ValueAsHandle { get { return this._handleValue; } }
 
-		public byte[] ValueAsBinaryChunk { get { return this.Value as byte[]; } }
+		public byte[] ValueAsBinaryChunk { get { return this._binaryValue; } }
 
 		protected abstract Stream baseStream { get; }
 
@@ -54,7 +69,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this.DxfCode = this.readCode();
 			this.GroupCodeValue = ACadSharp.GroupCodeValue.TransformValue(this.Code);
-			this.Value = this.transformValue(this.GroupCodeValue);
+			this.readAndStoreValue(this.GroupCodeValue);
 		}
 
 		public bool Find(string dxfEntry)
@@ -79,6 +94,14 @@ namespace ACadSharp.IO.DXF
 		{
 			this.DxfCode = DxfCode.Invalid;
 			this.Value = string.Empty;
+			this._stringValue = null;
+			this._doubleValue = 0;
+			this._shortValue = 0;
+			this._intValue = 0;
+			this._longValue = 0;
+			this._handleValue = 0;
+			this._boolValue = false;
+			this._binaryValue = null;
 
 			this.baseStream.Position = 0;
 
@@ -103,36 +126,52 @@ namespace ACadSharp.IO.DXF
 
 		protected abstract bool lineAsBool();
 
-		private object transformValue(GroupCodeValueType code)
+		private void readAndStoreValue(GroupCodeValueType code)
 		{
 			switch (code)
 			{
 				case GroupCodeValueType.String:
 				case GroupCodeValueType.Comment:
 				case GroupCodeValueType.ExtendedDataString:
-					return this.readStringLine();
+					this._stringValue = this.readStringLine();
+					this.Value = this._stringValue;
+					break;
 				case GroupCodeValueType.Point3D:
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
-					return this.lineAsDouble();
+					this._doubleValue = this.lineAsDouble();
+					this.Value = this._doubleValue;
+					break;
 				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
-					return this.lineAsShort();
+					this._shortValue = this.lineAsShort();
+					this.Value = this._shortValue;
+					break;
 				case GroupCodeValueType.Int32:
 				case GroupCodeValueType.ExtendedDataInt32:
-					return this.lineAsInt();
+					this._intValue = this.lineAsInt();
+					this.Value = this._intValue;
+					break;
 				case GroupCodeValueType.Int64:
-					return this.lineAsLong();
+					this._longValue = this.lineAsLong();
+					this.Value = this._longValue;
+					break;
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					return this.lineAsHandle();
+					this._handleValue = this.lineAsHandle();
+					this.Value = this._handleValue;
+					break;
 				case GroupCodeValueType.Bool:
-					return this.lineAsBool();
+					this._boolValue = this.lineAsBool();
+					this.Value = this._boolValue;
+					break;
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
-					return this.lineAsBinaryChunk();
+					this._binaryValue = this.lineAsBinaryChunk();
+					this.Value = this._binaryValue;
+					break;
 				case GroupCodeValueType.None:
 				default:
 					throw new DxfException((int)code, this.Position);

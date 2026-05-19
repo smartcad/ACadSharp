@@ -1,4 +1,4 @@
-﻿using ACadSharp.Classes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
@@ -159,6 +159,7 @@ namespace ACadSharp
 		public BlockRecord PaperSpace { get { return this.BlockRecords[BlockRecord.PaperSpaceName]; } }
 
 		private CadDictionary _rootDictionary = null;
+		private ulong _maxHandle = 0;
 
 		//Contains all the objects in the document
 		private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
@@ -381,7 +382,7 @@ namespace ACadSharp
 
 			if (cadObject.Handle == 0 || this._cadObjects.ContainsKey(cadObject.Handle))
 			{
-				var nextHandle = this._cadObjects.Keys.Max() + 1;
+				ulong nextHandle = Math.Max(this.Header.HandleSeed, this._maxHandle + 1);
 				if (nextHandle < this.Header.HandleSeed)
 				{
 					nextHandle = this.Header.HandleSeed;
@@ -390,6 +391,11 @@ namespace ACadSharp
 				cadObject.Handle = nextHandle;
 
 				this.Header.HandleSeed = nextHandle + 1;
+				this._maxHandle = nextHandle;
+			}
+			else if (cadObject.Handle > this._maxHandle)
+			{
+				this._maxHandle = cadObject.Handle;
 			}
 
 			this._cadObjects.Add(cadObject.Handle, cadObject);
@@ -591,6 +597,7 @@ namespace ACadSharp
 			this.ImageDefinitions?.Dispose();
 
 			this._cadObjects.Clear();
+			this._maxHandle = 0;
         }
     }
 }

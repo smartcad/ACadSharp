@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -9,6 +10,8 @@ namespace ACadSharp.IO.DXF
 		protected override Stream baseStream { get { return this._stream.BaseStream; } }
 
 		private StreamReader _stream;
+		private char[] _lineBuffer = new char[512];
+		private int _lineLength = 0;
 
 		public DxfTextReader(Stream stream, Encoding encoding)
 		{
@@ -19,7 +22,7 @@ namespace ACadSharp.IO.DXF
 		public override void Start()
 		{
 			base.Start();
-
+			this._lineLength = 0;
 			this._stream.DiscardBufferedData();
 		}
 
@@ -29,17 +32,59 @@ namespace ACadSharp.IO.DXF
 			this.Position += 2;
 		}
 
+		/// <summary>
+		/// Reads a line from the stream into the reusable character buffer.
+		/// Returns the length of the read line.
+		/// </summary>
+		private int readLineToBuffer()
+		{
+			_lineLength = 0;
+			while (true)
+			{
+				int next = this._stream.Read();
+				if (next == -1)
+				{
+					break;
+				}
+				char c = (char)next;
+				if (c == '\r')
+				{
+					int peek = this._stream.Peek();
+					if (peek == '\n')
+					{
+						this._stream.Read();
+					}
+					break;
+				}
+				if (c == '\n')
+				{
+					break;
+				}
+				
+				if (_lineLength >= _lineBuffer.Length)
+				{
+					char[] temp = new char[_lineBuffer.Length * 2];
+					System.Array.Copy(_lineBuffer, 0, temp, 0, _lineLength);
+					_lineBuffer = temp;
+				}
+				_lineBuffer[_lineLength++] = c;
+			}
+			return _lineLength;
+		}
+
 		protected override string readStringLine()
 		{
-			this.ValueRaw = this._stream.ReadLine();
+			this.readLineToBuffer();
+			this.ValueRaw = new string(this._lineBuffer, 0, this._lineLength);
 			return this.ValueRaw;
 		}
 
 		protected override DxfCode readCode()
 		{
-			string line = this.readStringLine();
+			this.readLineToBuffer();
+			var span = new ReadOnlySpan<char>(this._lineBuffer, 0, this._lineLength);
 
-			if (int.TryParse(line, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
+			if (TryParseInt(span, out int value))
 			{
 				return (DxfCode)value;
 			}
@@ -51,9 +96,10 @@ namespace ACadSharp.IO.DXF
 
 		protected override bool lineAsBool()
 		{
-			var str = this.readStringLine();
+			this.readLineToBuffer();
+			var span = new ReadOnlySpan<char>(this._lineBuffer, 0, this._lineLength);
 
-			if (byte.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out byte result))
+			if (TryParseInt(span, out int result))
 			{
 				return result > 0;
 			}
@@ -63,7 +109,8 @@ namespace ACadSharp.IO.DXF
 
 		protected override double lineAsDouble()
 		{
-			var str = this.readStringLine();
+			this.readLineToBuffer();
+			var str = new string(this._lineBuffer, 0, this._lineLength);
 
 			if (double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out double result))
 			{
@@ -75,11 +122,12 @@ namespace ACadSharp.IO.DXF
 
 		protected override short lineAsShort()
 		{
-			var str = this.readStringLine();
+			this.readLineToBuffer();
+			var span = new ReadOnlySpan<char>(this._lineBuffer, 0, this._lineLength);
 
-			if (short.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out short result))
+			if (TryParseInt(span, out int result))
 			{
-				return result;
+				return (short)result;
 			}
 
 			return 0;
@@ -87,9 +135,10 @@ namespace ACadSharp.IO.DXF
 
 		protected override int lineAsInt()
 		{
-			var str = this.readStringLine();
+			this.readLineToBuffer();
+			var span = new ReadOnlySpan<char>(this._lineBuffer, 0, this._lineLength);
 
-			if (int.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
+			if (TryParseInt(span, out int result))
 			{
 				return result;
 			}
@@ -99,9 +148,10 @@ namespace ACadSharp.IO.DXF
 
 		protected override long lineAsLong()
 		{
-			var str = this.readStringLine();
+			this.readLineToBuffer();
+			var span = new ReadOnlySpan<char>(this._lineBuffer, 0, this._lineLength);
 
-			if (long.TryParse(str, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
+			if (TryParseLong(span, out long result))
 			{
 				return result;
 			}
@@ -111,9 +161,10 @@ namespace ACadSharp.IO.DXF
 
 		protected override ulong lineAsHandle()
 		{
-			var str = this.readStringLine();
+			this.readLineToBuffer();
+			var span = new ReadOnlySpan<char>(this._lineBuffer, 0, this._lineLength);
 
-			if (ulong.TryParse(str, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
+			if (TryParseHex(span, out ulong result))
 			{
 				return result;
 			}
@@ -123,26 +174,148 @@ namespace ACadSharp.IO.DXF
 
 		protected override byte[] lineAsBinaryChunk()
 		{
-			var str = this.readStringLine();
-
-			byte[] bytes = new byte[str.Length];
-
-			for (int i = 0; i < str.Length; i++)
+			this.readLineToBuffer();
+			
+			int len = this._lineLength;
+			while (len > 0 && char.IsWhiteSpace(this._lineBuffer[len - 1]))
 			{
-				//Create a byte value
-				string hex = $"{str[i]}{str[++i]}";
-
-				if (byte.TryParse(hex, NumberStyles.AllowHexSpecifier | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out byte result))
-				{
-					bytes[i] = result;
-				}
-				else
+				len--;
+			}
+			
+			int byteCount = len / 2;
+			byte[] bytes = new byte[byteCount];
+			
+			for (int i = 0; i < byteCount; i++)
+			{
+				char c1 = this._lineBuffer[i * 2];
+				char c2 = this._lineBuffer[i * 2 + 1];
+				
+				int d1 = parseHexChar(c1);
+				int d2 = parseHexChar(c2);
+				if (d1 < 0 || d2 < 0)
 				{
 					return new byte[0];
 				}
+				bytes[i] = (byte)((d1 << 4) | d2);
 			}
-
+			
 			return bytes;
 		}
+
+		private static int parseHexChar(char c)
+		{
+			if (c >= '0' && c <= '9') return c - '0';
+			if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+			if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+			return -1;
+		}
+
+		#region Zero-Allocation Parsers
+
+		private static bool TryParseInt(ReadOnlySpan<char> span, out int value)
+		{
+			value = 0;
+			if (span.IsEmpty) return false;
+			int i = 0;
+			while (i < span.Length && char.IsWhiteSpace(span[i])) i++;
+			if (i == span.Length) return false;
+
+			bool negative = false;
+			if (span[i] == '-')
+			{
+				negative = true;
+				i++;
+			}
+			else if (span[i] == '+')
+			{
+				i++;
+			}
+
+			int temp = 0;
+			bool hasDigits = false;
+			while (i < span.Length && span[i] >= '0' && span[i] <= '9')
+			{
+				temp = temp * 10 + (span[i] - '0');
+				i++;
+				hasDigits = true;
+			}
+			if (!hasDigits) return false;
+
+			while (i < span.Length && char.IsWhiteSpace(span[i])) i++;
+			if (i != span.Length) return false;
+
+			value = negative ? -temp : temp;
+			return true;
+		}
+
+		private static bool TryParseLong(ReadOnlySpan<char> span, out long value)
+		{
+			value = 0;
+			if (span.IsEmpty) return false;
+			int i = 0;
+			while (i < span.Length && char.IsWhiteSpace(span[i])) i++;
+			if (i == span.Length) return false;
+
+			bool negative = false;
+			if (span[i] == '-')
+			{
+				negative = true;
+				i++;
+			}
+			else if (span[i] == '+')
+			{
+				i++;
+			}
+
+			long temp = 0;
+			bool hasDigits = false;
+			while (i < span.Length && span[i] >= '0' && span[i] <= '9')
+			{
+				temp = temp * 10 + (span[i] - '0');
+				i++;
+				hasDigits = true;
+			}
+			if (!hasDigits) return false;
+
+			while (i < span.Length && char.IsWhiteSpace(span[i])) i++;
+			if (i != span.Length) return false;
+
+			value = negative ? -temp : temp;
+			return true;
+		}
+
+		private static bool TryParseHex(ReadOnlySpan<char> span, out ulong value)
+		{
+			value = 0;
+			if (span.IsEmpty) return false;
+			int i = 0;
+			while (i < span.Length && char.IsWhiteSpace(span[i])) i++;
+			if (i == span.Length) return false;
+
+			ulong temp = 0;
+			bool hasDigits = false;
+			while (i < span.Length)
+			{
+				char c = span[i];
+				int digit;
+				if (c >= '0' && c <= '9') digit = c - '0';
+				else if (c >= 'a' && c <= 'f') digit = c - 'a' + 10;
+				else if (c >= 'A' && c <= 'F') digit = c - 'A' + 10;
+				else break;
+
+				temp = (temp << 4) | (uint)digit;
+				i++;
+				hasDigits = true;
+			}
+			if (!hasDigits) return false;
+
+			while (i < span.Length && char.IsWhiteSpace(span[i])) i++;
+			if (i != span.Length) return false;
+
+			value = temp;
+			return true;
+		}
+
+		#endregion
 	}
 }
