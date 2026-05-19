@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ACadSharp.Attributes;
 using ACadSharp.Tables;
 
@@ -52,7 +51,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Gets a list of <see cref="StartEndPointPair" />.
 			/// </summary>
-			public IList<StartEndPointPair> BreakStartEndPointsPairs { get; } = new List<StartEndPointPair>();
+			public IList<StartEndPointPair> BreakStartEndPointsPairs { get; private set; } = new List<StartEndPointPair>();
 
 			/// <summary>
 			/// Leader index
@@ -71,7 +70,7 @@ namespace ACadSharp.Objects
 			/// leader lines starting from the landing point
 			/// of the multi leader.
 			/// </summary>
-			public IList<LeaderLine> Lines { get; } = new List<LeaderLine>();
+			public IList<LeaderLine> Lines { get; private set; } = new List<LeaderLine>();
 
 			//R2010
 			/// <summary>
@@ -84,12 +83,14 @@ namespace ACadSharp.Objects
 			{
 				LeaderRoot clone = (LeaderRoot)this.MemberwiseClone();
 
-				foreach (var breakStartEndPoint in BreakStartEndPointsPairs.ToList())
+				clone.BreakStartEndPointsPairs = new List<StartEndPointPair>(this.BreakStartEndPointsPairs.Count);
+				foreach (var breakStartEndPoint in this.BreakStartEndPointsPairs)
 				{
 					clone.BreakStartEndPointsPairs.Add((StartEndPointPair)breakStartEndPoint.Clone());
 				}
 
-				foreach (var line in Lines.ToList())
+				clone.Lines = new List<LeaderLine>(this.Lines.Count);
+				foreach (var line in this.Lines)
 				{
 					clone.Lines.Add((LeaderLine)line.Clone());
 				}
@@ -142,7 +143,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Get the list of points of this <see cref="LeaderLine"/>.
 			/// </summary>
-			public IList<XYZ> Points { get; } = new List<XYZ>();
+			public IList<XYZ> Points { get; private set; } = new List<XYZ>();
 
 			/// <summary>
 			/// Break info count
@@ -158,7 +159,7 @@ namespace ACadSharp.Objects
 			/// <summary>
 			/// Start/end point pairs
 			/// </summary>
-			public IList<StartEndPointPair> StartEndPoints { get; } = new List<StartEndPointPair>();
+			public IList<StartEndPointPair> StartEndPoints { get; private set; } = new List<StartEndPointPair>();
 
 			/// <summary>
 			/// Leader line index.
@@ -214,12 +215,14 @@ namespace ACadSharp.Objects
 			{
 				LeaderLine clone = (LeaderLine)this.MemberwiseClone();
 
-				foreach (var point in Points.ToList())
+				clone.Points = new List<XYZ>(this.Points.Count);
+				foreach (var point in this.Points)
 				{
 					clone.Points.Add(point);
 				}
 
-				foreach (var startEndPoint in StartEndPoints.ToList())
+				clone.StartEndPoints = new List<StartEndPointPair>(this.StartEndPoints.Count);
+				foreach (var startEndPoint in this.StartEndPoints)
 				{
 					clone.StartEndPoints.Add((StartEndPointPair)startEndPoint.Clone());
 				}

@@ -2915,7 +2915,7 @@ namespace ACadSharp.Header
 		/// </summary>
 		public CadDocument Document { get; internal set; }
 
-		private static readonly Dictionary<string, CadSystemVariable> _sysVarCache = DxfMetadataRegistry.GetHeaderMap();
+		private static readonly IReadOnlyDictionary<string, CadSystemVariable> _sysVarCache = DxfMetadataRegistry.GetHeaderMapInternal();
 
 		private Layer _currentLayer = Layer.Default;
 
@@ -2947,6 +2947,11 @@ namespace ACadSharp.Header
 		{
 			// Use generated registry (no reflection)
 			return DxfMetadataRegistry.GetHeaderMap();
+		}
+
+		internal static IReadOnlyDictionary<string, CadSystemVariable> GetHeaderMapInternal()
+		{
+			return DxfMetadataRegistry.GetHeaderMapInternal();
 		}
 
 		/// <summary>

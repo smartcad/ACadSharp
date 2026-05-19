@@ -58,10 +58,11 @@ namespace ACadSharp.IO.DXF
 				this.Holder.Objects.Enqueue(cadObject.XDictionary);
 			}
 
-			if (cadObject.Reactors != null && cadObject.Reactors.Count > 0)
+			var reactors = cadObject.ReactorsInternal;
+			if (reactors != null && reactors.Count > 0)
 			{
 				this._writer.Write(DxfCode.ControlString, DxfFileToken.ReactorsToken);
-				foreach (ulong reactorHandle in cadObject.Reactors.Keys)
+				foreach (ulong reactorHandle in reactors.Keys)
 				{
 					this._writer.Write(DxfCode.SoftPointerId, reactorHandle);
 				}
@@ -71,7 +72,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
 
 			//TODO: Write exended data
-			if (cadObject.ExtendedData != null)
+			if (cadObject.ExtendedDataInternal != null)
 			{
 				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
 				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);

@@ -143,7 +143,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Main.HandleReference(cadObject);
 
 			//Extended object data, if any
-			this.writeExtendedData(cadObject.ExtendedData);
+			this.writeExtendedData(cadObject.ExtendedDataInternal);
 		}
 
 		private void writeCommonNonEntityData(CadObject cadObject)
@@ -345,14 +345,18 @@ namespace ACadSharp.IO.DWG
 			//TODO: Write reactors
 
 			//Numreactors S number of reactors in this object
-			this._writer.WriteBitLong(cadObject.Reactors.Count);
+			var reactors = cadObject.ReactorsInternal;
+			this._writer.WriteBitLong(reactors?.Count ?? 0);
 
-			foreach (var item in cadObject.Reactors)
+			if (reactors != null)
 			{
-				//[Reactors (soft pointer)]
-				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Key);
-                //cadObject.Reactors.Add(item.Key, item.Value);
-            }
+				foreach (var item in reactors)
+				{
+					//[Reactors (soft pointer)]
+					this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Key);
+                    //cadObject.Reactors.Add(item.Key, item.Value);
+                }
+			}
 
 			bool noDictionary = cadObject.XDictionary == null;
 

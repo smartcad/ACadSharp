@@ -15,6 +15,8 @@ namespace CSUtilities.IO
 	/// </summary>
 	internal class StreamIO : IDisposable
 	{
+		private static readonly DefaultEndianConverter _defaultEndianConverter = new DefaultEndianConverter();
+
 		/// <summary>
 		/// Gets or sets the position within the current stream.
 		/// </summary>
@@ -31,7 +33,7 @@ namespace CSUtilities.IO
 
 		public Encoding Encoding { get; set; } = Encoding.Default;
 
-		public IEndianConverter EndianConverter { get; set; } = new DefaultEndianConverter();
+		public IEndianConverter EndianConverter { get; set; } = _defaultEndianConverter;
 
 		public Stream Stream { get { return _stream; } }
 
@@ -430,14 +432,14 @@ namespace CSUtilities.IO
 		public void Write<T>(T value)
 			where T : struct
 		{
-			this.Write(value, new DefaultEndianConverter());
+			this.Write(value, _defaultEndianConverter);
 		}
 
 		public void Write<T, E>(T value)
 			where T : struct
 			where E : IEndianConverter, new()
 		{
-			this.Write(value, new E());
+			this.Write(value, getEndianConverter<E>());
 		}
 
 		/// <summary>
@@ -449,8 +451,53 @@ namespace CSUtilities.IO
 		public void Write<T>(T value, IEndianConverter converter)
 			where T : struct
 		{
-			byte[] arr = converter.GetBytes(value).ToArray();
+			byte[] arr = getBytes(value, converter);
 			this._stream.Write(arr, 0, arr.Length);
+		}
+
+		private static IEndianConverter getEndianConverter<E>()
+			where E : IEndianConverter, new()
+		{
+			Type type = typeof(E);
+
+			if (type == typeof(DefaultEndianConverter))
+				return _defaultEndianConverter;
+
+			if (type == typeof(LittleEndianConverter))
+				return LittleEndianConverter.Instance;
+
+			if (type == typeof(BigEndianConverter))
+				return BigEndianConverter.Instance;
+
+			return new E();
+		}
+
+		private static byte[] getBytes<T>(T value, IEndianConverter converter)
+			where T : struct
+		{
+			switch (value)
+			{
+				case char c:
+					return converter.GetBytes(c);
+				case short s:
+					return converter.GetBytes(s);
+				case ushort us:
+					return converter.GetBytes(us);
+				case int i:
+					return converter.GetBytes(i);
+				case uint ui:
+					return converter.GetBytes(ui);
+				case long l:
+					return converter.GetBytes(l);
+				case ulong ul:
+					return converter.GetBytes(ul);
+				case double d:
+					return converter.GetBytes(d);
+				case float f:
+					return converter.GetBytes(f);
+				default:
+					throw new NotSupportedException($"type {typeof(T).FullName} not supported");
+			}
 		}
 
 		public virtual void WriteBytes(byte[] buffer)

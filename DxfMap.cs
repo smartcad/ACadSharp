@@ -63,29 +63,27 @@ namespace ACadSharp
 			return $"DxfMap:{this.Name}";
 		}
 
-		private static bool tryGetFromCache(Type type, out DxfMap map)
+		internal DxfMap Clone()
 		{
-			map = null;
+			DxfMap map = new DxfMap();
+			map.Name = this.Name;
 
-			if (_cache.TryGetValue(type, out var curr))
+			foreach (var p in this.DxfProperties)
 			{
-				map = new DxfMap();
-				map.Name = curr.Name;
-
-				foreach (var p in curr.DxfProperties)
-				{
-					map.DxfProperties.Add(p.Key, p.Value);
-				}
-
-				foreach (var sub in curr.SubClasses)
-				{
-					map.SubClasses.Add(sub.Key, sub.Value);
-				}
-
-				return true;
+				map.DxfProperties.Add(p.Key, p.Value);
 			}
 
-			return false;
+			foreach (var sub in this.SubClasses)
+			{
+				map.SubClasses.Add(sub.Key, sub.Value);
+			}
+
+			return map;
+		}
+
+		private static bool tryGetFromCache(Type type, out DxfMap map)
+		{
+			return _cache.TryGetValue(type, out map);
 		}
 	}
 }

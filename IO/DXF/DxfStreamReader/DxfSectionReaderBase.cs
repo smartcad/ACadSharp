@@ -238,6 +238,10 @@ namespace ACadSharp.IO.DXF
 			this._reader.ReadNext();
 
 			DxfMap map = DxfMap.Create<T>();
+			if (requiresMutableMap(typeof(T)))
+			{
+				map = map.Clone();
+			}
 
 			while (this._reader.DxfCode != DxfCode.Start)
             {
@@ -253,6 +257,14 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return template;
+		}
+
+		private static bool requiresMutableMap(Type type)
+		{
+			return type == typeof(Entity)
+				|| typeof(Dimension).IsAssignableFrom(type)
+				|| typeof(Polyline).IsAssignableFrom(type)
+				|| typeof(Vertex).IsAssignableFrom(type);
 		}
 
 		protected void readCommonEntityCodes(CadEntityTemplate template, out bool isExtendedData, DxfMap map = null)

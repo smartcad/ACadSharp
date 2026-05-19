@@ -6,7 +6,6 @@ using CSUtilities.Extensions;
 using System;
 using System.Collections;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 
 namespace ACadSharp
@@ -27,20 +26,22 @@ namespace ACadSharp
 				if (this._assignedCode.HasValue)
 					return this._assignedCode.Value;
 
-				if (this.DxfCodes.Length == 1)
-					return this.DxfCodes.First();
+				if (this._dxfCodes.Length == 1)
+					return this._dxfCodes[0];
 				else
 					return (int)DxfCode.Invalid;
 			}
 		}
 
-		public int[] DxfCodes { get { return this._attributeData.ValueCodes.Select(c => (int)c).ToArray(); } }
+		public int[] DxfCodes { get { return this._dxfCodes; } }
 
 		protected int? _assignedCode;
 
 		protected PropertyInfo _property;
 
 		protected T _attributeData;
+
+		private readonly int[] _dxfCodes;
 
 		protected Type _propertyType;
 
@@ -57,6 +58,8 @@ namespace ACadSharp
 			if (this._attributeData == null)
 				throw new ArgumentException($"The property does not implement the {nameof(DxfCodeValueAttribute)}", nameof(property));
 
+			this._dxfCodes = buildDxfCodes(this._attributeData);
+
 			this._property = property;
 			this._propertyType = property.PropertyType;
 			this._propertyName = property.Name;
@@ -67,10 +70,24 @@ namespace ACadSharp
 		internal DxfPropertyBase(T attributeData, Type propertyType, string propertyName, Func<object, object> getter, Action<object, object> setter)
 		{
 			this._attributeData = attributeData;
+			this._dxfCodes = buildDxfCodes(attributeData);
 			this._propertyType = propertyType;
 			this._propertyName = propertyName;
 			this._getter = getter;
 			this._setter = setter;
+		}
+
+		private static int[] buildDxfCodes(T attributeData)
+		{
+			DxfCode[] valueCodes = attributeData.ValueCodes;
+			int[] codes = new int[valueCodes.Length];
+
+			for (int i = 0; i < valueCodes.Length; i++)
+			{
+				codes[i] = (int)valueCodes[i];
+			}
+
+			return codes;
 		}
 
 		/// <summary>

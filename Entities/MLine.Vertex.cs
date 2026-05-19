@@ -36,7 +36,7 @@ namespace ACadSharp.Entities
 			{
 				Vertex clone = (Vertex)this.MemberwiseClone();
 
-				clone.Segments.Clear();
+				clone.Segments = new List<Segment>(this.Segments.Count);
 				foreach (var item in this.Segments)
 				{
 					var seg = new Segment();

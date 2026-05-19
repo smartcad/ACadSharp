@@ -101,7 +101,7 @@ namespace ACadSharp.Entities
 
 			clone.Style = (MLineStyle)(this.Style?.Clone());
 
-			clone.Vertices.Clear();
+			clone.Vertices = new List<Vertex>(this.Vertices.Count);
 			foreach (var item in this.Vertices)
 			{
 				clone.Vertices.Add(item.Clone());

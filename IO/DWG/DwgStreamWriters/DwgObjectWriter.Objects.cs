@@ -762,7 +762,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Numdatabytes BL number of databytes
 			this._writer.WriteBitLong((int)ms.Length);
-			this._writer.WriteBytes(stream.GetBuffer());
+			this._writer.WriteBytes(stream.GetBuffer(), 0, (int)stream.Length);
 
 			//R2000+:
 			if (this.R2000Plus)

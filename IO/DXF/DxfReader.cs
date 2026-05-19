@@ -181,7 +181,7 @@ namespace ACadSharp.IO
 
 			CadHeader header = new CadHeader();
 
-			Dictionary<string, CadSystemVariable> headerMap = CadHeader.GetHeaderMap();
+			IReadOnlyDictionary<string, CadSystemVariable> headerMap = CadHeader.GetHeaderMapInternal();
 
 			this._reader.ReadNext();
 

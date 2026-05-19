@@ -1453,7 +1453,7 @@ namespace ACadSharp.IO.DWG
 						//Annotative data bytes RC Byte array with length Annotative data size.
 						var arr = ArrayPool<byte>.Shared.Rent(dataSize);
 						this._objectReader.ReadBytes(arr, dataSize);
-						ArrayPool<byte>.Shared.Rent(dataSize);
+						ArrayPool<byte>.Shared.Return(arr);
 						//Registered application H Hard pointer.
 						var appHanlde = this.handleReference(); //What to do??
 																//Unknown BS 72? Value 0.

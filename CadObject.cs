@@ -65,12 +65,38 @@ namespace ACadSharp
 		/// <summary>
 		/// Objects that are attached to this object
 		/// </summary>
-		public Dictionary<ulong, CadObject> Reactors { get; } = new Dictionary<ulong, CadObject>();
+		public Dictionary<ulong, CadObject> Reactors
+		{
+			get
+			{
+				if (this._reactors == null)
+				{
+					this._reactors = new Dictionary<ulong, CadObject>();
+				}
+
+				return this._reactors;
+			}
+		}
 
 		/// <summary>
 		/// Extended data attached to this object
 		/// </summary>
-		public ExtendedDataDictionary ExtendedData { get; } = new ExtendedDataDictionary();
+		public ExtendedDataDictionary ExtendedData
+		{
+			get
+			{
+				if (this._extendedData == null)
+				{
+					this._extendedData = new ExtendedDataDictionary();
+				}
+
+				return this._extendedData;
+			}
+		}
+
+		internal Dictionary<ulong, CadObject> ReactorsInternal { get { return this._reactors; } }
+
+		internal ExtendedDataDictionary ExtendedDataInternal { get { return this._extendedData; } }
 
 		/// <summary>
 		/// Document where this element belongs
@@ -80,6 +106,10 @@ namespace ACadSharp
 			get;
 			private set;
 		}
+
+		private Dictionary<ulong, CadObject> _reactors;
+
+		private ExtendedDataDictionary _extendedData;
 
 		private CadDictionary _xdictionary = null;
 
@@ -119,9 +149,14 @@ namespace ACadSharp
 			clone.Owner = null;
 
 			//Collections
-			clone.Reactors.Clear();
-			clone.XDictionary = new CadDictionary();
-			clone.ExtendedData.Clear();
+			clone._reactors = null;
+			clone._xdictionary = null;
+			clone._extendedData = null;
+
+			if (this._xdictionary != null)
+			{
+				clone.XDictionary = new CadDictionary();
+			}
 
 			return clone;
 		}

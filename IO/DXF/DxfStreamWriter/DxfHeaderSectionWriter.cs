@@ -19,7 +19,7 @@ namespace ACadSharp.IO.DXF
 
 		protected override void writeSection()
 		{
-			Dictionary<string, CadSystemVariable> map = CadHeader.GetHeaderMap();
+			IReadOnlyDictionary<string, CadSystemVariable> map = CadHeader.GetHeaderMapInternal();
 
 			foreach (KeyValuePair<string, CadSystemVariable> item in map)
 			{

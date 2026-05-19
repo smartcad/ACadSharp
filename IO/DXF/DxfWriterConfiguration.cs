@@ -90,7 +90,7 @@ namespace ACadSharp.IO
 		/// <exception cref="ArgumentException"></exception>
 		public void AddHeaderVariable(string name)
 		{
-			Dictionary<string, CadSystemVariable> map = CadHeader.GetHeaderMap();
+			IReadOnlyDictionary<string, CadSystemVariable> map = CadHeader.GetHeaderMapInternal();
 
 			if (!map.ContainsKey(name))
 			{
