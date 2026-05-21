@@ -9,7 +9,7 @@ namespace ACadSharp.IO.Templates
 
 		public CadLeaderTemplate(Leader entity) : base(entity) { }
 
-		public double Dimasz { get; set; }
+		//public double Dimasz { get; set; }
 
 		public ulong DIMSTYLEHandle { get; set; }
 

@@ -7,14 +7,11 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
-using CSUtilities.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
-using ACadSharp.Types;
 using static ACadSharp.Objects.MultiLeaderAnnotContext;
-using System.Net;
 using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using ACadSharp.Objects.Evaluations;
@@ -53,7 +50,7 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private Queue<ulong> _handles;
 
-		private readonly Dictionary<ulong, ObjectType> _readedObjects;
+		private readonly HashSet<ulong> _readedObjects;
 
 		private readonly Dictionary<ulong, long> _map;
 
@@ -95,7 +92,6 @@ namespace ACadSharp.IO.DWG
 		private readonly MemoryStream _handlesStream;
 		private readonly MemoryStream _textStream;
 
-		private readonly byte[] _buffer;
 
 		public DwgObjectReader(
 			ACadVersion version,
@@ -111,7 +107,7 @@ namespace ACadSharp.IO.DWG
 
 			this._handles = new Queue<ulong>(handles);
 			this._map = handleMap;
-			this._readedObjects = new Dictionary<ulong, ObjectType>(handleMap.Count);
+			this._readedObjects = new HashSet<ulong>();
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
 			//Initialize the crc stream
@@ -164,7 +160,7 @@ namespace ACadSharp.IO.DWG
 				//Check if the handle has already been read
 				if (!this._map.TryGetValue(handle, out long offset) ||
 					this._builder.TryGetObjectTemplate(handle, out CadTemplate _) ||
-					this._readedObjects.ContainsKey(handle))
+					this._readedObjects.Contains(handle))
 				{
 					continue;
 				}
@@ -172,7 +168,7 @@ namespace ACadSharp.IO.DWG
 				//Get the object type
 				ObjectType type = this.getEntityType(offset);
 				//Save the object to avoid infinite loops while reading
-				this._readedObjects.Add(handle, type);
+				this._readedObjects.Add(handle);
 
 				CadTemplate template = null;
 
@@ -293,7 +289,7 @@ namespace ACadSharp.IO.DWG
 
 			if (value != 0 &&
 				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._readedObjects.ContainsKey(value))
+				!this._readedObjects.Contains(value))
 			{
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
@@ -412,9 +408,9 @@ namespace ACadSharp.IO.DWG
 			}
 			else if (!this.R2004Plus)
 			{
-				if (!this._readedObjects.ContainsKey(entity.Handle - 1UL))
+				if (!this._readedObjects.Contains(entity.Handle - 1UL))
 					this._handles.Enqueue(entity.Handle - 1UL);
-				if (!this._readedObjects.ContainsKey(entity.Handle + 1UL))
+				if (!this._readedObjects.Contains(entity.Handle + 1UL))
 					this._handles.Enqueue(entity.Handle + 1UL);
 			}
 
@@ -1853,7 +1849,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readArc()
 		{
 			Arc arc = new Arc();
-			CadEntityTemplate template = new CadArcTemplate(arc);
+			CadEntityTemplate template = new CadEntityTemplate(arc);
 
 			this.readCommonEntityData(template);
 
@@ -3074,7 +3070,7 @@ namespace ACadSharp.IO.DWG
 				//Arrowheadtype BS arrowhead type
 				this._objectReader.ReadBitShort();
 				//Dimasz BD DIMASZ at the time of creation, multiplied by DIMSCALE
-				template.Dimasz = this._objectReader.ReadBitDouble();
+				/*template.Dimasz =*/ this._objectReader.ReadBitDouble();
 				//Unknown B
 				this._objectReader.ReadBit();
 				//Unknown B
@@ -5521,7 +5517,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readXRecord()
 		{
 			XRecord xRecord = new XRecord();
-			CadXRecordTemplate template = new CadXRecordTemplate(xRecord);
+			CadTemplate<XRecord> template = new CadTemplate<XRecord>(xRecord);
 
 			this.readCommonNonEntityData(template);
 

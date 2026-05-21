@@ -72,7 +72,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectVisualStyle:
 					return this.readObjectCodes<VisualStyle>(new CadTemplate<VisualStyle>(new VisualStyle()), this.readVisualStyle);
 				case DxfFileToken.ObjectXRecord:
-					return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
+					return this.readObjectCodes<XRecord>(new CadTemplate<XRecord>(new XRecord()), this.readXRecord);
 				default:
 					DxfMap map = null;
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -196,7 +196,7 @@ namespace ACadSharp.IO.DXF
 
 		private bool readXRecord(CadTemplate template, DxfMap map)
 		{
-			CadXRecordTemplate tmp = template as CadXRecordTemplate;
+			CadTemplate<XRecord> tmp = template as CadTemplate<XRecord>;
 
 			switch (this._reader.Code)
 			{
