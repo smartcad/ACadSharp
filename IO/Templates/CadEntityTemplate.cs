@@ -18,13 +18,11 @@ namespace ACadSharp.IO.Templates
 
 		public string LineTypeName { get; set; }
 
-		public ulong? PrevEntity { get; set; }
-
 		public ulong? NextEntity { get; set; }
 
 		public ulong? ColorHandle { get; set; }
 
-		public ulong? MaterialHandle { get; set; }
+		//public ulong? MaterialHandle { get; set; }
 
 		public CadEntityTemplate(Entity entity) : base(entity) { }
 
@@ -83,7 +81,7 @@ namespace ACadSharp.IO.Templates
 	internal class CadEntityTemplate<T> : CadEntityTemplate
 			where T : Entity, new()
 	{
-		public new T CadObject { get { return (T)base.CadObject; } set { base.CadObject = value; } }
+		public new T CadObject { get { return (T)base.CadObject; } }
 
 		public CadEntityTemplate() : base(new T()) { }
 

@@ -7,7 +7,7 @@ namespace ACadSharp.IO.Templates
 {
 	internal abstract class CadTemplate : ICadObjectTemplate
 	{
-		public CadObject CadObject { get; set; }
+		public CadObject CadObject { get; protected set; }
 
 		public ulong? OwnerHandle { get; set; }
 

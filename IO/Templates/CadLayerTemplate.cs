@@ -1,5 +1,4 @@
-﻿using ACadSharp.Objects;
-using ACadSharp.Tables;
+﻿using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
@@ -28,16 +27,6 @@ namespace ACadSharp.IO.Templates
 
 			base.Build(builder);
 
-			//this.CadObject.PlotStyleName = builder.GetCadObject(PlotStyleHandle);
-
-			if (builder.TryGetCadObject(this.MaterialHandle, out Material material))
-			{
-
-			}
-			else
-			{
-				// builder.Notify($"Linetype with handle {this.LineTypeHandle} could not be found for layer {this.CadObject.Name}", NotificationType.Warning);
-			}
 
 			if (this.getTableReference(builder, LineTypeHandle, LineTypeName, out LineType lineType))
 			{

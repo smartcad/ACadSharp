@@ -33,10 +33,6 @@ namespace ACadSharp.Entities
 			this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
 		}
 
-		public override IEnumerable<Entity> Explode()
-		{
-			throw new System.NotImplementedException();
-		}
 
 		/// <inheritdoc/>
 		public override CadObject Clone()

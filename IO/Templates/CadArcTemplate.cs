@@ -1,14 +1,11 @@
 ﻿using System;
 using ACadSharp.Entities;
-using ACadSharp.IO.DXF;
 
 namespace ACadSharp.IO.Templates
 {
 	[Obsolete]
 	internal class CadArcTemplate : CadEntityTemplate
 	{
-
-		public CadArcTemplate() : base(new Arc()) { }
 
 		public CadArcTemplate(Entity entity) : base(entity) { }
 
@@ -18,12 +15,6 @@ namespace ACadSharp.IO.Templates
 			base.Build(builder);
 
 			return;
-
-            if (builder is DxfDocumentBuilder && this.CadObject is Arc arc)
-            {
-                arc.StartAngle *= MathUtils.DegToRadFactor;
-                arc.EndAngle *= MathUtils.DegToRadFactor;
-            }
 		}
 	}
 }

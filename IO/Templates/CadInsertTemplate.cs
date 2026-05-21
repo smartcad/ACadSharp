@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
-using ACadSharp.IO.DXF;
 
 namespace ACadSharp.IO.Templates
 {
@@ -19,8 +18,6 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? EndAttributeHandle { get; set; }
 
-		public ulong? SeqendHandle { get; set; }
-
 		public List<ulong> AttributesHandles { get; set; } = new List<ulong>();
 
 		public CadInsertTemplate() : base(new Insert()) { }
@@ -31,25 +28,19 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (!(this.CadObject is Insert insert))
+			if (this.CadObject is not Insert insert)
 				return;
 
-			BlockRecord block;
-			if (builder.TryGetCadObject(this.BlockHeaderHandle, out block))
-			{
-				insert.Block = block;
-			}
-			else if (!string.IsNullOrEmpty(this.BlockName) && builder.TryGetTableEntry(this.BlockName, out block))
-			{
-				insert.Block = block;
-			}
+            if(builder.TryGetCadObject(this.BlockHeaderHandle, out BlockRecord block))
+            {
+                insert.Block = block;
+            }
+            else if(!string.IsNullOrEmpty(this.BlockName) && builder.TryGetTableEntry(this.BlockName, out block))
+            {
+                insert.Block = block;
+            }
 
-			//if (builder.TryGetCadObject<Seqend>(this.SeqendHandle, out Seqend seqend))
-			//{
-			//	insert.Attributes.Seqend = seqend;
-			//}
-
-			if (this.FirstAttributeHandle.HasValue)
+            if (this.FirstAttributeHandle.HasValue)
 			{
 				var attributes = getEntitiesCollection<AttributeEntity>(builder, FirstAttributeHandle.Value, EndAttributeHandle.Value);
 				insert.Attributes.AddRange(attributes);
@@ -58,7 +49,7 @@ namespace ACadSharp.IO.Templates
 			{
 				foreach (ulong handle in this.AttributesHandles)
 				{
-					if (builder.TryGetCadObject<AttributeEntity>(handle, out AttributeEntity att))
+					if (builder.TryGetCadObject(handle, out AttributeEntity att))
 					{
 						insert.Attributes.Add(att);
 					}

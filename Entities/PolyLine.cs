@@ -11,13 +11,19 @@ namespace ACadSharp.Entities
 	/// </summary>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(null, true)]
-	public abstract class Polyline : Entity, IPolyline
+	public class Polyline : Entity, IPolyline
 	{
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyline;
 
-		/// <inheritdoc/>
-		[DxfCodeValue(30)]
+
+		private ObjectType _objectType = ObjectType.POLYLINE_2D;
+
+        /// <inheritdoc/>
+        public override ObjectType ObjectType => _objectType;
+
+        /// <inheritdoc/>
+        [DxfCodeValue(30)]
 		public double Elevation { get; set; } = 0.0;
 
 		/// <inheritdoc/>
@@ -96,10 +102,6 @@ namespace ACadSharp.Entities
 		}
 
 		/// <inheritdoc/>
-		public abstract IEnumerable<Entity> Explode();
-
-		/// <inheritdoc/>
-
 		internal static IEnumerable<Entity> Explode(IPolyline polyline)
 		{
 			//Generic explode method for Polyline2D and LwPolyline

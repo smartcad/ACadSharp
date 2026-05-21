@@ -100,25 +100,22 @@ namespace ACadSharp.IO.DWG
 				case Point p:
 					this.writePoint(p);
 					break;
-				case Polyline pline:
-					switch (pline)
-					{
-						case PolyfaceMesh faceMesh:
-							this.writePolyfaceMesh(faceMesh);
-							children.AddRange(faceMesh.Faces);
-							break;
-						case Polyline2D pline2d:
-							this.writePolyline2D(pline2d);
-							break;
-						case Polyline3D pline3d:
-							this.writePolyline3D(pline3d);
-							break;
-						default:
-							throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
-					}
-					children.AddRange(pline.Vertices);
-					seqend = pline.Vertices.Seqend;
-					break;
+				case Polyline pline when pline.ObjectType == ObjectType.POLYLINE_2D:
+                    this.writePolyline2D(pline);
+                    children.AddRange(pline.Vertices);
+                    seqend = pline.Vertices.Seqend;
+                    break;
+				case Polyline pline when pline.ObjectType == ObjectType.POLYLINE_3D:
+                    this.writePolyline3D(pline);
+                    children.AddRange(pline.Vertices);
+                    seqend = pline.Vertices.Seqend;
+                    break;
+                case PolyfaceMesh faceMesh:
+                    this.writePolyfaceMesh(faceMesh);
+                    children.AddRange(faceMesh.Faces);
+                    children.AddRange(faceMesh.Vertices);
+                    seqend = faceMesh.Vertices.Seqend;
+                    break;
 				case Ray ray:
 					this.writeRay(ray);
 					break;
@@ -1589,7 +1586,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
 		}
 
-		private void writePolyline2D(Polyline2D pline)
+		private void writePolyline2D(Polyline pline)
 		{
 			//Flags BS 70
 			this._writer.WriteBitShort((short)pline.Flags);
@@ -1633,7 +1630,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
 		}
 
-		private void writePolyline3D(Polyline3D pline)
+		private void writePolyline3D(Polyline pline)
 		{
 			//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
 			//75 0 : Splined(75 value is 5)

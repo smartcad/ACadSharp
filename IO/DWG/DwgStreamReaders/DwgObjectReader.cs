@@ -319,9 +319,6 @@ namespace ACadSharp.IO.DWG
 		// Read the common entity format.
 		private void readCommonEntityData(CadEntityTemplate template)
 		{
-			//Get the cad object as an entity
-			Entity entity = template.CadObject;
-
 			this.readCommonData(template);
 
 			//Graphic present Flag B 1 if a graphic is present
@@ -409,7 +406,7 @@ namespace ACadSharp.IO.DWG
 			if (!this.R2004Plus && !this._objectReader.ReadBit())
 			{
 				//[PREVIOUS ENTITY (relative soft pointer)]
-				template.PrevEntity = this.handleReference(entity.Handle);
+				/*template.PrevEntity = */this.handleReference(entity.Handle);
 				//[NEXT ENTITY (relative soft pointer)]
 				template.NextEntity = this.handleReference(entity.Handle);
 			}
@@ -460,7 +457,7 @@ namespace ACadSharp.IO.DWG
 				if (this._objectReader.Read2Bits() == 3)
 				{
 					//MATERIAL present if material flags were 11
-					template.MaterialHandle = this.handleReference(0);
+					/*template.MaterialHandle =*/ this.handleReference(0);
 				}
 
 				//Shadow flags RC
@@ -1749,7 +1746,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPolyline2D()
 		{
-			Polyline2D pline = new Polyline2D();
+			Polyline pline = new Polyline();
 			CadPolyLineTemplate template = new CadPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);
@@ -1797,7 +1794,7 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readPolyline3D()
 		{
-			Polyline3D pline = new Polyline3D();
+			Polyline pline = new Polyline();
 			CadPolyLineTemplate template = new CadPolyLineTemplate(pline);
 
 			this.readCommonEntityData(template);

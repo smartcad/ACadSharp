@@ -50,8 +50,6 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, ICadTableTemplate> tableTemplates = new(16);
 
-		protected Dictionary<ulong, ICadDictionaryTemplate> dictionaryTemplates = new(16);
-
 		public CadDocumentBuilder(ACadVersion version, CadDocument document)
 		{
 			this.Version = version;
@@ -77,9 +75,6 @@ namespace ACadSharp.IO
 
 			switch (template)
 			{
-				case ICadDictionaryTemplate dictionaryTemplate:
-					this.dictionaryTemplates.Add(dictionaryTemplate.CadObject.Handle, dictionaryTemplate);
-					break;
 				case ICadTableTemplate tableTemplate:
 					this.tableTemplates.Add(tableTemplate.CadObject.Handle, tableTemplate);
 					break;
@@ -268,11 +263,6 @@ namespace ACadSharp.IO
 
 		protected void buildDictionaries()
 		{
-			foreach (ICadDictionaryTemplate dictionaryTemplate in dictionaryTemplates.Values)
-			{
-				dictionaryTemplate.Build(this);
-			}
-
 			this.DocumentToBuild.UpdateCollections(true);
 		}
 
@@ -309,7 +299,6 @@ namespace ACadSharp.IO
 			templatesMap.Clear();
 			tableTemplates.Clear();
 			tableEntryTemplates.Clear();
-            dictionaryTemplates.Clear();
         }
 	}
 }

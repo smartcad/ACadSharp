@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Entities;
-using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -14,8 +12,6 @@ namespace ACadSharp.IO.Templates
 		public List<ulong> VertexHandles { get; set; } = new List<ulong>();
 
 		public Polyline PolyLine => this.CadObject as Polyline;
-
-		public CadPolyLineTemplate() : base(new PolyLinePlaceholder()) { }
 
 		public CadPolyLineTemplate(Polyline entity) : base(entity) { }
 
@@ -40,7 +36,7 @@ namespace ACadSharp.IO.Templates
 				{
 					foreach (var handle in this.VertexHandles)
 					{
-						if (builder.TryGetCadObject<Vertex>(handle, out Vertex v))
+						if (builder.TryGetCadObject(handle, out Vertex v))
 						{
 							polyLine.Vertices.Add(v);
 						}
@@ -51,18 +47,6 @@ namespace ACadSharp.IO.Templates
 					}
 				}
 			}
-		}
-
-		public void SetPolyLineObject(Polyline polyLine)
-		{
-			polyLine.Handle = this.CadObject.Handle;
-			polyLine.Color = this.CadObject.Color;
-			polyLine.LineWeight = this.CadObject.LineWeight;
-			polyLine.LinetypeScale = this.CadObject.LinetypeScale;
-			polyLine.IsInvisible = this.CadObject.IsInvisible;
-			polyLine.Transparency = this.CadObject.Transparency;
-
-			this.CadObject = polyLine;
 		}
 
 		private void buildPolyfaceMesh(PolyfaceMesh polyfaceMesh, CadDocumentBuilder builder)
@@ -84,16 +68,6 @@ namespace ACadSharp.IO.Templates
 						builder.Notify($"Unidentified type for PolyfaceMesh {e.GetType().FullName}");
 					}
 				}
-			}
-		}
-
-		internal class PolyLinePlaceholder : Polyline
-		{
-			public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
-
-			public override IEnumerable<Entity> Explode()
-			{
-				throw new NotImplementedException();
 			}
 		}
 	}

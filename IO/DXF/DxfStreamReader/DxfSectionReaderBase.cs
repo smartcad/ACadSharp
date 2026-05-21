@@ -287,9 +287,9 @@ namespace ACadSharp.IO.DXF
 				//Proxy entity graphics data
 				case 310:
 					break;
-				case 347:
-					template.MaterialHandle = this._reader.ValueAsHandle;
-					break;
+				//case 347:
+				//	template.MaterialHandle = this._reader.ValueAsHandle;
+				//	break;
 				default:
 					if (map == null || !this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Entity]))
 					{
@@ -388,10 +388,10 @@ namespace ACadSharp.IO.DXF
 					tmp.StyleName = this._reader.ValueAsString;
 					return true;
 				case 50:
-					var dim = new DimensionLinear();
+                    var dim = new DimensionLinear();
 					tmp.SetDimensionObject(dim);
-					dim.Rotation = CSMath.MathHelper.DegToRad(this._reader.ValueAsDouble);
-					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+					dim.Rotation = MathHelper.DegToRad(this._reader.ValueAsDouble);
+                    map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 					return true;
 				case 70:
 					//Flags do not have set
@@ -676,9 +676,9 @@ namespace ACadSharp.IO.DXF
 
 			if (this._builder.Version == ACadVersion.Unknown)
 			{
-				var polyline = new Polyline2D();
+				var polyline = new Polyline();
 				template = new CadPolyLineTemplate(polyline);
-				this.readEntityCodes<Polyline2D>(template, this.readPolyline);
+				this.readEntityCodes<Polyline>(template, this.readPolyline);
 
 				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
 				{
@@ -710,16 +710,9 @@ namespace ACadSharp.IO.DXF
 			}
 			else
 			{
-				template = new CadPolyLineTemplate();
+				template = new CadPolyLineTemplate(new Polyline());
 				this.readEntityCodes<Entity>(template, this.readPolyline);
 			}
-
-			if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
-			{
-				this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
-				return null;
-			}
-
 			return template;
 		}
 
@@ -748,15 +741,9 @@ namespace ACadSharp.IO.DXF
 					switch (this._reader.ValueAsString)
 					{
 						case DxfSubclassMarker.Polyline:
-							tmp.SetPolyLineObject(new Polyline2D());
-							map.SubClasses.Add(DxfSubclassMarker.Polyline, DxfClassMap.Create<Polyline2D>());
-							return true;
-						case DxfSubclassMarker.Polyline3d:
-							tmp.SetPolyLineObject(new Polyline3D());
-							map.SubClasses.Add(DxfSubclassMarker.Polyline3d, DxfClassMap.Create<Polyline3D>());
+							map.SubClasses.Add(DxfSubclassMarker.Polyline, DxfClassMap.Create<Polyline>());
 							return true;
 						case DxfSubclassMarker.PolyfaceMesh:
-							tmp.SetPolyLineObject(new PolyfaceMesh());
 							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMesh, DxfClassMap.Create<PolyfaceMesh>());
 							return true;
 						default:

@@ -919,15 +919,12 @@ namespace ACadSharp.IO.DXF
 			DxfClassMap map;
 
 			switch (polyline)
-			{
-				case Polyline2D:
-					map = DxfClassMap.Create<Polyline2D>();
-					break;
-				case Polyline3D:
-					map = DxfClassMap.Create<Polyline3D>();
-					break;
-				case PolyfaceMesh:
-					map = DxfClassMap.Create<PolyfaceMesh>();
+            {
+                case PolyfaceMesh:
+                    map = DxfClassMap.Create<PolyfaceMesh>();
+                    break;
+                case Polyline:
+					map = DxfClassMap.Create<Polyline>();
 					break;
 				default:
 					throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
