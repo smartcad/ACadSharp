@@ -51,36 +51,6 @@ namespace ACadSharp.IO.DXF
 			base.BuildDocument();
 		}
 
-		public List<Entity> BuildEntities()
-		{
-			var entities = new List<Entity>();
-			var entityTemplates = new List<CadEntityTemplate>();
-
-			foreach (var kvp in this.cadObjectsTemplates)
-			{
-				if (kvp.Value is CadEntityTemplate entityTemplate)
-				{
-					entityTemplates.Add(entityTemplate);
-				}
-			}
-
-			foreach (var item in entityTemplates)
-			{
-				item.Build(this);
-				item.SetUnlinkedReferences();
-			}
-
-			foreach (var item in entityTemplates)
-			{
-				if (item.CadObject.Owner == null)
-				{
-					item.CadObject.Handle = 0;
-					entities.Add(item.CadObject);
-				}
-			}
-
-			return entities;
-		}
 
 		private void assignOwner(CadTemplate template)
 		{

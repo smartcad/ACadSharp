@@ -120,16 +120,6 @@ namespace ACadSharp.IO
 			return false;
 		}
 
-		public T GetObjectTemplate<T>(ulong handle) where T : CadTemplate
-		{
-			if (this.templatesMap.TryGetValue(handle, out ICadObjectTemplate template))
-			{
-				return (T)template;
-			}
-
-			return null;
-		}
-
 		public bool TryGetTableEntry<T>(string name, out T entry)
 			where T : TableEntry
 		{
@@ -280,6 +270,21 @@ namespace ACadSharp.IO
 
 			this.templatesMap.Add(template.CadObject.Handle, template);
 			this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
+		}
+
+		private void addToMap(CadObject cadObject)
+		{
+			if (cadObject.Handle == 0)
+			{
+				cadObject.Handle = this.InitialHandSeed + 1;
+			}
+
+			if (cadObject.Handle > this.InitialHandSeed)
+			{
+				this.InitialHandSeed = cadObject.Handle;
+			}
+
+			this.cadObjects.Add(cadObject.Handle, cadObject);
 		}
 
 		public void Dispose()

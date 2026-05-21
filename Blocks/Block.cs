@@ -26,18 +26,13 @@ namespace ACadSharp.Blocks
 		public override string SubclassMarker => DxfSubclassMarker.BlockBegin;
 
 		/// <summary>
-		/// Block record that owns this entity
-		/// </summary>
-		public BlockRecord BlockOwner { get { return this.Owner as BlockRecord; } }
-
-		/// <summary>
 		/// Specifies the name of the object.
 		/// </summary>
 		[DxfCodeValue(2, 3)]
 		public string Name
 		{
-			get { return this.BlockOwner.Name; }
-			set { this.BlockOwner.Name = value; }
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -70,12 +65,12 @@ namespace ACadSharp.Blocks
 
 		internal Block(BlockRecord record, Layer lyr) : base(lyr)
 		{
-			this.Owner = record;
+			this.Owner = record.Handle;
 		}
 		
 		public Block(BlockRecord record) : base()
 		{
-			this.Owner = record;
+			this.Owner = record.Handle;
 		}
 
 		/// <inheritdoc/>
@@ -86,7 +81,7 @@ namespace ACadSharp.Blocks
 		{
 			Block clone = (Block)base.Clone();
 
-			clone.Owner = new BlockRecord(this.Name, this.Layer);
+			//clone.Owner = new BlockRecord(this.Name, this.Layer);
 
 			return clone;
 		}

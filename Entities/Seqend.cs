@@ -23,7 +23,7 @@ namespace ACadSharp.Entities
 
 		internal Seqend(CadObject owner)
 		{
-			this.Owner = owner;
+			this.Owner = owner.Handle;
 		}
 
 		/// <inheritdoc/>

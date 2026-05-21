@@ -462,7 +462,7 @@ namespace ACadSharp.IO.DWG
 			this.HandleReference(DwgReferenceType.Undefined, handle);
 		}
 
-		public void HandleReference(DwgReferenceType type, ulong handle)
+		public void HandleReference(DwgReferenceType type, in ulong handle)
 		{
 			byte b = (byte)((uint)type << 4);
 

@@ -27,14 +27,14 @@ namespace ACadSharp.Blocks
 
 		public BlockEnd(BlockRecord record) : base()
 		{
-			this.Owner = record;
+			this.Owner = record.Handle;
 		}
 
 		/// <inheritdoc/>
 		public override CadObject Clone()
 		{
 			BlockEnd clone = (BlockEnd)base.Clone();
-			clone.Owner = new BlockRecord((this.Owner as BlockRecord).Name, this.Layer);
+			//clone.Owner = new BlockRecord((this.Owner as BlockRecord).Name, this.Layer);
 			return clone;
 		}
 

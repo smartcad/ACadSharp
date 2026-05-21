@@ -46,7 +46,7 @@ namespace ACadSharp.IO.DWG
 			this.HandleWriter.HandleReference(handle);
 		}
 
-		public void HandleReference(DwgReferenceType type, ulong handle)
+		public void HandleReference(DwgReferenceType type, in ulong handle)
 		{
 			this.HandleWriter.HandleReference(type, handle);
 		}

@@ -143,7 +143,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.Main.HandleReference(cadObject);
 
 			//Extended object data, if any
-			this.writeExtendedData(cadObject.ExtendedDataInternal);
+			this.writeExtendedData();
 		}
 
 		private void writeCommonNonEntityData(CadObject cadObject)
@@ -156,7 +156,8 @@ namespace ACadSharp.IO.DWG
 				this._writer.SavePositonForSize();
 
 			//[Owner ref handle (soft pointer)]
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner.Handle);
+			ulong ownerHandle = cadObject.Owner ?? 0UL;
+            this._writer.HandleReference(DwgReferenceType.SoftPointer, ownerHandle);
 
 			//write the cad object reactors
 			this.writeReactorsAndDictionaryHandle(cadObject);
@@ -195,8 +196,9 @@ namespace ACadSharp.IO.DWG
 			byte entmode = getEntMode(entity);
 			this._writer.Write2Bits(entmode);
 			if (entmode == 0)
-			{
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, entity.Owner);
+            {
+                ulong ownerHandle = entity.Owner ?? 0UL;
+                this._writer.HandleReference(DwgReferenceType.SoftPointer, ownerHandle);
 			}
 
 			this.writeReactorsAndDictionaryHandle(entity);
@@ -334,7 +336,7 @@ namespace ACadSharp.IO.DWG
 			this._writer.WriteByte(CadUtils.ToIndex(entity.LineWeight));
 		}
 
-		private void writeExtendedData(ExtendedDataDictionary data)
+		private void writeExtendedData()
 		{
 			//EED size BS size of extended entity data, if any
 			this._writer.WriteBitShort(0);
@@ -397,12 +399,12 @@ namespace ACadSharp.IO.DWG
 				return 0;
 			}
 
-			if (entity.Owner.Handle == this._document.PaperSpace.Handle)
+			if (entity.Owner == this._document.PaperSpace.Handle)
 			{
 				return 0b01;
 			}
 
-			if (entity.Owner.Handle == this._document.ModelSpace.Handle)
+			if (entity.Owner == this._document.ModelSpace.Handle)
 			{
 				return 0b10;
 			}

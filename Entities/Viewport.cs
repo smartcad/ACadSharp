@@ -62,23 +62,24 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(69)]
 		public short Id
 		{
-			get
-			{
-				if (this.Owner is BlockRecord record)
-				{
-					short id = 0;
-					foreach (Viewport viewport in record.Viewports)
-					{
-						id += 1;
-						if (viewport == this)
-						{
-							return id;
-						}
-					}
-				}
+			get;
+			//{
+			//	if (this.Owner is BlockRecord record)
+			//	{
+			//		short id = 0;
+			//		foreach (Viewport viewport in record.Viewports)
+			//		{
+			//			id += 1;
+			//			if (viewport == this)
+			//			{
+			//				return id;
+			//			}
+			//		}
+			//	}
 
-				return 0;
-			}
+			//	return 0;
+			//}
+			set;
 		}
 
 		/// <summary>
@@ -365,13 +366,13 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// A paper viewport is only for boundaries only, does not visualize anything.
 		/// </remarks>
-		public bool RepresentsPaper
-		{
-			get
-			{
-				return this.Id == PaperViewId;
-			}
-		}
+		//public bool RepresentsPaper
+		//{
+		//	get
+		//	{
+		//		return this.Id == PaperViewId;
+		//	}
+		//}
 
 		private Scale _scale;
 

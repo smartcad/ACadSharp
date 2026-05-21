@@ -3,7 +3,6 @@ using ACadSharp.Objects;
 using CSMath;
 using System;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -956,7 +955,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this._writer.Write(0, seqend.ObjectName);
 			this._writer.Write(5, seqend.Handle);
-			this._writer.Write(330, seqend.Owner.Handle);
+			this._writer.Write(330, seqend.Owner);
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
 			this._writer.Write(8, seqend.Layer.Name);
 		}

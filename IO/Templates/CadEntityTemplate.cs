@@ -6,8 +6,6 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadEntityTemplate : CadTemplate<Entity>
 	{
-		public byte EntityMode { get; set; }
-
 		public byte? LtypeFlags { get; set; }
 
 		public ulong? LayerHandle { get; set; }
@@ -17,8 +15,6 @@ namespace ACadSharp.IO.Templates
 		public ulong? LineTypeHandle { get; set; }
 
 		public string LineTypeName { get; set; }
-
-		public ulong? NextEntity { get; set; }
 
 		public ulong? ColorHandle { get; set; }
 

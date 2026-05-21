@@ -159,7 +159,6 @@ namespace ACadSharp.IO.DWG
 
 				//Check if the handle has already been read
 				if (!this._map.TryGetValue(handle, out long offset) ||
-					this._builder.TryGetObjectTemplate(handle, out CadTemplate _) ||
 					this._readedObjects.Contains(handle))
 				{
 					continue;
@@ -171,6 +170,7 @@ namespace ACadSharp.IO.DWG
 				this._readedObjects.Add(handle);
 
 				CadTemplate template = null;
+				CadObject cadObject = null;
 
 				try
 				{
@@ -287,9 +287,7 @@ namespace ACadSharp.IO.DWG
 			if (!this._handlesReader.HandleReference(handle, out _, out ulong value))
 				throw new Exceptions.DwgException($"[HandleReference] invalid reference code ");
 
-			if (value != 0 &&
-				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._readedObjects.Contains(value))
+			if (value != 0 && !this._readedObjects.Contains(value))
 			{
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
@@ -310,6 +308,20 @@ namespace ACadSharp.IO.DWG
 
 			//Extended object data, if any
 			this.readExtendedData(template);
+		}
+
+		private void readCommonData(CadObject cadObject)
+		{
+			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
+				//Obj size RL size of object in bits, not including end handles
+				this.updateHandleReader();
+
+			//Common:
+			//Handle H 5 code 0, length followed by the handle bytes.
+			cadObject.Handle = this._objectReader.HandleReference();
+
+			//Extended object data, if any
+			this.readExtendedData(cadObject);
 		}
 
 		// Read the common entity format.
@@ -345,6 +357,39 @@ namespace ACadSharp.IO.DWG
 			this.readEntityMode(template);
 		}
 
+		// Read the common entity format.
+		//private void readCommonEntityData(CadObject cadObject)
+		//{
+		//	this.readCommonData(cadObject);
+
+		//	//Graphic present Flag B 1 if a graphic is present
+		//	if (this._objectReader.ReadBit())
+		//	{
+		//		//Graphics X if graphicpresentflag is 1, the graphic goes here.
+		//		//See the section on Proxy Entity Graphics for the format of this section.
+
+		//		//R13 - R007:
+		//		//RL: Size of graphic image in bytes
+		//		//R2010 +:
+		//		//BLL: Size of graphic image in bytes
+		//		long graphicImageSize = this._version >= ACadVersion.AC1024 ?
+		//			this._objectReader.ReadBitLongLong() : this._objectReader.ReadRawLong();
+
+		//		//Common:
+		//		//X: The graphic image
+		//		//entityHandler.CadObject.JumpGraphicImage(this, entityHandler, graphicImageSize);
+		//		this._objectReader.Advance((int)graphicImageSize);
+		//	}
+
+		//	//R13 - R14 Only:
+		//	if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
+		//	{
+		//		this.updateHandleReader();
+		//	}
+
+		//	this.readEntityMode(template);
+		//}
+
 		private void readEntityMode(CadEntityTemplate template)
 		{
 			//Get the cad object as an entity
@@ -353,7 +398,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//6B : Flags
 			//Entmode BB entity mode
-			template.EntityMode = this._objectReader.Read2Bits();
+			var EntityMode = this._objectReader.Read2Bits();
 
 			//FE: Entity mode(entmode). Generally, this indicates whether or not the owner
 			//relative handle reference is present.The values go as follows:
@@ -368,15 +413,15 @@ namespace ACadSharp.IO.DWG
 			//10 : MSPACE entity without a owner relative handle ref.
 			//11 : Not used.
 
-			if (template.EntityMode == 0)
+			if (EntityMode == 0)
 			{
 				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
 			}
-			else if (template.EntityMode == 1)
+			else if (EntityMode == 1)
 			{
 				this._builder.PaperSpaceEntities.Add(entity);
 			}
-			else if (template.EntityMode == 2)
+			else if (EntityMode == 2)
 			{
 				this._builder.ModelSpaceEntities.Add(entity);
 			}
@@ -404,7 +449,7 @@ namespace ACadSharp.IO.DWG
 				//[PREVIOUS ENTITY (relative soft pointer)]
 				/*template.PrevEntity = */this.handleReference(entity.Handle);
 				//[NEXT ENTITY (relative soft pointer)]
-				template.NextEntity = this.handleReference(entity.Handle);
+				entity.NextEntity = this.handleReference(entity.Handle);
 			}
 			else if (!this.R2004Plus)
 			{
@@ -563,7 +608,29 @@ namespace ACadSharp.IO.DWG
 				//template.ExtendedData
 				ExtendedData edata = this.readExtendedDataRecords(endPos);
 
-				template.EDataTemplate.Add(appHandle, edata);
+				//template.EDataTemplate.Add(appHandle, edata);
+
+				size = this._objectReader.ReadBitShort();
+			}
+		}
+
+		private void readExtendedData(CadObject cadObject)
+		{
+			//EED directly follows the entity handle.
+			//Each application's data is structured as follows:
+			//|Length|Application handle|Data items|
+
+			//EED size BS size of extended entity data, if any
+			short size = this._objectReader.ReadBitShort();
+
+			while (size != 0)
+			{
+				//App handle
+				ulong appHandle = this._objectReader.HandleReference();
+				long endPos = this._objectReader.Position + size;
+
+				//template.ExtendedData
+				ExtendedData edata = this.readExtendedDataRecords(endPos);
 
 				size = this._objectReader.ReadBitShort();
 			}

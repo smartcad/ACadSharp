@@ -69,15 +69,15 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(DxfCode.ControlString, "}");
 			}
 
-			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
+			this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner);
 
 			//TODO: Write exended data
-			if (cadObject.ExtendedDataInternal != null)
-			{
+			//if (cadObject.ExtendedDataInternal != null)
+			//{
 				//this._writer.Write(DxfCode.ControlString,DxfFileToken.ReactorsToken);
 				//this._writer.Write(DxfCode.HardOwnershipId, cadObject.ExtendedData);
 				//this._writer.Write(DxfCode.ControlString, "}");
-			}
+			//}
 		}
 
 		protected void writeExtendedData(CadObject cadObject)

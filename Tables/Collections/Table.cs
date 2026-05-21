@@ -44,7 +44,7 @@ namespace ACadSharp.Tables.Collections
 
 		protected Table(CadDocument document)
 		{
-			this.Owner = document;
+			this.Owner = document.Handle;
 			document.RegisterCollection(this);
 		}
 
@@ -149,7 +149,7 @@ namespace ACadSharp.Tables.Collections
 		protected void add(string key, T item)
 		{
 			this.entries.Add(key, item);
-			item.Owner = this;
+			item.Owner = this.Handle;
 
 			item.OnNameChanged += this.onEntryNameChanged;
 
@@ -158,7 +158,7 @@ namespace ACadSharp.Tables.Collections
 
 		protected void addHandlePrefix(T item)
 		{
-			item.Owner = this;
+			item.Owner = this.Handle;
 			item.OnNameChanged += this.onEntryNameChanged;
 
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));

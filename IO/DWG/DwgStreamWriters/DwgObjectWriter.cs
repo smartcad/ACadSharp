@@ -206,22 +206,34 @@ namespace ACadSharp.IO.DWG
 		{
 			foreach (BlockRecord blkRecord in this._document.BlockRecords)
 			{
-				this.writeBlockBegin(blkRecord.BlockEntity);
+				this.writeBlockBegin(blkRecord);
 
 				this._prev = null;
 				this._next = null;
-				Entity[] arr = blkRecord.Entities.ToArray();
-				for (int i = 0; i < arr.Length; i++)
+
+				Entity prevEntity = null;
+				Entity prev2Entity = null;
+				foreach(var e in blkRecord.Entities)
 				{
-					this._prev = i > 0 ? arr[i - 1] : null;
-					Entity e = arr[i];
-					this._next = i < arr.Length - 1 ? arr[i + 1] : null;
+					if(prevEntity is not null)
+					{
+						this._prev = prev2Entity;
+						this._next = e;
+                        this.writeEntity(prevEntity);
+                    }
 
-					this.writeEntity(e);
-				}
+					prev2Entity = prevEntity;
+					prevEntity = e;
+                }
+				if(prevEntity is not null)
+                {
+                    this._prev = prev2Entity;
+                    this._next = null;
+                    this.writeEntity(prevEntity);
+                }
 
-				this._prev = null;
 				this._next = null;
+				this._prev = null;
 
 				this.writeBlockEnd(blkRecord.BlockEnd);
 			}
@@ -382,13 +394,14 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(record);
 		}
 
-		private void writeBlockBegin(Block block)
+		private void writeBlockBegin(BlockRecord blockRecord)
 		{
+			Block block = blockRecord.BlockEntity;
 			this.writeCommonEntityData(block);
 
 			//Common:
 			//Entry name TV 2
-			this._writer.WriteVariableText(block.Name);
+			this._writer.WriteVariableText(blockRecord.Name);
 
 			this.registerObject(block);
 		}

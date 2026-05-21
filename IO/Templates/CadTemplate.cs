@@ -20,12 +20,12 @@ namespace ACadSharp.IO.Templates
 			set => _reactorsHandles = value;
 		}
 
-		private Dictionary<ulong, ExtendedData> _eDataTemplate;
-		public Dictionary<ulong, ExtendedData> EDataTemplate
-		{
-			get => _eDataTemplate ??= new Dictionary<ulong, ExtendedData>();
-			set => _eDataTemplate = value;
-		}
+		//private Dictionary<ulong, ExtendedData> _eDataTemplate;
+		//public Dictionary<ulong, ExtendedData> EDataTemplate
+		//{
+		//	get => _eDataTemplate ??= new Dictionary<ulong, ExtendedData>();
+		//	set => _eDataTemplate = value;
+		//}
 
 		private Dictionary<string, ExtendedData> _eDataTemplateByAppName;
 		public Dictionary<string, ExtendedData> EDataTemplateByAppName
@@ -68,20 +68,16 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			if (_eDataTemplate != null)
-			{
-				foreach (KeyValuePair<ulong, ExtendedData> item in _eDataTemplate)
-				{
-					if (builder.TryGetCadObject(item.Key, out AppId app))
-					{
-						this.CadObject.ExtendedData.Add(app, item.Value);
-					}
-					else
-					{
-						builder.Notify($"AppId in extended data with handle {item.Key} not found", NotificationType.Warning);
-					}
-				}
-			}
+			//if (_eDataTemplate != null)
+			//{
+			//	foreach (KeyValuePair<ulong, ExtendedData> item in _eDataTemplate)
+			//	{
+			//		if (builder.TryGetCadObject(item.Key, out AppId app))
+			//		{
+			//			this.CadObject.ExtendedData.Add(app, item.Value);
+			//		}
+			//	}
+			//}
 		}
 
 		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
@@ -89,23 +85,22 @@ namespace ACadSharp.IO.Templates
 		{
 			List<T> collection = new List<T>();
 
-			CadEntityTemplate template = builder.GetObjectTemplate<CadEntityTemplate>(firstHandle);
-			while (template != null)
-			{
-				collection.Add((T)template.CadObject);
+			if(!builder.TryGetCadObject(firstHandle, out Entity entity))
+				return collection;
 
-				if (template.CadObject.Handle == endHandle)
+			while (entity != null)
+			{
+				collection.Add((T)entity);
+
+				if (entity.Handle == endHandle)
 				{
 					break;
 				}
 
-				if (template.NextEntity.HasValue)
+				if (!entity.NextEntity.HasValue || !builder.TryGetCadObject(entity.NextEntity.Value, out entity))
 				{
-					template = builder.GetObjectTemplate<CadEntityTemplate>(template.NextEntity.Value);
-				}
-				else
-				{
-					template = builder.GetObjectTemplate<CadEntityTemplate>(template.CadObject.Handle + 1);
+					if(!builder.TryGetCadObject(entity.Handle + 1, out entity))
+						break;
 				}
 			}
 

@@ -60,7 +60,7 @@ namespace ACadSharp
 				throw new ArgumentException($"Item {item.GetType().FullName} is already in the collection", nameof(item));
 
 			this._entries.Add(item);
-			item.Owner = this.Owner;
+			item.Owner = this.Owner.Handle;
 
 			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
 		}

@@ -159,9 +159,9 @@ namespace ACadSharp.Objects
 		{
 			var dict = new CadDictionary
 			{
-				Owner = owned_by
+				Owner = owned_by.Handle
 			};
-			child.Owner = dict;
+			child.Owner = dict.Handle;
 			return dict;
 		}
 
@@ -242,7 +242,7 @@ namespace ACadSharp.Objects
 			}
 
 			this._entries.Add(key, value);
-			value.Owner = this;
+			value.Owner = this.Handle;
 
 			value.OnNameChanged += this.onEntryNameChanged;
 

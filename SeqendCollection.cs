@@ -30,7 +30,7 @@ namespace ACadSharp
 			internal set
 			{
 				this._seqend = value;
-				this._seqend.Owner = this.Owner;
+				this._seqend.Owner = this.Owner.Handle;
 			}
 		}
 

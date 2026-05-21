@@ -51,18 +51,25 @@ namespace ACadSharp.IO.Templates
                 {
 					entityCollection = this.getEntitiesCollection<Entity>(builder, this.FirstEntityHandle.Value, this.LastEntityHandle.Value);
                 }
+
+				short viewPortId = 0;
                 foreach (Entity e in entityCollection)
 				{
-					this.addEntity(builder, e);
+					if(e is Viewport vp)
+						viewPortId++;
+                    this.addEntity(builder, e, viewPortId);
 				}
 			}
 			else
-			{
-				foreach (ulong handle in this.OwnedObjectsHandlers)
+            {
+                short viewPortId = 0;
+                foreach (ulong handle in this.OwnedObjectsHandlers)
 				{
 					if (builder.TryGetCadObject(handle, out Entity child))
-					{
-						this.addEntity(builder, child);
+                    {
+                        if(child is Viewport vp)
+                            viewPortId++;
+                        this.addEntity(builder, child, viewPortId);
 					}
 				}
 			}
@@ -91,14 +98,15 @@ namespace ACadSharp.IO.Templates
 			}
 		}
 
-		private void addEntity(CadDocumentBuilder builder,Entity entity)
+		private void addEntity(CadDocumentBuilder builder, Entity entity, short viewPortId)
 		{
 			if(!builder.KeepUnknownEntities && entity is UnknownEntity)
-			{
 				return;
-			}
 
-			if(this.CadObject.Entities.Contains(entity))
+			if(entity is Viewport vp)
+				vp.Id = viewPortId;
+
+            if(this.CadObject.Entities.Contains(entity))
 				return;
 			this.CadObject.Entities.Add(entity);
 		}

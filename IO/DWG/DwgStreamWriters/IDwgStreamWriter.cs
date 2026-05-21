@@ -73,7 +73,7 @@ namespace ACadSharp.IO.DWG
 
 		void HandleReference(ulong handle);
 
-		void HandleReference(DwgReferenceType type, ulong handle);
+		void HandleReference(DwgReferenceType type, in ulong handle);
 
 		void WriteSpearShift();
 

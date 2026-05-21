@@ -38,15 +38,17 @@ namespace ACadSharp
 		/// Soft-pointer ID/handle to owner object
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
-		public IHandledCadObject Owner { get; internal set; }
+		public ulong? Owner { get; internal set; }
 
-		/// <summary>
-		/// Extended Dictionary object.
-		/// </summary>
-		/// <remarks>
-		/// An extended dictionary can be created using <see cref="CreateExtendedDictionary"/>
-		/// </remarks>
-		public CadDictionary XDictionary
+        public ulong? NextEntity { get; set; }
+
+        /// <summary>
+        /// Extended Dictionary object.
+        /// </summary>
+        /// <remarks>
+        /// An extended dictionary can be created using <see cref="CreateExtendedDictionary"/>
+        /// </remarks>
+        public CadDictionary XDictionary
 		{
 			get { return this._xdictionary; }
 			set
@@ -55,7 +57,7 @@ namespace ACadSharp
 					return;
 
 				this._xdictionary = value;
-				this._xdictionary.Owner = this;
+				this._xdictionary.Owner = this.Handle;
 
 				if (this.Document != null)
 					this.Document.RegisterCollection(this._xdictionary);
@@ -78,25 +80,7 @@ namespace ACadSharp
 			}
 		}
 
-		/// <summary>
-		/// Extended data attached to this object
-		/// </summary>
-		public ExtendedDataDictionary ExtendedData
-		{
-			get
-			{
-				if (this._extendedData == null)
-				{
-					this._extendedData = new ExtendedDataDictionary();
-				}
-
-				return this._extendedData;
-			}
-		}
-
 		internal Dictionary<ulong, CadObject> ReactorsInternal { get { return this._reactors; } }
-
-		internal ExtendedDataDictionary ExtendedDataInternal { get { return this._extendedData; } }
 
 		/// <summary>
 		/// Document where this element belongs
@@ -108,8 +92,6 @@ namespace ACadSharp
 		}
 
 		private Dictionary<ulong, CadObject> _reactors;
-
-		private ExtendedDataDictionary _extendedData;
 
 		private CadDictionary _xdictionary = null;
 
@@ -151,7 +133,6 @@ namespace ACadSharp
 			//Collections
 			clone._reactors = null;
 			clone._xdictionary = null;
-			clone._extendedData = null;
 
 			if (this._xdictionary != null)
 			{

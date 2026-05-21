@@ -15,15 +15,16 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (BlockRecord b in this._document.BlockRecords)
 			{
-				this.writeBlock(b.BlockEntity);
+				this.writeBlock(b);
 				this.processEntities(b);
 				this.writeBlockEnd(b.BlockEnd);
 			}
 		}
 
-		private void writeBlock(Block block)
+		private void writeBlock(BlockRecord blockRecord)
 		{
-			DxfClassMap map = DxfClassMap.Create<Block>();
+			Block block = blockRecord.BlockEntity;
+            DxfClassMap map = DxfClassMap.Create<Block>();
 
 			this._writer.Write(DxfCode.Start, block.ObjectName);
 
@@ -37,12 +38,12 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.Write(1, block.XrefPath, map);
 			}
-			this._writer.Write(2, block.Name, map);
+			this._writer.Write(2, blockRecord.Name, map);
 			this._writer.Write(70, (short)block.Flags, map);
 
 			this._writer.Write(10, block.BasePoint, map);
 		
-			this._writer.Write(3, block.Name, map);
+			this._writer.Write(3, blockRecord.Name, map);
 			this._writer.Write(4, block.Comments, map);
 		}
 

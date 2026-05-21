@@ -188,7 +188,7 @@ namespace ACadSharp.Tables
 			internal set
 			{
 				this._blockEntity = value;
-				this._blockEntity.Owner = this;
+				this._blockEntity.Owner = this.Handle;
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace ACadSharp.Tables
 			internal set
 			{
 				this._blockEnd = value;
-				this._blockEnd.Owner = this;
+				this._blockEnd.Owner = this.Handle;
 			}
 		}
 
@@ -225,9 +225,11 @@ namespace ACadSharp.Tables
 		public BlockRecord(string name, Layer lyr) : base(name)
 		{
 			this.BlockEntity = new Block(this, lyr);
-			this.BlockEnd = new BlockEnd(this);
-			this.BlockEnd.Layer = lyr;
-			this.Entities = new CadObjectCollection<Entity>(this);
+            this.BlockEnd = new BlockEnd(this)
+            {
+                Layer = lyr
+            };
+            this.Entities = new CadObjectCollection<Entity>(this);
 		}
 
 		/// <summary>
@@ -268,9 +270,9 @@ namespace ACadSharp.Tables
 			}
 
 			clone.BlockEntity = (Block)this.BlockEntity.Clone();
-			clone.BlockEntity.Owner = clone;
+			clone.BlockEntity.Owner = clone.Handle;
 			clone.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
-			clone.BlockEnd.Owner = clone;
+			clone.BlockEnd.Owner = clone.Handle;
 
 			return clone;
 		}

@@ -138,7 +138,7 @@ namespace ACadSharp
 			internal set
 			{
 				this._rootDictionary = value;
-				this._rootDictionary.Owner = this;
+				this._rootDictionary.Owner = this.Handle;
 				this.RegisterCollection(this._rootDictionary);
 			}
 		}
@@ -451,39 +451,39 @@ namespace ACadSharp
 			{
 				case AppIdsTable:
 					this.AppIds = (AppIdsTable)collection;
-					this.AppIds.Owner = this;
+					this.AppIds.Owner = this.Handle;
 					break;
 				case BlockRecordsTable:
 					this.BlockRecords = (BlockRecordsTable)collection;
-					this.BlockRecords.Owner = this;
+					this.BlockRecords.Owner = this.Handle;
 					break;
 				case DimensionStylesTable:
 					this.DimensionStyles = (DimensionStylesTable)collection;
-					this.DimensionStyles.Owner = this;
+					this.DimensionStyles.Owner = this.Handle;
 					break;
 				case LayersTable:
 					this.Layers = (LayersTable)collection;
-					this.Layers.Owner = this;
+					this.Layers.Owner = this.Handle;
 					break;
 				case LineTypesTable:
 					this.LineTypes = (LineTypesTable)collection;
-					this.LineTypes.Owner = this;
+					this.LineTypes.Owner = this.Handle;
 					break;
 				case TextStylesTable:
 					this.TextStyles = (TextStylesTable)collection;
-					this.TextStyles.Owner = this;
+					this.TextStyles.Owner = this.Handle;
 					break;
 				case UCSTable:
 					this.UCSs = (UCSTable)collection;
-					this.UCSs.Owner = this;
+					this.UCSs.Owner = this.Handle;
 					break;
 				case ViewsTable:
 					this.Views = (ViewsTable)collection;
-					this.Views.Owner = this;
+					this.Views.Owner = this.Handle;
 					break;
 				case VPortsTable:
 					this.VPorts = (VPortsTable)collection;
-					this.VPorts.Owner = this;
+					this.VPorts.Owner = this.Handle;
 					break;
 			}
 
