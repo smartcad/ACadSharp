@@ -62,38 +62,60 @@ namespace ACadSharp
 				if (this.Document != null)
 					this.Document.RegisterCollection(this._xdictionary);
 			}
+
 		}
 
-		/// <summary>
-		/// Objects that are attached to this object
-		/// </summary>
-		public Dictionary<ulong, CadObject> Reactors
-		{
-			get
-			{
-				if (this._reactors == null)
-				{
-					this._reactors = new Dictionary<ulong, CadObject>();
-				}
+        /// <summary>
+        /// Objects that are attached to this object
+        /// </summary>
+        public Dictionary<ulong, CadObject> Reactors
+        {
+            get
+            {
+                if(this._reactors == null)
+                {
+                    this._reactors = new Dictionary<ulong, CadObject>();
+                }
 
-				return this._reactors;
-			}
-		}
+                return this._reactors;
+            }
+        }
 
-		internal Dictionary<ulong, CadObject> ReactorsInternal { get { return this._reactors; } }
+        /// <summary>
+        /// Extended data attached to this object
+        /// </summary>
+        public ExtendedDataDictionary ExtendedData
+        {
+            get
+            {
+                if(this._extendedData == null)
+                {
+                    this._extendedData = new ExtendedDataDictionary();
+                }
 
-		/// <summary>
-		/// Document where this element belongs
-		/// </summary>
-		public CadDocument Document
-		{
-			get;
-			private set;
-		}
+                return this._extendedData;
+            }
+        }
 
-		private Dictionary<ulong, CadObject> _reactors;
+        internal Dictionary<ulong, CadObject> ReactorsInternal { get { return this._reactors; } }
 
-		private CadDictionary _xdictionary = null;
+        internal ExtendedDataDictionary ExtendedDataInternal { get { return this._extendedData; } }
+
+        /// <summary>
+        /// Document where this element belongs
+        /// </summary>
+        public CadDocument Document
+        {
+            get;
+            private set;
+        }
+
+        private Dictionary<ulong, CadObject> _reactors;
+
+        private ExtendedDataDictionary _extendedData;
+
+
+        private CadDictionary _xdictionary = null;
 
 		/// <summary>
 		/// Default constructor.

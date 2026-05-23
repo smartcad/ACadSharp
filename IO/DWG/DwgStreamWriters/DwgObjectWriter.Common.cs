@@ -3,7 +3,6 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSUtilities.Converters;
 using System.IO;
-using System.Linq;
 
 namespace ACadSharp.IO.DWG
 {

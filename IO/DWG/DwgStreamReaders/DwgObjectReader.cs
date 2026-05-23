@@ -170,7 +170,6 @@ namespace ACadSharp.IO.DWG
 				this._readedObjects.Add(handle);
 
 				CadTemplate template = null;
-				CadObject cadObject = null;
 
 				try
 				{
@@ -363,7 +362,7 @@ namespace ACadSharp.IO.DWG
 		//	this.readCommonData(cadObject);
 
 		//	//Graphic present Flag B 1 if a graphic is present
-		//	if (this._objectReader.ReadBit())
+		//	if(this._objectReader.ReadBit())
 		//	{
 		//		//Graphics X if graphicpresentflag is 1, the graphic goes here.
 		//		//See the section on Proxy Entity Graphics for the format of this section.
@@ -382,7 +381,7 @@ namespace ACadSharp.IO.DWG
 		//	}
 
 		//	//R13 - R14 Only:
-		//	if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
+		//	if(this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
 		//	{
 		//		this.updateHandleReader();
 		//	}
@@ -3935,7 +3934,7 @@ namespace ACadSharp.IO.DWG
 				for (int i = 0; i < insertCount; ++i)
 				{
 					//Entries	//TODO: necessary to store the insert handles??
-					template.InsertHandles.Add(this.handleReference());
+					/*template.InsertHandles.Add(*/this.handleReference();
 				}
 				//Layout Handle H(hard pointer)
 				template.LayoutHandle = this.handleReference();

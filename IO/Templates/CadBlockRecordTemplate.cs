@@ -22,11 +22,6 @@ namespace ACadSharp.IO.Templates
 		public ulong? LayoutHandle { get; set; }
 
 		public List<ulong> OwnedObjectsHandlers { get; set; } = new List<ulong>();
-
-		public List<ulong> InsertHandles { get; set; } = new List<ulong>();
-
-		public string LayerName { get; set; }
-
 		public CadBlockRecordTemplate() : base(new BlockRecord()) { }
 
 		public CadBlockRecordTemplate(BlockRecord block) : base(block) { }

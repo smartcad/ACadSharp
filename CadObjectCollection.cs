@@ -53,10 +53,10 @@ namespace ACadSharp
 		{
 			if (item is null) throw new ArgumentNullException(nameof(item));
 
-			if (item.Owner != null)
+			if(item.Owner != null && item.Owner != this.Owner.Handle)
 				throw new ArgumentException($"Item {item.GetType().FullName} already has an owner", nameof(item));
 
-			if (this._entries.Contains(item))
+			if(this._entries.Contains(item))
 				throw new ArgumentException($"Item {item.GetType().FullName} is already in the collection", nameof(item));
 
 			this._entries.Add(item);

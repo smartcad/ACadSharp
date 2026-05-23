@@ -20,12 +20,12 @@ namespace ACadSharp.IO.Templates
 			set => _reactorsHandles = value;
 		}
 
-		//private Dictionary<ulong, ExtendedData> _eDataTemplate;
-		//public Dictionary<ulong, ExtendedData> EDataTemplate
-		//{
-		//	get => _eDataTemplate ??= new Dictionary<ulong, ExtendedData>();
-		//	set => _eDataTemplate = value;
-		//}
+		private Dictionary<ulong, ExtendedData> _eDataTemplate;
+		public Dictionary<ulong, ExtendedData> EDataTemplate
+		{
+			get => _eDataTemplate ??= new Dictionary<ulong, ExtendedData>();
+			set => _eDataTemplate = value;
+		}
 
 		private Dictionary<string, ExtendedData> _eDataTemplateByAppName;
 		public Dictionary<string, ExtendedData> EDataTemplateByAppName
@@ -68,16 +68,16 @@ namespace ACadSharp.IO.Templates
 				}
 			}
 
-			//if (_eDataTemplate != null)
-			//{
-			//	foreach (KeyValuePair<ulong, ExtendedData> item in _eDataTemplate)
-			//	{
-			//		if (builder.TryGetCadObject(item.Key, out AppId app))
-			//		{
-			//			this.CadObject.ExtendedData.Add(app, item.Value);
-			//		}
-			//	}
-			//}
+			if(_eDataTemplate != null)
+			{
+				foreach(KeyValuePair<ulong, ExtendedData> item in _eDataTemplate)
+				{
+					if(builder.TryGetCadObject(item.Key, out AppId app))
+					{
+						this.CadObject.ExtendedData.Add(app, item.Value);
+					}
+				}
+			}
 		}
 
 		protected IEnumerable<T> getEntitiesCollection<T>(CadDocumentBuilder builder, ulong firstHandle, ulong endHandle)
