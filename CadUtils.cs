@@ -9,7 +9,7 @@ namespace ACadSharp
 {
 	internal static class CadUtils
 	{
-		private static Dictionary<string, CodePage> _dxfEncodingMap = new Dictionary<string, CodePage>
+		private static Dictionary<string, CodePage> _dxfEncodingMap = new Dictionary<string, CodePage>(StringComparer.OrdinalIgnoreCase)
 		{
 			{"gb2312"    ,CodePage.Gb2312},
 			{"kcs5601"   ,CodePage.Ksc5601},
@@ -205,7 +205,7 @@ namespace ACadSharp
 
 		public static CodePage GetCodePage(string value)
 		{
-			if (_dxfEncodingMap.TryGetValue(value.ToLower(), out CodePage code))
+			if (_dxfEncodingMap.TryGetValue(value, out CodePage code))
 			{
 				return code;
 			}
@@ -217,17 +217,24 @@ namespace ACadSharp
 
 		public static string GetCodePageName(CodePage value)
 		{
-			return _dxfEncodingMap.FirstOrDefault(o => o.Value == value).Key;
+			foreach (var kvp in _dxfEncodingMap)
+			{
+				if (kvp.Value == value)
+					return kvp.Key;
+			}
+			return null;
 		}
 
 		public static CodePage GetCodePage(int value)
 		{
-			return _pageCodes.ElementAtOrDefault(value);
+			if (value >= 0 && value < _pageCodes.Length)
+				return _pageCodes[value];
+			return default;
 		}
 
 		public static int GetCodeIndex(CodePage code)
 		{
-			return _pageCodes.ToList().IndexOf(code);
+			return Array.IndexOf(_pageCodes, code);
 		}
 
 		public static ACadVersion GetVersionFromName(string name)

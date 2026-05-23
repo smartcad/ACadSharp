@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace ACadSharp.Attributes
 {
@@ -14,7 +13,10 @@ namespace ACadSharp.Attributes
 
 		public DxfCollectionCodeValueAttribute(params int[] codes)
 		{
-			this.ValueCodes = codes.Select(c => (DxfCode)c).ToArray();
+			var arr = new DxfCode[codes.Length];
+			for (int i = 0; i < codes.Length; i++)
+				arr[i] = (DxfCode)codes[i];
+			this.ValueCodes = arr;
 		}
 
 		public DxfCollectionCodeValueAttribute(DxfReferenceType referenceType, params int[] codes) : this(codes)

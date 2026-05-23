@@ -405,7 +405,7 @@ namespace ACadSharp.Classes
 					MaintenanceVersion = 14,
 					ProxyFlags = ProxyFlags.None,
 					WasZombie = false,
-					InstanceCount = (doc.RootDictionary[CadDictionary.AcadColor] as CadDictionary).EntryHandles.Length
+					InstanceCount = (doc.RootDictionary[CadDictionary.AcadColor] as CadDictionary).Count
 				});
 
             ////AcDbGeoData

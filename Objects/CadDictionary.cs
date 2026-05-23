@@ -135,10 +135,28 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Soft-owner ID/handle to entry object
 		/// </summary>
-		[DxfCodeValue(350)]
-		public ulong[] EntryHandles { get { return this._entries.Values.Select(c => c.Handle).ToArray(); } }
+		//[DxfCodeValue(350)]
+		//public ulong[] EntryHandles
+		//{
+		//	get
+		//	{
+		//		var values = this._entries.Values;
+		//		ulong[] handles = new ulong[values.Count];
+		//		int i = 0;
+		//		foreach (var entry in values)
+		//		{
+		//			handles[i++] = entry.Handle;
+		//		}
+		//		return handles;
+		//	}
+		//}
 
 		public CadObject this[string key] { get { return this._entries[key]; } }
+
+		/// <summary>
+		/// Gets the number of entries in the dictionary.
+		/// </summary>
+		public int Count { get { return this._entries.Count; } }
 
 		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
 

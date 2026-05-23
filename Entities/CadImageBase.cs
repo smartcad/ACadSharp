@@ -197,12 +197,18 @@ namespace ACadSharp.Entities
 				return BoundingBox.Null;
 			}
 
-			double minX = this.ClipBoundaryVertices.Select(v => v.X).Min();
-			double minY = this.ClipBoundaryVertices.Select(v => v.Y).Min();
-			XYZ min = new XYZ(minX, minY, 0) + this.InsertPoint;
+			double minX = double.MaxValue, minY = double.MaxValue;
+			double maxX = double.MinValue, maxY = double.MinValue;
 
-			double maxX = this.ClipBoundaryVertices.Select(v => v.X).Max();
-			double maxY = this.ClipBoundaryVertices.Select(v => v.Y).Max();
+			foreach (var v in this.ClipBoundaryVertices)
+			{
+				if (v.X < minX) minX = v.X;
+				if (v.Y < minY) minY = v.Y;
+				if (v.X > maxX) maxX = v.X;
+				if (v.Y > maxY) maxY = v.Y;
+			}
+
+			XYZ min = new XYZ(minX, minY, 0) + this.InsertPoint;
 			XYZ max = new XYZ(maxX, maxY, 0) + this.InsertPoint;
 
 			BoundingBox box = new BoundingBox(min, max);

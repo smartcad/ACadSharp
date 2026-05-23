@@ -298,7 +298,7 @@ namespace ACadSharp.IO.DWG
 				&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
 				//Owned Object Count BL Number of objects owned by this object.
-				_writer.WriteBitLong(record.Entities.Count());
+				_writer.WriteBitLong(record.Entities.Count);
 			}
 
 			//Common:

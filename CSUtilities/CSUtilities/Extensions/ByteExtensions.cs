@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace CSUtilities.Extensions
@@ -14,10 +13,16 @@ namespace CSUtilities.Extensions
 		/// <returns></returns>
 		public static string ToHexString(this IEnumerable<byte> array)
 		{
-			StringBuilder hex = new StringBuilder(array.Count() * 2);
+			int count = 0;
+			if (array is ICollection<byte> col)
+				count = col.Count;
+			else if (array is byte[] arr)
+				count = arr.Length;
+
+			StringBuilder hex = new StringBuilder(count * 2);
 			foreach (byte b in array)
-				hex.AppendFormat("{0:x2}", b);
-			return hex.ToString().ToUpper();
+				hex.AppendFormat("{0:X2}", b);
+			return hex.ToString();
 		}
 	}
 }

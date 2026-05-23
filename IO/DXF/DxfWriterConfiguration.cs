@@ -10,51 +10,16 @@ namespace ACadSharp.IO
 	/// </summary>
 	public class DxfWriterConfiguration : CadWriterConfiguration
 	{
-		/// <summary>
-		/// Variables that must be writen in a dxf file
-		/// </summary>
-		public static readonly string[] Variables = new string[]
+        internal HashSet<string> HeaderVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
-			"$ACADVER",
-			"$DWGCODEPAGE",
-			"$LASTSAVEDBY",
-			"$HANDSEED",
-			"$ANGBASE",
-			"$ANGDIR",
-			"$ATTMODE",
-			"$AUNITS",
-			"$AUPREC",
-			"$CECOLOR",
-			"$CELTSCALE",
-			"$CELTYPE",
-			"$CELWEIGHT",
-			"$CLAYER",
-			"$CMLJUST",
-			"$CMLSCALE",
-			"$CMLSTYLE",
-			"$DIMSTYLE",
-			"$TEXTSIZE",
-			"$TEXTSTYLE",
-			"$LUNITS",
-			"$LUPREC",
-			"$MIRRTEXT",
-			"$EXTNAMES",
-			"$INSBASE",
-			"$INSUNITS",
-			"$LTSCALE",
-			"$LWDISPLAY",
-			"$PDMODE",
-			"$PDSIZE",
-			"$PLINEGEN",
-			"$PSLTSCALE",
-			"$SPLINESEGS",
-			"$SURFU",
-			"$SURFV",
-			"$TDCREATE",
-			"$TDUCREATE",
-			"$TDUPDATE",
-			"$TDUUPDATE",
-			"$TDINDWG",
+			"$ACADVER", "$DWGCODEPAGE", "$LASTSAVEDBY", "$HANDSEED",
+			"$ANGBASE", "$ANGDIR", "$ATTMODE", "$AUNITS", "$AUPREC",
+			"$CECOLOR", "$CELTSCALE", "$CELTYPE", "$CELWEIGHT", "$CLAYER",
+			"$CMLJUST", "$CMLSCALE", "$CMLSTYLE", "$DIMSTYLE", "$TEXTSIZE",
+			"$TEXTSTYLE", "$LUNITS", "$LUPREC", "$MIRRTEXT", "$EXTNAMES",
+			"$INSBASE", "$INSUNITS", "$LTSCALE", "$LWDISPLAY", "$PDMODE",
+			"$PDSIZE", "$PLINEGEN", "$PSLTSCALE", "$SPLINESEGS", "$SURFU",
+			"$SURFV", "$TDCREATE", "$TDUCREATE", "$TDUPDATE", "$TDUUPDATE", "$TDINDWG",
 		};
 
 		/// <summary>
@@ -68,16 +33,8 @@ namespace ACadSharp.IO
 		/// </value>
 		public bool WriteAllHeaderVariables { get; set; } = false;
 
-		/// <summary>
-		/// Header variables to write in the dxf file
-		/// </summary>
-		public IEnumerable<string> HeaderVariables { get { return this._headerVariables.AsEnumerable(); } }
-
-		private HashSet<string> _headerVariables;
-
 		public DxfWriterConfiguration()
 		{
-			this._headerVariables = new HashSet<string>(Variables);
 		}
 
 		/// <summary>
@@ -97,7 +54,7 @@ namespace ACadSharp.IO
 				throw new ArgumentException($"The variable {name} does not exist in the header", nameof(name));
 			}
 
-			this._headerVariables.Add(name);
+			this.HeaderVariables.Add(name);
 		}
 
 		/// <summary>
@@ -111,12 +68,12 @@ namespace ACadSharp.IO
 		/// <exception cref="ArgumentException"></exception>
 		public bool RemoveHeaderVariable(string name)
 		{
-			if (Variables.Select(v => v.ToLowerInvariant()).Contains(name.ToLowerInvariant()))
+			if (HeaderVariables.Contains(name))
 			{
 				throw new ArgumentException($"The variable {name} cannot be removed from the set", nameof(name));
 			}
 
-			return this._headerVariables.Remove(name);
+			return this.HeaderVariables.Remove(name);
 		}
 	}
 }

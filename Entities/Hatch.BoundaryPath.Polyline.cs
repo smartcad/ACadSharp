@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -18,22 +17,24 @@ namespace ACadSharp.Entities
 				/// The polyline has bulges with value different than 0.
 				/// </summary>
 				[DxfCodeValue(72)]
-				public bool HasBulge => this.Bulges.Any(b => b != 0);
+				public bool HasBulge
+				{
+					get
+					{
+						foreach (var v in this.Vertices)
+						{
+							if (v.Z != 0)
+								return true;
+						}
+						return false;
+					}
+				}
 
 				/// <summary>
 				/// Is closed flag.
 				/// </summary>
 				[DxfCodeValue(73)]
 				public bool IsClosed { get; set; }
-
-				/// <summary>
-				/// Bulges applied to each vertice, the number of bulges must be equal to the vertices or empty.
-				/// </summary>
-				/// <remarks>
-				/// default value, 0 if not set
-				/// </remarks>
-				[DxfCodeValue(DxfReferenceType.Optional, 42)]
-				public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
 
 				/// <summary>
 				/// Position values are only X and Y.

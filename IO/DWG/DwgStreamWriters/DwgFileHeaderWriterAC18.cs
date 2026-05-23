@@ -140,15 +140,20 @@ namespace ACadSharp.IO.DWG
 			MemoryStream stream = new MemoryStream();
 			if (isCompressed)
 			{
-				MemoryStream holder = new MemoryStream(decompressedSize);
-				holder.Write(buffer, (int)offset, totalSize);
-				int diff = decompressedSize - totalSize;
-				for (int i = 0; i < diff; i++)
+				byte[] padded;
+				if (totalSize == decompressedSize)
 				{
-					holder.WriteByte(0);
+					padded = buffer;
+				}
+				else
+				{
+					padded = new byte[decompressedSize];
+					Buffer.BlockCopy(buffer, (int)offset, padded, 0, totalSize);
+					// remaining bytes are already zero
+					offset = 0;
 				}
 
-				this.compressor.Compress(holder.GetBuffer(), 0, decompressedSize, stream);
+				this.compressor.Compress(padded, (int)offset, decompressedSize, stream);
 			}
 			else
 			{

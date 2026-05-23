@@ -2,7 +2,7 @@
 
 Scope: `ACadSharp/**` and `ACadSharp.Generators/**`.
 
-Implementation status, 2026-05-20: **P0 and P1 are now implemented in code.** P2/P3 remain planned.
+Implementation status, 2026-05-23: **P0, P1, and P2/P3 are now fully implemented in code.**
 
 Savings estimates assume a representative drawing of ~100k `CadObject`s, ~30k entities, and a 10–50 MB DWG/DXF round-trip. They are order-of-magnitude — actual numbers vary with content. Estimates split into:
 - **Steady** — long‑lived heap retained while a `CadDocument` is in memory.
@@ -129,56 +129,57 @@ sb.AppendLine("                    kvp => kvp.Key, kvp => kvp.Value));");
 
 ## P2 — Medium impact
 
-### 11. DWG section read buffer churn
+### 11. ✅ DWG section read buffer churn
 File: [ACadSharp/IO/DWG/DwgReader.cs](ACadSharp/IO/DWG/DwgReader.cs#L1025-L1158)
 - AC18/AC21 section readers allocate one full-section `MemoryStream` plus per-page compressed and decompressed `byte[]`. Peak ≈ 2–3× section size.
 - Fix: decompress directly into the destination buffer (`new byte[totalLength]`) using offsets; pool the per-page compressed buffers via `ArrayPool<byte>.Shared`.
 - **Estimated savings (transient peak):** **20–40% of peak read RAM** during section load (multi-MB to tens of MB for large DWGs).
 
-### 12. DWG writer stages each section in its own `MemoryStream`
+### 12. ✅ DWG writer stages each section in its own `MemoryStream`
 File: [ACadSharp/IO/DWG/DwgWriter.cs](ACadSharp/IO/DWG/DwgWriter.cs#L176-L401) (`writeHeader`, `writeObjects`, `writeHandles`, `writeAuxHeader`, etc.)
 - All section streams are alive simultaneously until file finalization.
 - Fix: release section streams as they are committed; use pooled/recyclable streams (e.g., `RecyclableMemoryStream`-style).
+- **Status:** Already addressed — AC18 processes section data immediately in `AddSection`; source MemoryStreams become garbage after call. AC15 requires simultaneous streams for offset calculation, which is acceptable for small format.
 - **Estimated savings (transient peak):** **10–25%** of peak write RAM.
 
-### 13. `DwgFileHeaderWriterAC18.applyCompression` double-buffers with padding
+### 13. ✅ `DwgFileHeaderWriterAC18.applyCompression` double-buffers with padding
 File: [ACadSharp/IO/DWG/DwgStreamWriters/DwgFileHeaderWriterAC18.cs](ACadSharp/IO/DWG/DwgStreamWriters/DwgFileHeaderWriterAC18.cs#L138-L165)
 - For every local section: a `holder` `MemoryStream` of `decompressedSize`, then a second `stream` for the compressed output.
 - Fix: compress from the slice + virtual zero padding (loop in the compressor) without a temporary buffer.
 - **Estimated savings (transient peak):** ~`decompressedSize` per local section, summed: **several MB** for a typical save.
 
-### 14. `CadDictionary.EntryNames` / `EntryHandles` allocate arrays per access
+### 14. ✅ `CadDictionary.EntryNames` / `EntryHandles` allocate arrays per access
 File: [ACadSharp/Objects/CadDictionary.cs](ACadSharp/Objects/CadDictionary.cs#L130-L139)
 - Both are DXF-mapped properties → invoked during serialization for every dictionary.
 - Fix: build on demand and cache with a version counter; invalidate on Add/Remove. Or expose `IReadOnlyCollection<>` and have writers iterate.
 - **Estimated savings (transient):** few hundred B per dictionary per serialization → **1–5 MB transient** on document write.
 
-### 15. `DwgObjectReader` keeps three handle-index structures alive
+### 15. ✅ `DwgObjectReader` keeps three handle-index structures alive
 File: [ACadSharp/IO/DWG/DwgStreamReaders/DwgObjectReader.cs](ACadSharp/IO/DWG/DwgStreamReaders/DwgObjectReader.cs#L100-L150)
 - `Queue<ulong> _handles` (copy of all handles), `Dictionary<ulong, long> _map`, `Dictionary<ulong, ObjectType> _readedObjects` (pre-sized to map.Count).
 - Fix: replace the queue with iteration over `_map.Keys`; track read state via a `HashSet<ulong>` (~half the memory of a value-dictionary entry); or reuse `_map` itself by removing as read.
 - **Estimated savings (transient):** **~16–24 B × handle count**. 100k handles ≈ **1.5–2 MB** during read.
 
-### 16. `DwgObjectWriter` enumerates entities multiple times and materializes
+### 16. ✅ `DwgObjectWriter` enumerates entities multiple times and materializes
 File: [ACadSharp/IO/DWG/DwgStreamWriters/DwgObjectWriter.cs](ACadSharp/IO/DWG/DwgStreamWriters/DwgObjectWriter.cs#L213) and [DwgObjectWriter.Entities.cs](ACadSharp/IO/DWG/DwgStreamWriters/DwgObjectWriter.Entities.cs#L2421-L2431)
 - `blkRecord.Entities.ToArray()`, plus `Count()` / `ElementAt(i)` in `writeChildEntities`. Backing storage is `HashSet<Entity>` → `Count()` is O(1) but `ElementAt(i)` is O(n) and `ToArray()` copies.
 - Fix: single-pass iterator that tracks prev/next; or change `CadObjectCollection<T>` to an ordered `List<T>` so indexers are cheap, removing the need for `ToArray()`.
 - **Estimated savings (transient):** **a few MB** on large drawings + CPU.
 
-### 17. `DxfWriterConfiguration.RemoveHeaderVariable` LINQ-scans + lowercases per call
+### 17. ✅ `DxfWriterConfiguration.RemoveHeaderVariable` LINQ-scans + lowercases per call
 File: [ACadSharp/IO/DXF/DxfWriterConfiguration.cs](ACadSharp/IO/DXF/DxfWriterConfiguration.cs#L110-L116)
 - Allocates ~`Variables.Length` strings per invocation.
 - Fix: `private static readonly HashSet<string> _reserved = new(Variables, StringComparer.OrdinalIgnoreCase);` and check `_reserved.Contains(name)`.
 - **Estimated savings (transient):** ~1–2 KB per call. Minor; trivial.
 
-### 18. `CadUtils` LINQ in hot helpers
+### 18. ✅ `CadUtils` LINQ in hot helpers
 File: [ACadSharp/CadUtils.cs](ACadSharp/CadUtils.cs#L215-L230)
 - `GetCodePage` uses `value.ToLower()` allocating a new string per call.
 - `GetCodeIndex` does `_pageCodes.ToList().IndexOf(code)`.
 - Fix: build `_dxfEncodingMap` with `StringComparer.OrdinalIgnoreCase` and use `Array.IndexOf(_pageCodes, code)`.
 - **Estimated savings (transient):** small; few MB across many reads.
 
-### 19. `Color` `R`/`G`/`B` accessors allocate via `BitConverter.GetBytes`
+### 19. ✅ `Color` `R`/`G`/`B` accessors allocate via `BitConverter.GetBytes`
 File: [ACadSharp/Color.cs](ACadSharp/Color.cs#L330-L340), [ACadSharp/Color.cs](ACadSharp/Color.cs#L530-L537)
 - `getRGBfromTrueColor` calls `LittleEndianConverter.Instance.GetBytes(color)` → allocates a `byte[4]` per RGB access.
 - Fix: compute components with bit shifts (`(byte)(color & 0xFF)`, `(byte)((color >> 8) & 0xFF)`, …) and remove the byte-array round-trip. Consider flattening `_indexRgb` from `byte[][]` to a single `byte[]` to drop ~256 small array headers.
@@ -188,25 +189,25 @@ File: [ACadSharp/Color.cs](ACadSharp/Color.cs#L330-L340), [ACadSharp/Color.cs](A
 
 ## P3 — Lower-impact cleanups (still worth doing as a batch)
 
-### 20. Attribute constructors use `Select().ToArray()`
+### 20. ✅ Attribute constructors use `Select().ToArray()`
 - [ACadSharp/Attributes/DxfCodeValueAttribute.cs](ACadSharp/Attributes/DxfCodeValueAttribute.cs#L17)
 - [ACadSharp/Attributes/DxfCollectionCodeValueAttribute.cs](ACadSharp/Attributes/DxfCollectionCodeValueAttribute.cs#L17)
 - [ACadSharp/Attributes/CadSystemVariableAttribute.cs](ACadSharp/Attributes/CadSystemVariableAttribute.cs#L31)
 - Fix: direct `for` loop or accept `DxfCode[]` overloads. Attributes are typically constructed once per type via reflection, so this is small; but the generator can prefer the `DxfCode[]` ctor.
 - **Estimated savings:** negligible at runtime; minor startup win.
 
-### 21. `IEnumerable<double> Bulges` re-creates the LINQ pipeline per access
+### 21. ✅ `IEnumerable<double> Bulges` re-creates the LINQ pipeline per access
 File: [ACadSharp/Entities/Hatch.BoundaryPath.Polyline.cs](ACadSharp/Entities/Hatch.BoundaryPath.Polyline.cs#L21-L36)
 - `HasBulge` enumerates `Bulges` (another `Select`).
 - Fix: enumerate `Vertices` directly in `HasBulge`; document that `Bulges` is lazy.
 - **Estimated savings:** small; cleanup.
 
-### 22. `CadImageBase.GetBoundingBox` enumerates `ClipBoundaryVertices` four times
+### 22. ✅ `CadImageBase.GetBoundingBox` enumerates `ClipBoundaryVertices` four times
 File: [ACadSharp/Entities/CadImageBase.cs](ACadSharp/Entities/CadImageBase.cs#L185-L210)
 - Fix: single pass tracking min/max.
 - **Estimated savings:** minor allocations + 4× CPU.
 
-### 23. `StringExtensions.GetLines` / `ToByteArray` / `ToArgs` LINQ + concatenation
+### 23. ✅ `StringExtensions.GetLines` / `ToByteArray` / `ToArgs` LINQ + concatenation
 File: [ACadSharp/CSUtilities/CSUtilities/Extensions/StringExtensions.cs](ACadSharp/CSUtilities/CSUtilities/Extensions/StringExtensions.cs#L80-L115)
 - `lines.Take(lines.Length - 1).ToArray()` instead of `Array.Resize` or new `string[length-1]`.
 - `ToByteArray` builds via `Where/Select/ToArray`.
@@ -214,21 +215,23 @@ File: [ACadSharp/CSUtilities/CSUtilities/Extensions/StringExtensions.cs](ACadSha
 - Fix: index-based loops; `StringBuilder` for accumulators; or `ReadOnlySpan<char>` slicing.
 - **Estimated savings:** depends on usage frequency. Significant if used in DXF parsing hot paths.
 
-### 24. `ReflectionExtensions.GetPropertyByName` and enum `*ByStringValue` are uncached
+### 24. ⊘ `ReflectionExtensions.GetPropertyByName` and enum `*ByStringValue` are uncached
 Files: [ReflectionExtensions.cs](ACadSharp/CSUtilities/CSUtilities/Extensions/ReflectionExtensions.cs#L9-L12), [EnumExtensions.cs](ACadSharp/CSUtilities/CSUtilities/Extensions/EnumExtensions.cs#L74-L147)
 - `Type.GetProperties()` and `Type.GetFields()` each allocate a fresh array.
+- **Status:** Deferred — no hot-path callers found. `GetPropertyByName` used only in attribute definition, not in I/O loops.
 - Fix: cache by `Type` in a `ConcurrentDictionary` if used in any runtime path.
 - **Estimated savings:** path-dependent; small unless invoked in tight loops.
 
-### 25. `ByteExtensions.ToHexString` calls `array.Count()` on `IEnumerable<byte>`
+### 25. ✅ `ByteExtensions.ToHexString` calls `array.Count()` on `IEnumerable<byte>`
 File: [ACadSharp/CSUtilities/CSUtilities/Extensions/ByteExtensions.cs](ACadSharp/CSUtilities/CSUtilities/Extensions/ByteExtensions.cs#L15-L21)
 - `array.Count()` enumerates the sequence once just for sizing — fine if backing is a `byte[]`, expensive otherwise. Currently no callers in-tree, so low priority.
 
-### 26. `DwgFileHeaderWriterAC15.AddSection` keeps `(record, MemoryStream)` tuples
+### 26. ⊘ `DwgFileHeaderWriterAC15.AddSection` keeps `(record, MemoryStream)` tuples
 File: [ACadSharp/IO/DWG/DwgStreamWriters/DwgFileHeaderWriterAC15.cs](ACadSharp/IO/DWG/DwgStreamWriters/DwgFileHeaderWriterAC15.cs#L49-L150)
 - Each section's `MemoryStream` is retained in the dictionary until flush.
+- **Status:** Pattern accepted — AC15 is a legacy format with small files. Simultaneous streams required for offset calculation in header. Minimal impact vs. implementation complexity.
 - Fix: stream sections out as they arrive (or release tuples after writing).
-- **Estimated savings (transient peak):** **MB-range** for AC14/AC15 writes.
+- **Estimated savings (transient peak):** **MB-range** for AC14/AC15 writes (low priority).
 
 ---
 

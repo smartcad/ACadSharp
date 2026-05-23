@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace CSUtilities.Extensions
 {
@@ -83,10 +84,12 @@ namespace CSUtilities.Extensions
 
 			string[] lines = str.Split('\n');
 
-			if (string.IsNullOrEmpty(lines.Last()))
+			if (lines.Length > 0 && string.IsNullOrEmpty(lines[lines.Length - 1]))
 			{
 				//Delete the last empty line
-				lines = lines.Take(lines.Length - 1).ToArray();
+				var result = new string[lines.Length - 1];
+				Array.Copy(lines, result, result.Length);
+				return result;
 			}
 
 			return lines;
@@ -109,10 +112,13 @@ namespace CSUtilities.Extensions
 		/// <returns></returns>
 		public static byte[] ToByteArray(this string str)
 		{
-			return Enumerable.Range(0, str.Length)
-				.Where(x => x % 2 == 0)
-				.Select(x => Convert.ToByte(str.Substring(x, 2), 16))
-				.ToArray();
+			int len = str.Length / 2;
+			byte[] result = new byte[len];
+			for (int i = 0; i < len; i++)
+			{
+				result[i] = Convert.ToByte(str.Substring(i * 2, 2), 16);
+			}
+			return result;
 		}
 
 		/// <summary>
@@ -331,7 +337,7 @@ namespace CSUtilities.Extensions
 		public static string[] ToArgs(this string str, char separator, char stringDelimitier, bool keepCollons = false, bool ignoreEmpty = true)
 		{
 			List<string> args = new List<string>();
-			string word = "";
+			StringBuilder word = new StringBuilder();
 			bool isReading = false;
 
 			foreach (char c in str)
@@ -342,7 +348,7 @@ namespace CSUtilities.Extensions
 					isReading = !isReading;
 
 					if (keepCollons)
-						word += c;
+						word.Append(c);
 
 					continue;
 				}
@@ -351,26 +357,26 @@ namespace CSUtilities.Extensions
 				if (c == separator && !isReading)
 				{
 					//Avoid empty words (multiple spaces)
-					if (String.IsNullOrEmpty(word) && ignoreEmpty)
+					if (word.Length == 0 && ignoreEmpty)
 						continue;
 
-					args.Add(word);
-					word = "";
+					args.Add(word.ToString());
+					word.Clear();
 				}
 				else
 				{
-					word += c;
+					word.Append(c);
 				}
 			}
 
 			//Add the last word
-			if (String.IsNullOrEmpty(word))
+			if (word.Length == 0)
 			{
 				if (!ignoreEmpty)
-					args.Add(word);
+					args.Add(string.Empty);
 			}
 			else
-				args.Add(word);
+				args.Add(word.ToString());
 
 			return args.ToArray();
 		}

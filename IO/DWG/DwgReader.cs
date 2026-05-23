@@ -1055,9 +1055,17 @@ namespace ACadSharp.IO
 					else
 					{
 						//Read the stream normally
-						byte[] buffer = new byte[section.CompressedSize];
-						sreader.Stream.Read(buffer, 0, (int)section.CompressedSize);
-						memoryStream.Write(buffer, 0, (int)section.CompressedSize);
+						int size = (int)section.CompressedSize;
+						byte[] buffer = ArrayPool<byte>.Shared.Rent(size);
+						try
+						{
+							sreader.Stream.Read(buffer, 0, size);
+							memoryStream.Write(buffer, 0, size);
+						}
+						finally
+						{
+							ArrayPool<byte>.Shared.Return(buffer);
+						}
 					}
 				}
 			}
@@ -1124,34 +1132,43 @@ namespace ACadSharp.IO
 					this._fileStream.Position = pageData.Seeker + 0x480L;
 
 					//Get the page data
-					byte[] pageBytes = new byte[pageData.Size];
-					this._fileStream.Stream.Read(pageBytes, 0, (int)pageData.Size);
-
-					if (section.Encoding == 4)
+					int pageSize = (int)pageData.Size;
+					byte[] pageBytes = ArrayPool<byte>.Shared.Rent(pageSize);
+					byte[] rentedPageBytes = pageBytes;
+					try
 					{
-						//Encoded page, use reed solomon
+						this._fileStream.Stream.Read(pageBytes, 0, pageSize);
 
-						//Avoid shifted bits
-						ulong v = page.CompressedSize + 7L;
-						ulong v1 = v & 0b11111111_11111111_11111111_11111000L;
+						if (section.Encoding == 4)
+						{
+							//Encoded page, use reed solomon
 
-						int alignedPageSize = (int)((v1 + 251 - 1) / 251);
-						byte[] arr = new byte[alignedPageSize * 251];
+							//Avoid shifted bits
+							ulong v = page.CompressedSize + 7L;
+							ulong v1 = v & 0b11111111_11111111_11111111_11111000L;
 
-						this.reedSolomonDecoding(pageBytes, arr, alignedPageSize, 251);
-						pageBytes = arr;
+							int alignedPageSize = (int)((v1 + 251 - 1) / 251);
+							byte[] arr = new byte[alignedPageSize * 251];
+
+							this.reedSolomonDecoding(pageBytes, arr, alignedPageSize, 251);
+							pageBytes = arr;
+						}
+
+						if ((long)page.CompressedSize != (long)page.DecompressedSize)
+						{
+							//Page is compressed
+							byte[] arr = new byte[page.DecompressedSize];
+							DwgLZ77AC21Decompressor.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
+							pageBytes = arr;
+						}
+
+						for (int i = 0; i < (int)page.DecompressedSize; ++i)
+							pagesBuffer[(int)currOffset++] = pageBytes[i];
 					}
-
-					if ((long)page.CompressedSize != (long)page.DecompressedSize)
+					finally
 					{
-						//Page is compressed
-						byte[] arr = new byte[page.DecompressedSize];
-						DwgLZ77AC21Decompressor.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
-						pageBytes = arr;
+						ArrayPool<byte>.Shared.Return(rentedPageBytes);
 					}
-
-					for (int i = 0; i < (int)page.DecompressedSize; ++i)
-						pagesBuffer[(int)currOffset++] = pageBytes[i];
 				}
 			}
 

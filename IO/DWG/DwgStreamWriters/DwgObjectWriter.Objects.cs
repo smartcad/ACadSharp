@@ -196,7 +196,7 @@ namespace ACadSharp.IO.DWG
 		{
 			//Common:
 			//Numitems L number of dictonary items
-			this._writer.WriteBitLong(dictionary.Count());
+			this._writer.WriteBitLong(dictionary.Count);
 
 			//R14 Only:
 			if (this._version == ACadVersion.AC1014)

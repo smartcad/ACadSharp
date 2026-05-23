@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace ACadSharp.Attributes
@@ -28,13 +27,19 @@ namespace ACadSharp.Attributes
 		{
 			this.Name = variable;
 			this.IsName = isName;
-			this.ValueCodes = codes.Select(c => (DxfCode)c).ToArray();
+			var arr = new DxfCode[codes.Length];
+			for (int i = 0; i < codes.Length; i++)
+				arr[i] = (DxfCode)codes[i];
+			this.ValueCodes = arr;
 		}
 
 		public CadSystemVariableAttribute(string variable, params int[] codes)
 		{
 			this.Name = variable;
-			this.ValueCodes = codes.Select(c => (DxfCode)c).ToArray();
+			var arr = new DxfCode[codes.Length];
+			for (int i = 0; i < codes.Length; i++)
+				arr[i] = (DxfCode)codes[i];
+			this.ValueCodes = arr;
 		}
 
 		public CadSystemVariableAttribute(string variable, params DxfCode[] codes)
@@ -47,7 +52,10 @@ namespace ACadSharp.Attributes
 		{
 			this.ReferenceType = referenceType;
 			this.Name = variable;
-			this.ValueCodes = codes.Select(c => (DxfCode)c).ToArray();
+			var arr = new DxfCode[codes.Length];
+			for (int i = 0; i < codes.Length; i++)
+				arr[i] = (DxfCode)codes[i];
+			this.ValueCodes = arr;
 		}
 	}
 }
