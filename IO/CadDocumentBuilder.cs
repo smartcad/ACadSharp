@@ -42,8 +42,6 @@ namespace ACadSharp.IO
 
 		protected Dictionary<ulong, CadTemplate> cadObjectsTemplates = new(256);
 
-		protected Dictionary<ulong, ICadObjectTemplate> templatesMap = new(256);
-
 		protected Dictionary<ulong, CadObject> cadObjects = new(256);
 
 		protected Dictionary<ulong, ICadTableEntryTemplate> tableEntryTemplates = new(64);
@@ -177,26 +175,7 @@ namespace ACadSharp.IO
 			return table.TryGetValue(name, out entry);
 		}
 
-		public bool TryGetObjectTemplate<T>(ulong? handle, out T value) where T : CadTemplate
-		{
-			if (!handle.HasValue || handle == 0)
-			{
-				value = null;
-				return false;
-			}
 
-			if (this.templatesMap.TryGetValue(handle.Value, out ICadObjectTemplate template))
-			{
-				if (template is T)
-				{
-					value = (T)template;
-					return true;
-				}
-			}
-
-			value = null;
-			return false;
-		}
 
 		public void RegisterTables()
 		{
@@ -268,7 +247,6 @@ namespace ACadSharp.IO
 				this.InitialHandSeed = template.CadObject.Handle;
 			}
 
-			this.templatesMap.Add(template.CadObject.Handle, template);
 			this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
 		}
 
@@ -301,7 +279,6 @@ namespace ACadSharp.IO
 
 			cadObjects.Clear();
 			cadObjectsTemplates.Clear();
-			templatesMap.Clear();
 			tableTemplates.Clear();
 			tableEntryTemplates.Clear();
         }

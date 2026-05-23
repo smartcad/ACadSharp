@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.Templates;
+﻿
 
 namespace ACadSharp.Tables.Collections
 {

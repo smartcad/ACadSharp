@@ -43,44 +43,48 @@ namespace ACadSharp.IO.DXF
 			this.BuildTables();
 
 			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
-			{
-				this.assignOwner(template);
-			}
+			this.assignOwners();
 
 			base.BuildDocument();
 		}
 
-
-		private void assignOwner(CadTemplate template)
+		private void assignOwners()
 		{
-			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
-				return;
+			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
+			{
+				if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
+					continue;
 
-			if (this.TryGetObjectTemplate(template.OwnerHandle, out CadTemplate owner))
-			{
-				switch (owner)
+				ulong ownerHandle = template.OwnerHandle.Value;
+
+				if (this.tableEntryTemplates.TryGetValue(ownerHandle, out ICadTableEntryTemplate tableEntry)
+					&& tableEntry is CadBlockRecordTemplate record
+					&& template.CadObject is Entity entity)
 				{
-					case CadDictionaryTemplate:
-						//Entries of the dictionary are assigned in the template
-						break;
-					case CadBlockRecordTemplate record when template.CadObject is Entity entity:
-						record.OwnedObjectsHandlers.Add(entity.Handle);
-						break;
-					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
-						pline.VertexHandles.Add(v.Handle);
-						break;
-					case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
-						insert.AttributesHandles.Add(att.Handle);
-						break;
-					default:
-						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}");
-						break;
+					record.OwnedObjectsHandlers.Add(entity.Handle);
 				}
-			}
-			else
-			{
-				this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}");
+				else if (this.cadObjectsTemplates.TryGetValue(ownerHandle, out CadTemplate ownerTemplate))
+				{
+					switch (ownerTemplate)
+					{
+						case CadDictionaryTemplate:
+							//Entries of the dictionary are assigned in the template
+							break;
+						case CadPolyLineTemplate pline when template.CadObject is Vertex v:
+							pline.VertexHandles.Add(v.Handle);
+							break;
+						case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
+							insert.AttributesHandles.Add(att.Handle);
+							break;
+						default:
+							this.Notify($"Owner {ownerTemplate.GetType().Name} with handle {ownerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}");
+							break;
+					}
+				}
+				else
+				{
+					this.Notify($"Owner {ownerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}");
+				}
 			}
 		}
 	}

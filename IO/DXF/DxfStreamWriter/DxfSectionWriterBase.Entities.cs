@@ -397,12 +397,15 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(72, poly.HasBulge ? (short)1 : (short)0);
 					this._writer.Write(73, poly.IsClosed ? (short)1 : (short)0);
 					this._writer.Write(93, poly.Vertices.Count);
-					for (int i = 0; i < poly.Vertices.Count; i++)
+					bool has_buldge = poly.HasBulge;
+
+
+                    for (int i = 0; i < poly.Vertices.Count; i++)
 					{
 						this._writer.Write(10, (XY)poly.Vertices[i]);
-						if (poly.HasBulge)
+						if (has_buldge)
 						{
-							this._writer.Write(42, poly.Bulges.ElementAtOrDefault(i));
+							this._writer.Write(42, poly.Vertices[i].Z);
 						}
 					}
 					break;

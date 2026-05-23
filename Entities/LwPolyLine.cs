@@ -87,10 +87,5 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
 
-		/// <inheritdoc/>
-		public IEnumerable<Entity> Explode()
-		{
-			return Polyline.Explode(this);
-		}
 	}
 }

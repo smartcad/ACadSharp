@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -2423,17 +2424,27 @@ namespace ACadSharp.IO.DWG
 			this._prev = null;
 			this._next = null;
 
-			Entity curr = entities.First();
-			for (int i = 1; i < entities.Count(); i++)
-			{
-				this._next = entities.ElementAt(i);
-				this.writeEntity(curr);
-				this._prev = curr;
-				curr = this._next;
-			}
 
-			this._next = null;
-			this.writeEntity(curr);
+            Entity prevEntity = null;
+            Entity prev2Entity = null;
+            foreach(var e in entities)
+            {
+                if(prevEntity is not null)
+                {
+                    this._prev = prev2Entity;
+                    this._next = e;
+                    this.writeEntity(prevEntity);
+                }
+
+                prev2Entity = prevEntity;
+                prevEntity = e;
+            }
+            if(prevEntity is not null)
+            {
+                this._prev = prev2Entity;
+                this._next = null;
+                this.writeEntity(prevEntity);
+            }
 
 			this._prev = prevHolder;
 			this._next = nextHolder;
