@@ -89,8 +89,12 @@ namespace ACadSharp.IO
 			this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, _document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 
-			_document.SummaryInfo = this.ReadSummaryInfo();
-			_document.Preview = this.ReadPreview();
+			_document.SummaryInfo = this.Configuration.SkipSummaryInfo 
+				? new CadSummaryInfo() 
+				: this.ReadSummaryInfo();
+			_document.Preview = this.Configuration.SkipPreview 
+				? null 
+				: this.ReadPreview();
             _document.Header = this.ReadHeader();
 
 			this.readAppInfo();
@@ -347,6 +351,9 @@ namespace ACadSharp.IO
 			Dictionary<ulong, long> handles = this.readHandles();
 			var classes = this.readClasses();
 
+			// Pre-size builder dictionaries based on known handle count
+			this._builder.PreSizeForObjectCount(handles.Count);
+
 			IDwgStreamReader sreader = null;
 			if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 			{
@@ -359,15 +366,20 @@ namespace ACadSharp.IO
 				sreader = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
 			}
 
-			IEnumerable<ulong> objectHandles = this._builder.HeaderHandles.GetHandles()
-				.Where(o => o.HasValue)
-				.Select(a => a.Value);
+			// Materialize header handles into a list to avoid LINQ iterator allocations
+			var allHandles = this._builder.HeaderHandles.GetHandles();
+			var objectHandlesList = new List<ulong>(64);
+			foreach (var h in allHandles)
+			{
+				if (h.HasValue)
+					objectHandlesList.Add(h.Value);
+			}
 
 			DwgObjectReader sectionReader = new DwgObjectReader(
 				this._fileHeader.AcadVersion,
 				this._builder,
 				sreader,
-				objectHandles,
+				objectHandlesList,
 				handles,
 				classes);
 
@@ -1027,17 +1039,16 @@ namespace ACadSharp.IO
 				return null;
 
 			//get the total size of the page
-			MemoryStream memoryStream = new MemoryStream((int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+			int totalSize = (int)descriptor.DecompressedSize * descriptor.LocalSections.Count;
+			byte[] buffer = new byte[totalSize];
+			MemoryStream memoryStream = new MemoryStream(buffer, 0, buffer.Length, true, true);
 
 			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
 			{
 				if (section.IsEmpty)
 				{
-					//Page is empty, fill the gap with 0s
-					for (int index = 0; index < (int)section.DecompressedSize; ++index)
-					{
-						memoryStream.WriteByte(0);
-					}
+					//Page is empty, skip forward (buffer is already zeroed)
+					memoryStream.Position += (int)section.DecompressedSize;
 				}
 				else
 				{
@@ -1056,15 +1067,15 @@ namespace ACadSharp.IO
 					{
 						//Read the stream normally
 						int size = (int)section.CompressedSize;
-						byte[] buffer = ArrayPool<byte>.Shared.Rent(size);
+						byte[] tempBuf = ArrayPool<byte>.Shared.Rent(size);
 						try
 						{
-							sreader.Stream.Read(buffer, 0, size);
-							memoryStream.Write(buffer, 0, size);
+							this._fileStream.Stream.Read(tempBuf, 0, size);
+							memoryStream.Write(tempBuf, 0, size);
 						}
 						finally
 						{
-							ArrayPool<byte>.Shared.Return(buffer);
+							ArrayPool<byte>.Shared.Return(tempBuf);
 						}
 					}
 				}

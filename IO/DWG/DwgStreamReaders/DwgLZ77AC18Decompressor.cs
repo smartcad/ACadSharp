@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ACadSharp.IO.DWG
 {
@@ -10,58 +11,167 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Decompress a stream with a specific decompressed size.
 		/// </summary>
-		/// <param name="compressed"></param>
-		/// <param name="decompressedSize"></param>
-		/// <returns></returns>
 		public static Stream Decompress(Stream compressed, long decompressedSize)
 		{
-			//Create a new stream
 			MemoryStream memoryStream = new MemoryStream(new byte[decompressedSize]);
-
-			//Decompress the stream
 			DecompressToDest(compressed, memoryStream);
 			memoryStream.Position = 0L;
-
 			return memoryStream;
 		}
 
 		/// <summary>
-		/// Decompress a compressed source stream.
+		/// Decompress a compressed source stream into a destination stream.
+		/// Uses direct buffer access when both streams are MemoryStreams.
 		/// </summary>
-		/// <param name="src">Source, compressed stream.</param>
-		/// <param name="dst">Destination, decompressed stream.</param>
 		public static void DecompressToDest(Stream src, Stream dst)
+		{
+			// Fast path: if src is a MemoryStream with accessible buffer, use array-based decompression
+			if (src is MemoryStream srcMs && srcMs.TryGetBuffer(out ArraySegment<byte> srcSeg)
+				&& dst is MemoryStream dstMs && dstMs.TryGetBuffer(out ArraySegment<byte> dstSeg))
+			{
+				int si = srcSeg.Offset + (int)srcMs.Position;
+				int dstStart = dstSeg.Offset + (int)dstMs.Position;
+				int written = DecompressBufferToBuffer(srcSeg.Array, ref si, dstSeg.Array, dstStart);
+				srcMs.Position = si - srcSeg.Offset;
+				dstMs.Position += written;
+				return;
+			}
+
+			// Fallback: original stream-based implementation
+			DecompressToDestStream(src, dst);
+		}
+
+		/// <summary>
+		/// Buffer-to-buffer decompression. Returns number of bytes written to dst.
+		/// </summary>
+		internal static int DecompressBufferToBuffer(byte[] src, ref int si, byte[] dst, int dstOffset)
+		{
+			int di = dstOffset;
+
+			int opcode1 = src[si++];
+
+			if ((opcode1 & 0xF0) == 0)
+			{
+				int litCount = literalCountBuf(opcode1, src, ref si) + 3;
+				Buffer.BlockCopy(src, si, dst, di, litCount);
+				si += litCount;
+				di += litCount;
+				opcode1 = src[si++];
+			}
+
+			while (opcode1 != 0x11)
+			{
+				int compOffset = 0;
+				int compressedBytes = 0;
+
+				if (opcode1 < 0x10 || opcode1 >= 0x40)
+				{
+					compressedBytes = (opcode1 >> 4) - 1;
+					byte opcode2 = src[si++];
+					compOffset = ((opcode1 >> 2 & 3) | (opcode2 << 2)) + 1;
+				}
+				else if (opcode1 < 0x20)
+				{
+					compressedBytes = readCompressedBytesBuf(opcode1, 0b0111, src, ref si);
+					compOffset = (opcode1 & 8) << 11;
+					opcode1 = twoByteOffsetBuf(ref compOffset, 0x4000, src, ref si);
+				}
+				else
+				{
+					compressedBytes = readCompressedBytesBuf(opcode1, 0b00011111, src, ref si);
+					opcode1 = twoByteOffsetBuf(ref compOffset, 1, src, ref si);
+				}
+
+				// Copy back-reference from already-decompressed output (always byte-by-byte for overlap safety)
+				int copyFrom = di - compOffset;
+				for (int end = di + compressedBytes; di < end; di++, copyFrom++)
+				{
+					dst[di] = dst[copyFrom];
+				}
+
+				// Literal count from low 2 bits
+				int litCount = opcode1 & 3;
+				if (litCount == 0)
+				{
+					opcode1 = src[si++];
+					if ((opcode1 & 0xF0) == 0)
+						litCount = literalCountBuf(opcode1, src, ref si) + 3;
+				}
+
+				if (litCount > 0)
+				{
+					Buffer.BlockCopy(src, si, dst, di, litCount);
+					si += litCount;
+					di += litCount;
+					opcode1 = src[si++];
+				}
+			}
+
+			return di - dstOffset;
+		}
+
+		private static int literalCountBuf(int code, byte[] src, ref int si)
+		{
+			int lowbits = code & 0xF;
+			if (lowbits == 0)
+			{
+				byte lastByte;
+				for (lastByte = src[si++]; lastByte == 0; lastByte = src[si++])
+					lowbits += 0xFF;
+				lowbits += 0xF + lastByte;
+			}
+			return lowbits;
+		}
+
+		private static int readCompressedBytesBuf(int opcode1, int validBits, byte[] src, ref int si)
+		{
+			int compressedBytes = opcode1 & validBits;
+			if (compressedBytes == 0)
+			{
+				byte lastByte;
+				for (lastByte = src[si++]; lastByte == 0; lastByte = src[si++])
+					compressedBytes += 0xFF;
+				compressedBytes += lastByte + validBits;
+			}
+			return compressedBytes + 2;
+		}
+
+		private static int twoByteOffsetBuf(ref int offset, int addedValue, byte[] src, ref int si)
+		{
+			int firstByte = src[si++];
+			offset |= firstByte >> 2;
+			offset |= src[si++] << 6;
+			offset += addedValue;
+			return firstByte;
+		}
+
+		/// <summary>
+		/// Original stream-based decompression (fallback for non-MemoryStream).
+		/// </summary>
+		private static void DecompressToDestStream(Stream src, Stream dst)
 		{
 			int opcode1 = (byte)src.ReadByte();
 
 			if ((opcode1 & 0xF0) == 0)
 				opcode1 = copy(literalCount(opcode1, src) + 3, src, dst);
 
-			//0x11 : Terminates the input stream.
 			while (opcode1 != 0x11)
 			{
-				//0x00 – 0x0F : Not used, because this would be mistaken for a Literal Length in some situations.
-
-				//Offset backwards from the current location in the decompressed data stream, where the “compressed” bytes should be copied from.
 				int compOffset = 0;
-				//Number of “compressed” bytes that are to be copied to this location from a previous location in the uncompressed data stream.
 				int compressedBytes = 0;
 
 				if (opcode1 < 0x10 || opcode1 >= 0x40)
 				{
 					compressedBytes = (opcode1 >> 4) - 1;
-					//Read the next byte(call it opcode2):
 					byte opcode2 = (byte)src.ReadByte();
 					compOffset = ((opcode1 >> 2 & 3) | (opcode2 << 2)) + 1;
 				}
-				//0x12 – 0x1F
 				else if (opcode1 < 0x20)
 				{
 					compressedBytes = readCompressedBytes(opcode1, 0b0111, src);
 					compOffset = (opcode1 & 8) << 11;
 					opcode1 = twoByteOffset(ref compOffset, 0x4000, src);
 				}
-				//0x20
 				else if (opcode1 >= 0x20)
 				{
 					compressedBytes = readCompressedBytes(opcode1, 0b00011111, src);
@@ -76,9 +186,8 @@ namespace ACadSharp.IO.DWG
 					dst.Position = position;
 					dst.WriteByte(value);
 				}
-				//Number of uncompressed or literal bytes to be copied from the input stream, following the addition of the compressed bytes.
+
 				int litCount = opcode1 & 3;
-				//0x00 : litCount is read as the next Literal Length (see format below)
 				if (litCount == 0)
 				{
 					opcode1 = (byte)src.ReadByte();
@@ -86,12 +195,11 @@ namespace ACadSharp.IO.DWG
 						litCount = literalCount(opcode1, src) + 3;
 				}
 
-				//Copy as literal
 				if (litCount > 0U)
 					opcode1 = copy(litCount, src, dst);
 			}
 		}
-		
+
 		private static byte copy(int count, Stream src, Stream dst)
 		{
 			for (int i = 0; i < count; ++i)
@@ -99,20 +207,17 @@ namespace ACadSharp.IO.DWG
 				byte b = (byte)src.ReadByte();
 				dst.WriteByte(b);
 			}
-
 			return (byte)src.ReadByte();
 		}
 
 		private static int literalCount(int code, Stream src)
 		{
 			int lowbits = code & 0b1111;
-			//0x00 : Set the running total to 0x0F, and read the next byte. From this point on, a 0x00 byte adds 0xFF to the running total, and a non-zero byte adds that value to the running total and terminates the process. Add 3 to the final result.
 			if (lowbits == 0)
 			{
 				byte lastByte;
 				for (lastByte = (byte)src.ReadByte(); lastByte == 0; lastByte = (byte)src.ReadByte())
-					lowbits += byte.MaxValue;  //0xFF
-
+					lowbits += byte.MaxValue;
 				lowbits += 0xF + lastByte;
 			}
 			return lowbits;
@@ -121,28 +226,22 @@ namespace ACadSharp.IO.DWG
 		private static int readCompressedBytes(int opcode1, int validBits, Stream compressed)
 		{
 			int compressedBytes = opcode1 & validBits;
-
 			if (compressedBytes == 0)
 			{
 				byte lastByte;
-
 				for (lastByte = (byte)compressed.ReadByte(); lastByte == 0; lastByte = (byte)compressed.ReadByte())
 					compressedBytes += byte.MaxValue;
-
 				compressedBytes += lastByte + validBits;
 			}
-
 			return compressedBytes + 2;
 		}
 
 		private static int twoByteOffset(ref int offset, int addedValue, Stream stream)
 		{
 			int firstByte = stream.ReadByte();
-
 			offset |= firstByte >> 2;
 			offset |= stream.ReadByte() << 6;
 			offset += addedValue;
-
 			return firstByte;
 		}
 	}

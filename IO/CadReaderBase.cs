@@ -33,7 +33,7 @@ namespace ACadSharp.IO
 			this.OnNotification += notification;
 		}
 
-		protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(File.OpenRead(filename), notification)
+		protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(File.ReadAllBytes(filename), notification)
 		{
 		}
 
@@ -43,7 +43,25 @@ namespace ACadSharp.IO
 		}
 		protected CadReaderBase(Stream stream, NotificationEventHandler notification = null) : this(notification)
 		{
-			this._fileStream = new StreamIO(stream);
+			// If the stream is already a MemoryStream with an accessible buffer, use it directly.
+			// Otherwise, copy to byte[] to avoid per-byte virtual dispatch on FileStream.
+			if (stream is MemoryStream ms && ms.TryGetBuffer(out ArraySegment<byte> seg) && seg.Offset == 0)
+			{
+				this._fileStream = new StreamIO(stream);
+			}
+			else if (stream.CanSeek)
+			{
+				long pos = stream.Position;
+				stream.Position = 0;
+				byte[] buffer = new byte[stream.Length];
+				stream.Read(buffer, 0, buffer.Length);
+				stream.Position = pos;
+				this._fileStream = new StreamIO(buffer);
+			}
+			else
+			{
+				this._fileStream = new StreamIO(stream);
+			}
 		}
 
 		/// <inheritdoc/>

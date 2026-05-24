@@ -54,6 +54,18 @@ namespace ACadSharp.IO
 			this.DocumentToBuild = document;
 		}
 
+		/// <summary>
+		/// Pre-size internal dictionaries based on expected object count to avoid rehashing.
+		/// </summary>
+		public void PreSizeForObjectCount(int objectCount)
+		{
+			if (objectCount > this.cadObjectsTemplates.Count)
+			{
+				this.cadObjectsTemplates = new Dictionary<ulong, CadTemplate>(objectCount);
+				this.cadObjects = new Dictionary<ulong, CadObject>(objectCount);
+			}
+		}
+
 		public virtual void BuildDocument()
 		{
 			foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)

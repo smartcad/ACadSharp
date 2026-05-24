@@ -91,7 +91,7 @@ namespace CSUtilities.IO
 		
 		public StreamIO(byte[] buffer)
 		{
-            _stream = new MemoryStream(buffer);
+            _stream = new MemoryStream(buffer, 0, buffer.Length, false, true);
         }
 
 		/// <summary>
