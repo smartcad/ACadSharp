@@ -194,7 +194,7 @@ namespace ACadSharp.IO.DXF
 				int d2 = parseHexChar(c2);
 				if (d1 < 0 || d2 < 0)
 				{
-					return new byte[0];
+					return Array.Empty<byte>();
 				}
 				bytes[i] = (byte)((d1 << 4) | d2);
 			}

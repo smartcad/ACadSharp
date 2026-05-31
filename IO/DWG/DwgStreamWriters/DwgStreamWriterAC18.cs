@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Objects;
-using CSUtilities.Converters;
 using System.IO;
 using System.Text;
 
@@ -17,28 +16,23 @@ namespace ACadSharp.IO.DWG
 			//BS: color index(always 0)
 			this.WriteBitShort(0);
 
-			byte[] arr = new byte[4];
+			uint rgb;
 
 			if (value.IsTrueColor)
 			{
-				arr[2] = (byte)value.R;
-				arr[1] = (byte)value.G;
-				arr[0] = (byte)value.B;
-				arr[3] = 0b1100_0010;
+				rgb = (uint)value.B | ((uint)value.G << 8) | ((uint)value.R << 16) | (0b1100_0010u << 24);
 			}
 			else if (value.IsByLayer)
 			{
-				arr[3] = 0b11000000;
-				arr[0] = (byte)value.Index;
+				rgb = (uint)(byte)value.Index | (0b1100_0000u << 24);
 			}
 			else
 			{
-				arr[3] = 0b1100_0011;
-				arr[0] = (byte)value.Index;
+				rgb = (uint)(byte)value.Index | (0b1100_0011u << 24);
 			}
 
 			//BL: RGB value
-			this.WriteBitLong(LittleEndianConverter.Instance.ToInt32(arr));
+			this.WriteBitLong(unchecked((int)rgb));
 
 
 			//RC: Color Byte
@@ -94,9 +88,8 @@ namespace ACadSharp.IO.DWG
 
 			if (color.IsTrueColor)
 			{
-				byte[] arr = new byte[] { color.B, color.G, color.R, 0b11000010 };
-				uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
-				base.WriteBitLong((int)rgb);
+				uint rgb = (uint)color.B | ((uint)color.G << 8) | ((uint)color.R << 16) | (0b1100_0010u << 24);
+				base.WriteBitLong(unchecked((int)rgb));
 			}
 
 			if (!transparency.IsByLayer)

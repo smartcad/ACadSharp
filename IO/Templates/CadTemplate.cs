@@ -9,23 +9,16 @@ namespace ACadSharp.IO.Templates
 	{
 		public CadObject CadObject { get; protected set; }
 
-		public ulong? OwnerHandle { get; set; }
-
 		public ulong? XDictHandle { get; set; }
 
 		private List<ulong> _reactorsHandles;
-		public List<ulong> ReactorsHandles
-		{
-			get => _reactorsHandles ??= new List<ulong>();
-			set => _reactorsHandles = value;
-		}
+		//public List<ulong> ReactorsHandles
+		//{
+		//	get => _reactorsHandles ??= new List<ulong>();
+		//	set => _reactorsHandles = value;
+		//}
 
 		private Dictionary<ulong, ExtendedData> _eDataTemplate;
-		public Dictionary<ulong, ExtendedData> EDataTemplate
-		{
-			get => _eDataTemplate ??= new Dictionary<ulong, ExtendedData>();
-			set => _eDataTemplate = value;
-		}
 
 		private Dictionary<string, ExtendedData> _eDataTemplateByAppName;
 		public Dictionary<string, ExtendedData> EDataTemplateByAppName

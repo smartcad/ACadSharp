@@ -55,8 +55,10 @@ namespace ACadSharp.IO.DWG
 			//RL value of 0x0dca (meaning unknown).
 			if (this.R2004Plus)
 			{
-				byte[] arr = LittleEndianConverter.Instance.GetBytes((int)0xDCA);
-				this._stream.Write(arr, 0, arr.Length);
+				this._stream.WriteByte(0xCA);
+				this._stream.WriteByte(0x0D);
+				this._stream.WriteByte(0);
+				this._stream.WriteByte(0);
 			}
 
 			this._objects.Enqueue(this._document.RootDictionary);
@@ -349,12 +351,12 @@ namespace ACadSharp.IO.DWG
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRef)
 					&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 			{
-				if (record.Entities.Any())
+				if (record.Entities.TryGetFirstLast(out Entity firstEntity, out Entity lastEntity))
 				{
 					//first entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.First());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, firstEntity);
 					//last entity in the def. (soft pointer)
-					this._writer.HandleReference(DwgReferenceType.SoftPointer, record.Entities.Last());
+					this._writer.HandleReference(DwgReferenceType.SoftPointer, lastEntity);
 				}
 				else
 				{

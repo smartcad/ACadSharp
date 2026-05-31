@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Entities;
 using System;
-using System.Linq;
 
 namespace ACadSharp
 {
@@ -22,7 +21,7 @@ namespace ACadSharp
 		{
 			get
 			{
-				if (this._entries.Any())
+				if (this._entries.Count != 0)
 					return this._seqend;
 				else
 					return null;
@@ -45,7 +44,7 @@ namespace ACadSharp
 		public override void Add(T item)
 		{
 			bool addSeqend = false;
-			if (!this._entries.Any())
+			if (this._entries.Count == 0)
 			{
 				addSeqend = true;
 			}
@@ -53,7 +52,7 @@ namespace ACadSharp
 			base.Add(item);
 
 			// The add could fail due an Exception
-			if (addSeqend && this._entries.Any())
+			if (addSeqend && this._entries.Count != 0)
 			{
 				this.OnSeqendAdded?.Invoke(this, new CollectionChangedEventArgs(this._seqend));
 			}

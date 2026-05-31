@@ -66,7 +66,7 @@ namespace ACadSharp.IO.Templates
             to_dimension.Handle = from_dimension.Handle;
             to_dimension.Owner = from_dimension.Owner;
 
-            to_dimension.XDictionary = from_dimension.XDictionary;
+            //to_dimension.XDictionary = from_dimension.XDictionary;
 
             to_dimension.Color = from_dimension.Color;
             to_dimension.LineWeight = from_dimension.LineWeight;

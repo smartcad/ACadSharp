@@ -43,6 +43,20 @@ namespace ACadSharp
 			return _entries.Contains(elem);
 		}
 
+		public bool TryGetFirstLast(out T first, out T last)
+		{
+			first = null;
+			last = null;
+
+			foreach (T entry in this._entries)
+			{
+				first ??= entry;
+				last = entry;
+			}
+
+			return first != null;
+		}
+
 		/// <summary>
 		/// Add a <see cref="CadObject"/> to the collection, this method triggers <see cref="OnAdd"/>.
 		/// </summary>

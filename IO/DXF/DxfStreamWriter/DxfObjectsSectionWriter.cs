@@ -1,8 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using System;
-using System.Linq;
-
 namespace ACadSharp.IO.DXF
 {
 	internal class DxfObjectsSectionWriter : DxfSectionWriterBase
@@ -17,7 +15,7 @@ namespace ACadSharp.IO.DXF
 
 		protected override void writeSection()
 		{
-			while (this.Holder.Objects.Any())
+			while (this.Holder.Objects.Count != 0)
 			{
 				CadObject item = this.Holder.Objects.Dequeue();
 

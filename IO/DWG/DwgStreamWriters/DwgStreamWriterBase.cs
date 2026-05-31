@@ -3,7 +3,9 @@ using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
+using System.Buffers;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -22,6 +24,8 @@ namespace ACadSharp.IO.DWG
 		public int BitShift { get; private set; } = 0;
 
 		private byte _lastByte;
+		private readonly byte[] _defaultDoubleBuffer = new byte[8];
+		private readonly byte[] _valueDoubleBuffer = new byte[8];
 
 		public DwgStreamWriterBase(Stream stream, Encoding encoding) : base(stream)
 		{
@@ -117,7 +121,7 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteInt(int value)
 		{
-			this.Write(value, LittleEndianConverter.Instance);
+			this.writeRawInt32(value);
 		}
 
 		public virtual void WriteObjectType(short value)
@@ -132,7 +136,7 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteRawLong(long value)
 		{
-			this.WriteBytes(LittleEndianConverter.Instance.GetBytes((int)value));
+			this.writeRawInt32((int)value);
 		}
 
 		public override void WriteBytes(byte[] arr)
@@ -154,7 +158,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		public void WriteBytes(byte[] arr, int initialIndex, int length)
+		public override void WriteBytes(byte[] arr, int initialIndex, int length)
 		{
 			if (this.BitShift == 0)
 			{
@@ -213,7 +217,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.Write2Bits(0);
-			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+			this.WriteRawDouble(value);
 		}
 
 		public void WriteBitLong(int value)
@@ -268,9 +272,18 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
-			byte[] bytes = this.Encoding.GetBytes(value);
-			this.WriteBitShort((short)bytes.Length);
-			this.WriteBytes(bytes);
+			int byteCount = this.Encoding.GetByteCount(value);
+			byte[] bytes = ArrayPool<byte>.Shared.Rent(byteCount);
+			try
+			{
+				this.Encoding.GetBytes(value, 0, value.Length, bytes, 0);
+				this.WriteBitShort((short)byteCount);
+				this.WriteBytes(bytes, 0, byteCount);
+			}
+			finally
+			{
+				ArrayPool<byte>.Shared.Return(bytes);
+			}
 		}
 		
 		public virtual void WriteVariableTextForDimassoc(string value)
@@ -281,24 +294,39 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
-			byte[] bytes = this.Encoding.GetBytes(value);
-			var arr = new byte[bytes.Length + 1];
-
-			for (int i = 0; i < bytes.Length; i++)
+			int byteCount = this.Encoding.GetByteCount(value);
+			byte[] bytes = ArrayPool<byte>.Shared.Rent(byteCount);
+			try
 			{
-				arr[i] = bytes[i];
+				this.Encoding.GetBytes(value, 0, value.Length, bytes, 0);
+				this.WriteBitShort((short)(byteCount + 1));
+				this.WriteBytes(bytes, 0, byteCount);
+				this.WriteByte(0);
 			}
-			arr[arr.Length - 1] = 0;
-
-			this.WriteBitShort((short)arr.Length);
-			this.WriteBytes(arr);
+			finally
+			{
+				ArrayPool<byte>.Shared.Return(bytes);
+			}
 		}
 
 		public virtual void WriteTextUnicode(string value)
 		{
-			byte[] bytes = this.Encoding.GetBytes(string.IsNullOrEmpty(value) ? string.Empty : value);
-			this.WriteRawShort((ushort)(bytes.Length + 1));
-			this._stream.Write(bytes, 0, bytes.Length);
+			value = string.IsNullOrEmpty(value) ? string.Empty : value;
+			int byteCount = this.Encoding.GetByteCount(value);
+			this.WriteRawShort((ushort)(byteCount + 1));
+			if (byteCount > 0)
+			{
+				byte[] bytes = ArrayPool<byte>.Shared.Rent(byteCount);
+				try
+				{
+					this.Encoding.GetBytes(value, 0, value.Length, bytes, 0);
+					this._stream.Write(bytes, 0, byteCount);
+				}
+				finally
+				{
+					ArrayPool<byte>.Shared.Return(bytes);
+				}
+			}
 			this._stream.WriteByte(0);
 		}
 
@@ -427,17 +455,17 @@ namespace ACadSharp.IO.DWG
 
 		public void WriteRawShort(short value)
 		{
-			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+			this.writeRawUInt16((ushort)value);
 		}
 
 		public void WriteRawShort(ushort value)
 		{
-			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+			this.writeRawUInt16(value);
 		}
 
 		public void WriteRawDouble(double value)
 		{
-			this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+			this.writeRawUInt64((ulong)doubleToInt64Bits(value));
 		}
 
 		public void HandleReference(IHandledCadObject cadObject)
@@ -585,8 +613,10 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
-			byte[] defBytes = LittleEndianConverter.Instance.GetBytes(def);
-			byte[] valueBytes = LittleEndianConverter.Instance.GetBytes(value);
+			byte[] defBytes = this._defaultDoubleBuffer;
+			byte[] valueBytes = this._valueDoubleBuffer;
+			writeLittleEndianBytes(def, defBytes);
+			writeLittleEndianBytes(value, valueBytes);
 
 			//Compare the 2 sets of bytes by it's simetry
 			int first = 0;
@@ -643,19 +673,19 @@ namespace ACadSharp.IO.DWG
 			{
 				if (pos >= 0x40000000)
 				{
-					this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)((pos >> 30) & 0xFFFF)));
-					this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)(((pos >> 15) & 0x7FFF) | 0x8000)));
+					this.WriteRawShort((ushort)((pos >> 30) & 0xFFFF));
+					this.WriteRawShort((ushort)(((pos >> 15) & 0x7FFF) | 0x8000));
 				}
 				else
 				{
-					this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)((pos >> 15) & 0xFFFF)));
+					this.WriteRawShort((ushort)((pos >> 15) & 0xFFFF));
 				}
 
-				this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)((pos & 0x7FFF) | 0x8000)));
+				this.WriteRawShort((ushort)((pos & 0x7FFF) | 0x8000));
 			}
 			else
 			{
-				this.WriteBytes(LittleEndianConverter.Instance.GetBytes((ushort)pos));
+				this.WriteRawShort((ushort)pos);
 			}
 		}
 
@@ -699,6 +729,60 @@ namespace ACadSharp.IO.DWG
 			this.WriteBit((value & 4) != 0);
 			this.WriteBit((value & 2) != 0);
 			this.WriteBit((value & 1) != 0);
+		}
+
+		private void writeRawInt32(int value)
+		{
+			this.WriteByte((byte)value);
+			this.WriteByte((byte)(value >> 8));
+			this.WriteByte((byte)(value >> 16));
+			this.WriteByte((byte)(value >> 24));
+		}
+
+		private void writeRawUInt16(ushort value)
+		{
+			this.WriteByte((byte)value);
+			this.WriteByte((byte)(value >> 8));
+		}
+
+		private void writeRawUInt64(ulong value)
+		{
+			this.WriteByte((byte)value);
+			this.WriteByte((byte)(value >> 8));
+			this.WriteByte((byte)(value >> 16));
+			this.WriteByte((byte)(value >> 24));
+			this.WriteByte((byte)(value >> 32));
+			this.WriteByte((byte)(value >> 40));
+			this.WriteByte((byte)(value >> 48));
+			this.WriteByte((byte)(value >> 56));
+		}
+
+		private static void writeLittleEndianBytes(double value, byte[] buffer)
+		{
+			ulong bits = (ulong)doubleToInt64Bits(value);
+			buffer[0] = (byte)bits;
+			buffer[1] = (byte)(bits >> 8);
+			buffer[2] = (byte)(bits >> 16);
+			buffer[3] = (byte)(bits >> 24);
+			buffer[4] = (byte)(bits >> 32);
+			buffer[5] = (byte)(bits >> 40);
+			buffer[6] = (byte)(bits >> 48);
+			buffer[7] = (byte)(bits >> 56);
+		}
+
+		private static long doubleToInt64Bits(double value)
+		{
+			return new DoubleLongUnion { Double = value }.Long;
+		}
+
+		[StructLayout(LayoutKind.Explicit)]
+		private struct DoubleLongUnion
+		{
+			[FieldOffset(0)]
+			public double Double;
+
+			[FieldOffset(0)]
+			public long Long;
 		}
 	}
 }

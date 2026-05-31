@@ -71,38 +71,6 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		[Obsolete("Only needed for SortEntitiesTable but it should be removed")]
-		protected void readCommonObjectData(CadTemplate template)
-		{
-			while (this._reader.DxfCode != DxfCode.Subclass)
-			{
-				switch (this._reader.Code)
-				{
-					//object name
-					case 0:
-						Debug.Assert(template.CadObject.ObjectName == this._reader.ValueAsString);
-						break;
-					//Handle
-					case 5:
-						template.CadObject.Handle = this._reader.ValueAsHandle;
-						break;
-					//Start of application - defined group
-					case 102:
-						this.readDefinedGroups(template);
-						break;
-					//Soft - pointer ID / handle to owner BLOCK_RECORD object
-					case 330:
-						template.OwnerHandle = this._reader.ValueAsHandle;
-						break;
-					default:
-						this._builder.Notify($"Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.", NotificationType.None);
-						break;
-				}
-
-				this._reader.ReadNext();
-			}
-		}
-
 		protected void readCommonCodes(CadTemplate template, out bool isExtendedData, DxfMap map = null)
 		{
 			isExtendedData = false;
@@ -124,7 +92,7 @@ namespace ACadSharp.IO.DXF
 					break;
 				//Soft - pointer ID / handle to owner BLOCK_RECORD object
 				case 330:
-					template.OwnerHandle = this._reader.ValueAsHandle;
+					template.CadObject.Owner = this._reader.ValueAsHandle;
 					break;
 				case 1001:
 					isExtendedData = true;
@@ -1497,7 +1465,7 @@ namespace ACadSharp.IO.DXF
 			this.readDefinedGroups(out ulong? xdict, out List<ulong> reactorsHandles);
 
 			template.XDictHandle = xdict;
-			template.ReactorsHandles = reactorsHandles;
+			//template.ReactorsHandles = reactorsHandles;
 		}
 
 		private void readDefinedGroups(out ulong? xdictHandle, out List<ulong> reactors)

@@ -113,7 +113,7 @@ namespace ACadSharp.Entities
 		/// True if the insert has attribute entities in it
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Ignored, 66)]
-		public bool HasAttributes { get { return this.Attributes.Any(); } }
+		public bool HasAttributes { get { return this.Attributes.Count != 0; } }
 
 		/// <summary>
 		/// Attributes from the block reference

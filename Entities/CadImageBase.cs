@@ -3,7 +3,6 @@ using CSMath;
 using System.Collections.Generic;
 using System;
 using ACadSharp.Objects;
-using System.Linq;
 
 namespace ACadSharp.Entities
 {
@@ -192,7 +191,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public BoundingBox GetBoundingBox()
 		{
-			if (!this.ClipBoundaryVertices.Any())
+			if (this.ClipBoundaryVertices.Count == 0)
 			{
 				return BoundingBox.Null;
 			}

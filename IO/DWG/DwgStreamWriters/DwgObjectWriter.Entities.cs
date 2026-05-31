@@ -1,10 +1,9 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
-using ACadSharp.Tables;
 using CSMath;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
 {
@@ -528,8 +527,9 @@ namespace ACadSharp.IO.DWG
 			//R13 - R2000:
 			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
 			{
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, insert.Attributes.First());
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, insert.Attributes.Last());
+				insert.Attributes.TryGetFirstLast(out AttributeEntity firstAttribute, out AttributeEntity lastAttribute);
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, firstAttribute);
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, lastAttribute);
 			}
 			//R2004+:
 			else if (this.R2004Plus)
@@ -617,7 +617,7 @@ namespace ACadSharp.IO.DWG
 			int nlines = 0;
 			if (mline.Vertices.Count > 0)
 			{
-				nlines = mline.Vertices.First().Segments.Count;
+				nlines = mline.Vertices[0].Segments.Count;
 			}
 			//Linesinstyle RC 73
 			this._writer.WriteByte((byte)nlines);
@@ -853,7 +853,7 @@ namespace ACadSharp.IO.DWG
 
 				if (boundaryPath.Flags.HasFlag(BoundaryPathFlags.Polyline))
 				{
-					Hatch.BoundaryPath.Polyline pline = boundaryPath.Edges.First() as Hatch.BoundaryPath.Polyline;
+					Hatch.BoundaryPath.Polyline pline = boundaryPath.Edges[0] as Hatch.BoundaryPath.Polyline;
 
 					//bulgespresent B 72 bulges are present if 1
 					this._writer.WriteBit(pline.HasBulge);
@@ -949,7 +949,7 @@ namespace ACadSharp.IO.DWG
 								{
 									//Numfitpoints BL 97 number of fit points
 									this._writer.WriteBitLong(splineEdge.FitPoints.Count);
-									if (splineEdge.FitPoints.Any())
+									if (splineEdge.FitPoints.Count != 0)
 									{
 										foreach (XY fp in splineEdge.FitPoints)
 										{
@@ -2416,14 +2416,10 @@ namespace ACadSharp.IO.DWG
 
 		private void writeChildEntities(IEnumerable<Entity> entities, Seqend seqend)
 		{
-			if (!entities.Any())
-				return;
-
 			Entity prevHolder = this._prev;
 			Entity nextHolder = this._next;
 			this._prev = null;
 			this._next = null;
-
 
             Entity prevEntity = null;
             Entity prev2Entity = null;
@@ -2445,6 +2441,12 @@ namespace ACadSharp.IO.DWG
                 this._next = null;
                 this.writeEntity(prevEntity);
             }
+			else
+			{
+				this._prev = prevHolder;
+				this._next = nextHolder;
+				return;
+			}
 
 			this._prev = prevHolder;
 			this._next = nextHolder;

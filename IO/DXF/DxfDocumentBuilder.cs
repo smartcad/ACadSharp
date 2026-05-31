@@ -52,10 +52,10 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 			{
-				if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
+				if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.CadObject.Owner.HasValue)
 					continue;
 
-				ulong ownerHandle = template.OwnerHandle.Value;
+				ulong ownerHandle = template.CadObject.Owner.Value;
 
 				if (this.tableEntryTemplates.TryGetValue(ownerHandle, out ICadTableEntryTemplate tableEntry)
 					&& tableEntry is CadBlockRecordTemplate record

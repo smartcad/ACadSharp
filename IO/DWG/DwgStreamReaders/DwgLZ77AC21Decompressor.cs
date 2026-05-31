@@ -18,12 +18,25 @@
 		/// <param name="buffer"></param>
 		public static void Decompress(byte[] source, uint initialOffset, uint length, byte[] buffer)
 		{
+			Decompress(source, initialOffset, length, buffer, 0);
+		}
+
+		/// <summary>
+		/// Decompress a compressed source buffer into an existing destination buffer.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="initialOffset"></param>
+		/// <param name="length"></param>
+		/// <param name="buffer"></param>
+		/// <param name="destinationOffset"></param>
+		public static void Decompress(byte[] source, uint initialOffset, uint length, byte[] buffer, uint destinationOffset)
+		{
 			m_sourceOffset = 0;
 			m_length = 0;
 			m_sourceIndex = initialOffset;
 			m_opCode = source[m_sourceIndex];
 
-			uint destIndex = 0;
+			uint destIndex = destinationOffset;
 			uint endIndex = m_sourceIndex + length;
 
 			++m_sourceIndex;

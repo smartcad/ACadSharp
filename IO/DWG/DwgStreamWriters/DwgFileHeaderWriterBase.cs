@@ -54,16 +54,69 @@ namespace ACadSharp.IO.DWG
 
 		protected void applyMask(byte[] buffer, int offset, int length)
 		{
-			byte[] bytes = LittleEndianConverter.Instance.GetBytes(0x4164536B ^ (int)this._stream.Position);
+			int mask = 0x4164536B ^ (int)this._stream.Position;
 			int diff = offset + length;
 			while (offset < diff)
 			{
-				for (int i = 0; i < 4; i++)
-				{
-					buffer[offset + i] ^= bytes[i];
-				}
+				buffer[offset++] ^= (byte)mask;
+				if (offset >= diff)
+					break;
+				buffer[offset++] ^= (byte)(mask >> 8);
+				if (offset >= diff)
+					break;
+				buffer[offset++] ^= (byte)(mask >> 16);
+				if (offset >= diff)
+					break;
+				buffer[offset++] ^= (byte)(mask >> 24);
+			}
+		}
 
-				offset += 4;
+		protected static void writeRawInt32(Stream stream, int value)
+		{
+			stream.WriteByte((byte)value);
+			stream.WriteByte((byte)(value >> 8));
+			stream.WriteByte((byte)(value >> 16));
+			stream.WriteByte((byte)(value >> 24));
+		}
+
+		protected static void writeRawUInt32(Stream stream, uint value)
+		{
+			writeRawInt32(stream, (int)value);
+		}
+
+		protected static void writeRawInt64(Stream stream, long value)
+		{
+			writeRawUInt64(stream, (ulong)value);
+		}
+
+		protected static void writeRawUInt64(Stream stream, ulong value)
+		{
+			stream.WriteByte((byte)value);
+			stream.WriteByte((byte)(value >> 8));
+			stream.WriteByte((byte)(value >> 16));
+			stream.WriteByte((byte)(value >> 24));
+			stream.WriteByte((byte)(value >> 32));
+			stream.WriteByte((byte)(value >> 40));
+			stream.WriteByte((byte)(value >> 48));
+			stream.WriteByte((byte)(value >> 56));
+		}
+
+		protected static void writeAsciiBytes(Stream stream, string value, int length)
+		{
+			int i = 0;
+			for (; i < length && i < value.Length; i++)
+			{
+				stream.WriteByte((byte)value[i]);
+			}
+
+			writeZeroes(stream, length - i);
+		}
+
+		protected static void writeZeroes(Stream stream, int count)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				stream.WriteByte(0);
 			}
 		}
 

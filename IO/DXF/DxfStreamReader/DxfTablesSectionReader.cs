@@ -162,9 +162,9 @@ namespace ACadSharp.IO.DXF
 
 			Debug.Assert(ownerHandle == null || ownerHandle.Value == 0);
 
-			template.OwnerHandle = ownerHandle;
+			template.CadObject.Owner = ownerHandle;
 			template.XDictHandle = xdictHandle;
-			template.ReactorsHandles = reactors;
+			//template.ReactorsHandles = reactors;
 			template.EDataTemplateByAppName = edata;
 
 			//Add the object and the template to the builder

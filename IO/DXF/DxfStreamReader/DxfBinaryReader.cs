@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -41,23 +40,29 @@ namespace ACadSharp.IO.DXF
 			byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(256);
 			int count = 0;
 
-			byte b = this._stream.ReadByte();
-			while (b != 0)
+			try
 			{
-				if (count == buffer.Length)
+				byte b = this._stream.ReadByte();
+				while (b != 0)
 				{
-					byte[] larger = System.Buffers.ArrayPool<byte>.Shared.Rent(buffer.Length * 2);
-					System.Buffer.BlockCopy(buffer, 0, larger, 0, count);
-					System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
-					buffer = larger;
+					if (count == buffer.Length)
+					{
+						byte[] larger = System.Buffers.ArrayPool<byte>.Shared.Rent(buffer.Length * 2);
+						System.Buffer.BlockCopy(buffer, 0, larger, 0, count);
+						System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+						buffer = larger;
+					}
+					buffer[count++] = b;
+					b = this._stream.ReadByte();
 				}
-				buffer[count++] = b;
-				b = this._stream.ReadByte();
-			}
 
-			this.ValueRaw = this._encoding.GetString(buffer, 0, count);
-			System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
-			return this.ValueRaw;
+				this.ValueRaw = this._encoding.GetString(buffer, 0, count);
+				return this.ValueRaw;
+			}
+			finally
+			{
+				System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+			}
 		}
 
 		protected override DxfCode readCode()
@@ -92,20 +97,36 @@ namespace ACadSharp.IO.DXF
 
 		protected override ulong lineAsHandle()
 		{
-			var str = this.readStringLine();
-
-			if (ulong.TryParse(str, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
+			ulong result = 0;
+			byte b = this._stream.ReadByte();
+			while (b != 0)
 			{
-				return result;
+				int digit = parseHexByte(b);
+				if (digit < 0)
+				{
+					while (this._stream.ReadByte() != 0) { }
+					return 0;
+				}
+
+				result = (result << 4) | (uint)digit;
+				b = this._stream.ReadByte();
 			}
 
-			return 0;
+			return result;
 		}
 
 		protected override byte[] lineAsBinaryChunk()
 		{
 			byte length = this._stream.ReadByte();
 			return this._stream.ReadBytes(length);
+		}
+
+		private static int parseHexByte(byte b)
+		{
+			if (b >= '0' && b <= '9') return b - '0';
+			if (b >= 'a' && b <= 'f') return b - 'a' + 10;
+			if (b >= 'A' && b <= 'F') return b - 'A' + 10;
+			return -1;
 		}
 	}
 }

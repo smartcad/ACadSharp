@@ -271,7 +271,7 @@ namespace ACadSharp.IO.DXF
 			//Jump the 0 marker
 			this._reader.ReadNext();
 
-			this.readCommonObjectData(template);
+			//this.readCommonObjectData(template);
 
 			System.Diagnostics.Debug.Assert(DxfSubclassMarker.DimAssoc == this._reader.ValueAsString);
 
@@ -398,7 +398,7 @@ namespace ACadSharp.IO.DXF
 			//Jump the 0 marker
 			this._reader.ReadNext();
 
-			this.readCommonObjectData(template);
+			//this.readCommonObjectData(template);
 
 			System.Diagnostics.Debug.Assert(DxfSubclassMarker.SortentsTable == this._reader.ValueAsString);
 

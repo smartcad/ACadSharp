@@ -16,8 +16,8 @@ namespace ACadSharp.IO.Templates
 		{
 			base.Build(builder);
 
-			if (this.OwnerHandle.HasValue
-				&& this.OwnerHandle == 0
+			if (this.CadObject.Owner.HasValue
+				&& this.CadObject.Owner == 0
 				&& builder.DocumentToBuild.RootDictionary == null)
 			{
 				if (builder is DwgDocumentBuilder dwgBuilder

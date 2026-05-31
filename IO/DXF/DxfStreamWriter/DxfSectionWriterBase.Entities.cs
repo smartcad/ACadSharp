@@ -943,7 +943,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(210, polyline.Normal, map);
 
-			if (polyline.Vertices.Any())
+			if (polyline.Vertices.Count != 0)
 			{
 				foreach (Vertex v in polyline.Vertices)
 				{
@@ -1028,7 +1028,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(72, (short)spline.Knots.Count, map);
 			this._writer.Write(73, (short)spline.ControlPoints.Count, map);
 
-			if (spline.FitPoints.Any())
+			if (spline.FitPoints.Count != 0)
 			{
 				this._writer.Write(74, (short)spline.FitPoints.Count, map);
 			}
@@ -1277,7 +1277,7 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(14, bv, map);
 				}
 
-				this._writer.Write(14, image.ClipBoundaryVertices.First(), map);
+				this._writer.Write(14, image.ClipBoundaryVertices[0], map);
 			}
 			else
 			{

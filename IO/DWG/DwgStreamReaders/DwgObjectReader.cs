@@ -105,9 +105,14 @@ namespace ACadSharp.IO.DWG
 
 			this._reader = reader;
 
-			this._handles = new Queue<ulong>(handles);
-			this._map = handleMap;
+			this._handles = new Queue<ulong>();
 			this._readedObjects = new HashSet<ulong>();
+			foreach (ulong handle in handles)
+			{
+				this.enqueueHandle(handle);
+			}
+
+			this._map = handleMap;
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
 			//Initialize the crc stream
@@ -158,16 +163,13 @@ namespace ACadSharp.IO.DWG
 				ulong handle = this._handles.Dequeue();
 
 				//Check if the handle has already been read
-				if (!this._map.TryGetValue(handle, out long offset) ||
-					this._readedObjects.Contains(handle))
+				if (!this._map.TryGetValue(handle, out long offset))
 				{
 					continue;
 				}
 
 				//Get the object type
 				ObjectType type = this.getEntityType(offset);
-				//Save the object to avoid infinite loops while reading
-				this._readedObjects.Add(handle);
 
 				CadTemplate template = null;
 
@@ -289,10 +291,18 @@ namespace ACadSharp.IO.DWG
 			if (value != 0 && !this._readedObjects.Contains(value))
 			{
 				//Add the value to the handles queue to be processed
-				this._handles.Enqueue(value);
+				this.enqueueHandle(value);
 			}
 
 			return value;
+		}
+
+		private void enqueueHandle(ulong handle)
+		{
+			if (handle == 0 || !this._readedObjects.Add(handle))
+				return;
+
+			this._handles.Enqueue(handle);
 		}
 
 		private void readCommonData(CadTemplate template)
@@ -414,7 +424,7 @@ namespace ACadSharp.IO.DWG
 
 			if (EntityMode == 0)
 			{
-				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
+				template.CadObject.Owner = this._handlesReader.HandleReference(entity.Handle);
 			}
 			else if (EntityMode == 1)
 			{
@@ -452,10 +462,8 @@ namespace ACadSharp.IO.DWG
 			}
 			else if (!this.R2004Plus)
 			{
-				if (!this._readedObjects.Contains(entity.Handle - 1UL))
-					this._handles.Enqueue(entity.Handle - 1UL);
-				if (!this._readedObjects.Contains(entity.Handle + 1UL))
-					this._handles.Enqueue(entity.Handle + 1UL);
+				this.enqueueHandle(entity.Handle - 1UL);
+				this.enqueueHandle(entity.Handle + 1UL);
 			}
 
 			//Color	CMC(B)	62
@@ -553,7 +561,7 @@ namespace ACadSharp.IO.DWG
 				this.updateHandleReader();
 
 			//[Owner ref handle (soft pointer)]
-			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
+			template.CadObject.Owner = this.handleReference(template.CadObject.Handle);
 
 			//Read the cad object reactors
 			this.readReactorsAndDictionaryHandle(template);
@@ -674,10 +682,9 @@ namespace ACadSharp.IO.DWG
 					case DxfCode.ExtendedDataBinaryChunk:
 						//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
 						var len = (int)this._objectReader.ReadByte();
-						var arr = ArrayPool<byte>.Shared.Rent(len);
+						var arr = new byte[len];
 						this._objectReader.ReadBytes(arr, len);
 						record = new ExtendedDataRecord(dxfCode, arr);
-						ArrayPool<byte>.Shared.Return(arr);
 						break;
 					case DxfCode.ExtendedDataHandle:
 						//5 (1005) An entity handle reference.
@@ -748,7 +755,7 @@ namespace ACadSharp.IO.DWG
 			//Add the reactors to the template
 			for (int i = 0; i < numberOfReactors; ++i)
 				//[Reactors (soft pointer)]
-				template.ReactorsHandles.Add(this.handleReference());
+				/*template.ReactorsHandles.Add(*/this.handleReference();
 
 			bool flag = false;
 			//R2004+:
@@ -5647,11 +5654,10 @@ namespace ACadSharp.IO.DWG
 					case GroupCodeValueType.Chunk:
 					case GroupCodeValueType.ExtendedDataChunk:
 						var len = this._objectReader.ReadByte();
-						var arr = ArrayPool<byte>.Shared.Rent(len);
+						var arr = new byte[len];
 						this._objectReader.ReadBytes(arr, len);
 
 						xRecord.CreateEntry(code, arr);
-						ArrayPool<byte>.Shared.Return(arr);
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:

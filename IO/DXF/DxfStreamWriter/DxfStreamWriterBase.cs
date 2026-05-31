@@ -1,6 +1,5 @@
-﻿using CSUtilities.Converters;
-using System;
-
+﻿using System;
+using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -40,23 +39,19 @@ namespace ACadSharp.IO.DXF
 			}
 			else
 			{
-				byte[] arr = new byte[4];
+				uint rgb;
 
 				if (color.IsTrueColor)
 				{
-					arr[0] = (byte)color.B;
-					arr[1] = (byte)color.G;
-					arr[2] = (byte)color.R;
-					arr[3] = 0b1100_0010;   //	0xC2
+					rgb = (uint)color.B | ((uint)color.G << 8) | ((uint)color.R << 16) | (0b1100_0010u << 24);
 				}
 				else
 				{
-					arr[3] = 0b1100_0001;
-					arr[0] = (byte)color.Index;
+					rgb = (uint)(byte)color.Index | (0b1100_0001u << 24);
 				}
 
 				//BL: RGB value
-				this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+				this.Write(code, unchecked((int)rgb), map);
 			}
 		}
 
@@ -100,12 +95,7 @@ namespace ACadSharp.IO.DXF
 
 			if (value is string s)
 			{
-				s = s
-					.Replace("^", "^ ")
-					.Replace("\n", "^J")
-					.Replace("\r", "^M")
-					.Replace("\t", "^I");
-				this.writeValue(code, s);
+				this.writeValue(code, escapeString(s));
 			}
 			else
 			{
@@ -123,5 +113,46 @@ namespace ACadSharp.IO.DXF
 		protected abstract void writeDxfCode(int code);
 
 		protected abstract void writeValue(int code, object value);
+
+		private static string escapeString(string value)
+		{
+			StringBuilder builder = null;
+
+			for (int i = 0; i < value.Length; i++)
+			{
+				string replacement = null;
+				switch (value[i])
+				{
+					case '^':
+						replacement = "^ ";
+						break;
+					case '\n':
+						replacement = "^J";
+						break;
+					case '\r':
+						replacement = "^M";
+						break;
+					case '\t':
+						replacement = "^I";
+						break;
+				}
+
+				if (replacement == null)
+				{
+					builder?.Append(value[i]);
+					continue;
+				}
+
+				if (builder == null)
+				{
+					builder = new StringBuilder(value.Length + 2);
+					builder.Append(value, 0, i);
+				}
+
+				builder.Append(replacement);
+			}
+
+			return builder?.ToString() ?? value;
+		}
 	}
 }

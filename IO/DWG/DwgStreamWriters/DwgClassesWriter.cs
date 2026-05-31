@@ -1,7 +1,6 @@
 ﻿using CSUtilities.IO;
 using CSUtilities.Text;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -45,9 +44,12 @@ namespace ACadSharp.IO.DWG
 			}
 
 			short maxClassNumber = 0;
-			if (this._document.Classes.Any())
+			foreach (var c in this._document.Classes)
 			{
-				maxClassNumber = this._document.Classes.Max(c => c.ClassNumber);
+				if (c.ClassNumber > maxClassNumber)
+				{
+					maxClassNumber = c.ClassNumber;
+				}
 			}
 
 			if (this.R2004Plus)

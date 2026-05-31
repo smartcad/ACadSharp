@@ -1026,18 +1026,22 @@ namespace ACadSharp.IO
 			if (!fileheader.Descriptors.TryGetValue(sectionName, out DwgSectionDescriptor descriptor))
 				return null;
 
-			//get the total size of the page
-			MemoryStream memoryStream = new MemoryStream((int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+			ulong totalLength = 0;
+			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
+				totalLength += section.DecompressedSize;
+
+			// Buffer must be large enough for full-page decompression (last page may decompress to full page size)
+			int bufferLength = Math.Max((int)totalLength, (int)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+			byte[] sectionBuffer = new byte[bufferLength];
+			MemoryStream memoryStream = new MemoryStream(sectionBuffer, 0, bufferLength, true, true);
+			long currOffset = 0;
 
 			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
 			{
 				if (section.IsEmpty)
 				{
-					//Page is empty, fill the gap with 0s
-					for (int index = 0; index < (int)section.DecompressedSize; ++index)
-					{
-						memoryStream.WriteByte(0);
-					}
+					currOffset += (long)section.DecompressedSize;
+					memoryStream.Position = currOffset;
 				}
 				else
 				{
@@ -1050,29 +1054,23 @@ namespace ACadSharp.IO
 					if (descriptor.IsCompressed)
 					{
 						//Page is compressed
+						memoryStream.Position = currOffset;
 						DwgLZ77AC18Decompressor.DecompressToDest(this._fileStream.Stream, memoryStream);
 					}
 					else
 					{
 						//Read the stream normally
-						int size = (int)section.CompressedSize;
-						byte[] buffer = ArrayPool<byte>.Shared.Rent(size);
-						try
-						{
-							sreader.Stream.Read(buffer, 0, size);
-							memoryStream.Write(buffer, 0, size);
-						}
-						finally
-						{
-							ArrayPool<byte>.Shared.Return(buffer);
-						}
+						int size = (int)Math.Min(section.CompressedSize, section.DecompressedSize);
+						readExactly(sreader.Stream, sectionBuffer, (int)currOffset, size);
 					}
+
+					currOffset += (long)section.DecompressedSize;
+					memoryStream.Position = currOffset;
 				}
 			}
 
-			//Reset the stream
-			memoryStream.Position = 0L;
-			return memoryStream;
+			//Return stream over only the actual data needed
+			return new MemoryStream(sectionBuffer, 0, (int)totalLength, false, true);
 		}
 
 		private void decryptDataSection(DwgLocalSectionMap section, IDwgStreamReader sreader)
@@ -1119,9 +1117,7 @@ namespace ACadSharp.IO
 			{
 				if (page.IsEmpty)
 				{
-					//Page is empty, fill the gap with 0s
-					for (int i = 0; i < (int)page.DecompressedSize; ++i)
-						pagesBuffer[(int)currOffset++] = 0;
+					currOffset += (long)page.DecompressedSize;
 				}
 				else
 				{
@@ -1135,6 +1131,7 @@ namespace ACadSharp.IO
 					int pageSize = (int)pageData.Size;
 					byte[] pageBytes = ArrayPool<byte>.Shared.Rent(pageSize);
 					byte[] rentedPageBytes = pageBytes;
+					byte[] decodedPageBytes = null;
 					try
 					{
 						this._fileStream.Stream.Read(pageBytes, 0, pageSize);
@@ -1148,25 +1145,30 @@ namespace ACadSharp.IO
 							ulong v1 = v & 0b11111111_11111111_11111111_11111000L;
 
 							int alignedPageSize = (int)((v1 + 251 - 1) / 251);
-							byte[] arr = new byte[alignedPageSize * 251];
+							int decodedPageLength = alignedPageSize * 251;
+							decodedPageBytes = ArrayPool<byte>.Shared.Rent(decodedPageLength);
 
-							this.reedSolomonDecoding(pageBytes, arr, alignedPageSize, 251);
-							pageBytes = arr;
+							this.reedSolomonDecoding(pageBytes, decodedPageBytes, alignedPageSize, 251, decodedPageLength);
+							pageBytes = decodedPageBytes;
 						}
 
 						if ((long)page.CompressedSize != (long)page.DecompressedSize)
 						{
 							//Page is compressed
-							byte[] arr = new byte[page.DecompressedSize];
-							DwgLZ77AC21Decompressor.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
-							pageBytes = arr;
+							DwgLZ77AC21Decompressor.Decompress(pageBytes, 0U, (uint)page.CompressedSize, pagesBuffer, (uint)currOffset);
+						}
+						else
+						{
+							Buffer.BlockCopy(pageBytes, 0, pagesBuffer, (int)currOffset, (int)page.DecompressedSize);
 						}
 
-						for (int i = 0; i < (int)page.DecompressedSize; ++i)
-							pagesBuffer[(int)currOffset++] = pageBytes[i];
+						currOffset += (long)page.DecompressedSize;
 					}
 					finally
 					{
+						if (decodedPageBytes != null)
+							ArrayPool<byte>.Shared.Return(decodedPageBytes);
+
 						ArrayPool<byte>.Shared.Return(rentedPageBytes);
 					}
 				}
@@ -1184,11 +1186,13 @@ namespace ACadSharp.IO
 		/// <param name="buffer"></param>
 		/// <param name="factor"></param>
 		/// <param name="blockSize"></param>
-		private void reedSolomonDecoding(byte[] encoded, byte[] buffer, int factor, int blockSize)
+		private void reedSolomonDecoding(byte[] encoded, byte[] buffer, int factor, int blockSize, int length = -1)
 		{
 			int index = 0;
 			int n = 0;
-			int length = buffer.Length;
+			if (length < 0)
+				length = buffer.Length;
+
 			for (int i = 0; i < factor; ++i)
 			{
 				int cindex = n;
@@ -1205,6 +1209,21 @@ namespace ACadSharp.IO
 					}
 				}
 				++n;
+			}
+		}
+
+		private static void readExactly(Stream stream, byte[] buffer, int offset, int count)
+		{
+			while (count > 0)
+			{
+				int read = stream.Read(buffer, offset, count);
+				if (read == 0)
+				{
+					throw new EndOfStreamException();
+				}
+
+				offset += read;
+				count -= read;
 			}
 		}
 

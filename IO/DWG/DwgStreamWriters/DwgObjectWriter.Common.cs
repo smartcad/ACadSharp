@@ -32,7 +32,8 @@ namespace ACadSharp.IO.DWG
 
 			//Write the object in the stream
 			crc.Write(this._msmain.GetBuffer(), 0, (int)this._msmain.Length);
-			_stream.Write(LittleEndianConverter.Instance.GetBytes(crc.Seed), 0, 2);
+			_stream.WriteByte((byte)crc.Seed);
+			_stream.WriteByte((byte)(crc.Seed >> 8));
 
 			this.Map.Add(cadObject.Handle, position);
 		}

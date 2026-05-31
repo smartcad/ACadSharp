@@ -19,7 +19,7 @@ namespace ACadSharp.IO.Templates
 			vertex.Handle = this.CadObject.Handle;
 			vertex.Owner = this.CadObject.Owner;
 
-			vertex.XDictionary = this.CadObject.XDictionary;
+			//vertex.XDictionary = this.CadObject.XDictionary;
 
 			//polyLine.Reactors = this.CadObject.Reactors;
 			//polyLine.ExtendedData = this.CadObject.ExtendedData;

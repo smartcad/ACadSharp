@@ -393,7 +393,7 @@ namespace ACadSharp
 		/// <param name="g">Green</param>
 		/// <param name="b">Blue</param>
 		public Color(byte r, byte g, byte b)
-			: this(new[] { r, g, b })
+			: this((uint)(r | (g << 8) | (b << 16)))
 		{
 		}
 

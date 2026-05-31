@@ -48,7 +48,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.String:
 				case GroupCodeValueType.Comment:
 				case GroupCodeValueType.ExtendedDataString:
-					this._stream.Write(value.ToString().ToCharArray());
+					this.writeStringChars(value.ToString());
 					this._stream.Write('\0');
 					return;
 				case GroupCodeValueType.Point3D:
@@ -71,7 +71,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					this._stream.Write(((ulong)value).ToString("X", System.Globalization.CultureInfo.InvariantCulture).ToCharArray());
+					this.writeStringChars(((ulong)value).ToString("X", System.Globalization.CultureInfo.InvariantCulture));
 					this._stream.Write('\0');
 					return;
 				case GroupCodeValueType.Bool:
@@ -86,6 +86,14 @@ namespace ACadSharp.IO.DXF
 			}
 
 			throw new DxfException($"Code: {code} doesn't belong to any GroupCodeValueType");
+		}
+
+		private void writeStringChars(string value)
+		{
+			for (int i = 0; i < value.Length; i++)
+			{
+				this._stream.Write(value[i]);
+			}
 		}
 	}
 }

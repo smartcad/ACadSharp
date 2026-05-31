@@ -5,6 +5,8 @@ namespace ACadSharp.IO.DXF
 {
 	internal class DxfAsciiWriter : DxfStreamWriterBase
 	{
+		private static readonly char[] _hexChars = "0123456789ABCDEF".ToCharArray();
+
 		private TextWriter _stream;
 
 		public DxfAsciiWriter(StreamWriter stream)
@@ -84,10 +86,14 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
 					byte[] arr = value as byte[];
-					foreach (byte v in arr)
+					char[] chars = new char[arr.Length * 2];
+					for (int i = 0, j = 0; i < arr.Length; i++)
 					{
-						this._stream.Write(string.Format("{0:X2}", v));
+						byte v = arr[i];
+						chars[j++] = _hexChars[v >> 4];
+						chars[j++] = _hexChars[v & 0xF];
 					}
+					this._stream.Write(chars);
 					this._stream.Write(Environment.NewLine);
 					return;
 			}

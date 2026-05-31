@@ -13,7 +13,7 @@ namespace ACadSharp.IO.DWG
 	{
 		private void writeObjects()
 		{
-			while (this._objects.Any())
+			while (this._objects.Count != 0)
 			{
 				CadObject obj = this._objects.Dequeue();
 
@@ -149,15 +149,10 @@ namespace ACadSharp.IO.DWG
 
             if (this.R2004Plus)
             {
-                byte[] arr = new byte[]
-                {
-                    color.Color.B,
-                    color.Color.G,
-                    color.Color.R,
-                    0b11000010
-                };
-
-                uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
+                uint rgb = (uint)color.Color.B
+                    | ((uint)color.Color.G << 8)
+                    | ((uint)color.Color.R << 16)
+                    | 0xC2000000u;
 
                 this._writer.WriteBitLong((int)rgb);
 

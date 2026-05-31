@@ -1,6 +1,7 @@
 using ACadSharp.Exceptions;
 using System;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO.DXF
 {
@@ -35,11 +36,7 @@ namespace ACadSharp.IO.DXF
 					this.GroupCodeValue == GroupCodeValueType.Comment || 
 					this.GroupCodeValue == GroupCodeValueType.ExtendedDataString)
 				{
-					return this._stringValue?
-						.Replace("^J", "\n")
-						.Replace("^M", "\r")
-						.Replace("^I", "\t")
-						.Replace("^ ", "^") ?? string.Empty;
+					return unescapeString(this._stringValue);
 				}
 				return this.Value?.ToString() ?? string.Empty;
 			}
@@ -176,6 +173,55 @@ namespace ACadSharp.IO.DXF
 				default:
 					throw new DxfException((int)code, this.Position);
 			}
+		}
+
+		private static string unescapeString(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				return string.Empty;
+			}
+
+			StringBuilder builder = null;
+			for (int i = 0; i < value.Length; i++)
+			{
+				if (value[i] != '^' || i + 1 >= value.Length)
+				{
+					builder?.Append(value[i]);
+					continue;
+				}
+
+				char replacement;
+				switch (value[i + 1])
+				{
+					case 'J':
+						replacement = '\n';
+						break;
+					case 'M':
+						replacement = '\r';
+						break;
+					case 'I':
+						replacement = '\t';
+						break;
+					case ' ':
+						replacement = '^';
+						break;
+					default:
+						builder?.Append(value[i]);
+						continue;
+				}
+
+				if (builder == null)
+				{
+					builder = new StringBuilder(value.Length);
+					builder.Append(value, 0, i);
+				}
+
+				builder.Append(replacement);
+				i++;
+			}
+
+			return builder?.ToString() ?? value;
 		}
 	}
 }

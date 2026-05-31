@@ -1,7 +1,6 @@
 ﻿using CSUtilities.Converters;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -99,10 +98,12 @@ namespace ACadSharp.IO.DWG
 
 			//0x00	6	“ACXXXX” version string
 			IDwgStreamWriter writer = DwgStreamWriterBase.GetStreamWriter(this._version, memoryStream, this._encoding);
-			writer.WriteBytes(Encoding.ASCII.GetBytes(this._document.Header.VersionString));
+			writeAsciiBytes(memoryStream, this._document.Header.VersionString, 6);
 			//The next 7 starting at offset 0x06 are to be six bytes of 0 
 			//(in R14, 5 0’s and the ACADMAINTVER variable) and a byte of 1.
-			writer.WriteBytes(new byte[7] { 0, 0, 0, 0, 0, 15, 1 });
+			writeZeroes(memoryStream, 5);
+			writer.WriteByte(15);
+			writer.WriteByte(1);
 			//At 0x0D is a seeker (4 byte long absolute address) for the beginning sentinel of the image data.
 			writer.WriteRawLong(this._records[DwgSectionDefinition.Preview].Item1.Seeker);
 
@@ -111,11 +112,12 @@ namespace ACadSharp.IO.DWG
 
 			//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 
-			writer.WriteBytes(LittleEndianConverter.Instance.GetBytes(this.getFileCodePage()));
-			writer.WriteBytes(LittleEndianConverter.Instance.GetBytes(6));
+			writer.WriteRawShort(this.getFileCodePage());
+			writer.WriteRawShort(6);
 
-			foreach (var item in this._records.Values.Select(r => r.Item1))
+			foreach (var record in this._records.Values)
 			{
+				var item = record.Item1;
 				if (!item.Number.HasValue)
 					continue;
 
@@ -142,8 +144,9 @@ namespace ACadSharp.IO.DWG
 
 		private void writeRecordStreams()
 		{
-			foreach (var item in this._records.Values.Select(r => r.Item2))
+			foreach (var record in this._records.Values)
 			{
+				var item = record.Item2;
 				this._stream.Write(item.GetBuffer(), 0, (int)item.Length);
 			}
 		}

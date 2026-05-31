@@ -130,7 +130,19 @@ namespace ACadSharp.Objects
 		/// Entry names
 		/// </summary>
 		[DxfCodeValue(3)]
-		public string[] EntryNames { get { return this._entries.Keys.ToArray(); } }
+		public string[] EntryNames
+		{
+			get
+			{
+				if (this._entryNames == null)
+				{
+					this._entryNames = new string[this._entries.Count];
+					this._entries.Keys.CopyTo(this._entryNames, 0);
+				}
+
+				return this._entryNames;
+			}
+		}
 
 		/// <summary>
 		/// Soft-owner ID/handle to entry object
@@ -159,6 +171,7 @@ namespace ACadSharp.Objects
 		public int Count { get { return this._entries.Count; } }
 
 		private readonly Dictionary<string, NonGraphicalObject> _entries = new(StringComparer.OrdinalIgnoreCase);
+		private string[] _entryNames;
 
 		/// <summary>
 		/// Creates the root dictionary with the default entries.
@@ -260,6 +273,7 @@ namespace ACadSharp.Objects
 			}
 
 			this._entries.Add(key, value);
+			this._entryNames = null;
 			value.Owner = this.Handle;
 
 			value.OnNameChanged += this.onEntryNameChanged;
@@ -320,6 +334,7 @@ namespace ACadSharp.Objects
 
 			if (this._entries.Remove(key))
 			{
+				this._entryNames = null;
 				item.Owner = null;
 				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
 				return true;
@@ -334,6 +349,7 @@ namespace ACadSharp.Objects
 		public void Clear()
 		{
 			this._entries.Clear();
+			this._entryNames = null;
 		}
 
 		/// <summary>
@@ -401,6 +417,7 @@ namespace ACadSharp.Objects
 			var entry = this._entries[e.OldName];
 			this._entries.Add(e.NewName, entry);
 			this._entries.Remove(e.OldName);
+			this._entryNames = null;
 		}
 
 		public void Dispose()

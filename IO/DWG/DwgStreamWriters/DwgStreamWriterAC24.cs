@@ -30,7 +30,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Read the following two bytes (raw short)
 				this.Write2Bits(2);
-				this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+				this.WriteRawShort(value);
 			}
 		}
 	}
