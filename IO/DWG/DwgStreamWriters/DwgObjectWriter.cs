@@ -3,7 +3,6 @@ using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
-using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -216,6 +215,13 @@ namespace ACadSharp.IO.DWG
 				Entity prev2Entity = null;
 				foreach(var e in blkRecord.Entities)
 				{
+					// Ensure the entity's Owner handle is correct in case it was
+					// added before the BlockRecord's handle was assigned.
+					if (e.Owner == null || e.Owner == 0UL)
+					{
+						e.Owner = blkRecord.Handle;
+					}
+
 					if(prevEntity is not null)
 					{
 						this._prev = prev2Entity;
@@ -236,7 +242,7 @@ namespace ACadSharp.IO.DWG
 				this._next = null;
 				this._prev = null;
 
-				this.writeBlockEnd(blkRecord.BlockEnd);
+				this.writeBlockEnd(blkRecord, blkRecord.BlockEnd);
 			}
 		}
 
@@ -398,6 +404,12 @@ namespace ACadSharp.IO.DWG
 		private void writeBlockBegin(BlockRecord blockRecord)
 		{
 			Block block = blockRecord.BlockEntity;
+
+			if (block.Owner == null || block.Owner == 0UL)
+			{
+				block.Owner = blockRecord.Handle;
+			}
+
 			this.writeCommonEntityData(block);
 
 			//Common:
@@ -407,8 +419,13 @@ namespace ACadSharp.IO.DWG
 			this.registerObject(block);
 		}
 
-		private void writeBlockEnd(BlockEnd blkEnd)
+		private void writeBlockEnd(BlockRecord blockRecord, BlockEnd blkEnd)
 		{
+			if (blkEnd.Owner == null || blkEnd.Owner == 0UL)
+			{
+				blkEnd.Owner = blockRecord.Handle;
+			}
+
 			this.writeCommonEntityData(blkEnd);
 
 			this.registerObject(blkEnd);

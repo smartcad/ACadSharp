@@ -164,14 +164,14 @@ namespace ACadSharp.Entities
 				this._layer = this.updateTable(this.Layer, doc.Layers);
 			this._lineType = this.updateTable(this.LineType, doc.LineTypes);
 
-			doc.Layers.OnRemove += this.tableOnRemove;
-			doc.LineTypes.OnRemove += this.tableOnRemove;
+			//doc.Layers.OnRemove += this.tableOnRemove;
+			//doc.LineTypes.OnRemove += this.tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
-			this.Document.Layers.OnRemove -= this.tableOnRemove;
-			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+			//this.Document.Layers.OnRemove -= this.tableOnRemove;
+			//this.Document.LineTypes.OnRemove -= this.tableOnRemove;
 
 			base.UnassignDocument();
 
@@ -179,17 +179,17 @@ namespace ACadSharp.Entities
 			this.LineType = (LineType)this.LineType.Clone();
 		}
 
-		protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this.Layer))
-			{
-				this.Layer = this.Document.Layers[Layer.DefaultName];
-			}
+		//protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		//{
+		//	if(e.Item.Equals(this.Layer))
+		//	{
+		//		this.Layer = this.Document.Layers[Layer.DefaultName];
+		//	}
 
-			if (e.Item.Equals(this.LineType))
-			{
-				this.LineType = this.Document.LineTypes[LineType.ByLayerName];
-			}
-		}
+		//	if(e.Item.Equals(this.LineType))
+		//	{
+		//		this.LineType = this.Document.LineTypes[LineType.ByLayerName];
+		//	}
+		//}
 	}
 }

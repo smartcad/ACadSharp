@@ -59,19 +59,6 @@ namespace ACadSharp.IO.Templates
 			}
 
 		}
-
-		public void SetUnlinkedReferences()
-		{
-			if (!string.IsNullOrEmpty(this.LayerName))
-			{
-				this.CadObject.Layer = new Layer(this.LayerName);
-			}
-
-			if (!string.IsNullOrEmpty(this.LineTypeName))
-			{
-				this.CadObject.LineType = new LineType(this.LineTypeName);
-			}
-		}
 	}
 
 	internal class CadEntityTemplate<T> : CadEntityTemplate

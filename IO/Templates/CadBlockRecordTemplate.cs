@@ -103,6 +103,11 @@ namespace ACadSharp.IO.Templates
 
             if(this.CadObject.Entities.Contains(entity))
 				return;
+
+			// Skip if entity already belongs to a different block record
+			if (entity.Owner != null && entity.Owner != 0UL && entity.Owner != this.CadObject.Handle)
+				return;
+
 			this.CadObject.Entities.Add(entity);
 		}
 	}

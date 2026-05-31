@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
-using System.Linq;
 
 namespace ACadSharp.IO.DXF
 {
@@ -17,7 +16,7 @@ namespace ACadSharp.IO.DXF
 			{
 				this.writeBlock(b);
 				this.processEntities(b);
-				this.writeBlockEnd(b.BlockEnd);
+				this.writeBlockEnd(b, b.BlockEnd);
 			}
 		}
 
@@ -25,6 +24,11 @@ namespace ACadSharp.IO.DXF
 		{
 			Block block = blockRecord.BlockEntity;
             DxfClassMap map = DxfClassMap.Create<Block>();
+
+			if (block.Owner == null || block.Owner == 0UL)
+			{
+				block.Owner = blockRecord.Handle;
+			}
 
 			this._writer.Write(DxfCode.Start, block.ObjectName);
 
@@ -53,6 +57,10 @@ namespace ACadSharp.IO.DXF
 			{
 				foreach (Entity e in b.Entities)
 				{
+					if (e.Owner == null || e.Owner == 0UL)
+					{
+						e.Owner = b.Handle;
+					}
 					this.Holder.Entities.Enqueue(e);
 				}
 			}
@@ -60,13 +68,22 @@ namespace ACadSharp.IO.DXF
 			{
 				foreach (Entity e in b.Entities)
 				{
+					if (e.Owner == null || e.Owner == 0UL)
+					{
+						e.Owner = b.Handle;
+					}
 					this.writeEntity(e);
 				}
 			}
 		}
 
-		private void writeBlockEnd(BlockEnd block)
+		private void writeBlockEnd(BlockRecord blockRecord, BlockEnd block)
 		{
+			if (block.Owner == null || block.Owner == 0UL)
+			{
+				block.Owner = blockRecord.Handle;
+			}
+
 			this._writer.Write(DxfCode.Start, block.ObjectName);
 
 			this.writeCommonObjectData(block);

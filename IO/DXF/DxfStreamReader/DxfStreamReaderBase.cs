@@ -42,7 +42,20 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		public bool ValueAsBool { get { return this._boolValue; } }
+		public bool ValueAsBool 
+		{ 
+			get 
+			{
+				if(this.GroupCodeValue == GroupCodeValueType.Int16)
+				{
+					if(this.ValueAsShort == 1)
+						return true;
+					if(this.ValueAsShort == 0)
+						return false;
+				}
+				return this._boolValue; 
+			} 
+		}
 
 		public short ValueAsShort { get { return this._shortValue; } }
 

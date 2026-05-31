@@ -86,8 +86,6 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeCommonEntityData(Entity entity)
 		{
-			DxfClassMap map = DxfClassMap.Create<Entity>();
-
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
 
 			this._writer.Write(8, entity.Layer.Name);
@@ -108,9 +106,9 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(440, Transparency.ToAlphaValue(entity.Transparency));
 			}
 
-			this._writer.Write(48, entity.LinetypeScale, map);
+			this._writer.Write(48, entity.LinetypeScale);
 
-			this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
+			this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0);
 
 			//TODO: Write if the layout is paperspace
 			if (false)

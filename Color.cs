@@ -450,9 +450,10 @@ namespace ACadSharp
 		public static byte ApproxIndex(byte r, byte g, byte b)
 		{
 			var prevDist = double.MaxValue;
-			int ret_idx = 0;
+			int ret_idx = 1;
 
-			for (var i = 0; i < _indexRgb.Length; i++)
+			// Start at 1 to skip index 0 (ByBlock) which is not a real color
+			for (var i = 1; i < _indexRgb.Length; i++)
 			{
 				var dist = (r - _indexRgb[i][0]) * (r - _indexRgb[i][0]) + (g - _indexRgb[i][1]) * (g - _indexRgb[i][1]) + (b - _indexRgb[i][2]) * (b - _indexRgb[i][2]);
 

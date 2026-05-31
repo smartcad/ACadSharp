@@ -123,51 +123,48 @@ namespace ACadSharp.IO
 			this._builder = new DxfDocumentBuilder(this._version, _document, this.Configuration);
 			this._builder.OnNotification += this.onNotificationEvent;
 
-			while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
-			{
-				if (this._reader.ValueAsString != DxfFileToken.BeginSection)
-				{
-					this._reader.ReadNext();
-					continue;
-				}
-				else
-				{
-					this._reader.ReadNext();
-				}
+            while(this._reader.ValueAsString != DxfFileToken.EndOfFile)
+            {
+                if(this._reader.ValueAsString != DxfFileToken.BeginSection)
+                {
+                    this._reader.ReadNext();
+                    continue;
+                }
+                else
+                {
+                    this._reader.ReadNext();
+                }
 
-				switch (this._reader.ValueAsString)
-				{
-					case DxfFileToken.HeaderSection:
-						_document.Header = this.ReadHeader();
-						this._builder.InitialHandSeed = _document.Header.HandleSeed;
-						break;
-					case DxfFileToken.ClassesSection:
-						_document.Classes = this.readClasses();
-						break;
-					case DxfFileToken.TablesSection:
-						this.readTables();
-						break;
-					case DxfFileToken.BlocksSection:
-						this.readBlocks();
-						break;
-					case DxfFileToken.EntitiesSection:
-						this.readEntities();
-						break;
-					case DxfFileToken.ObjectsSection:
-						this.readObjects();
-						break;
-					default:
-						this.triggerNotification(($"Section not implemented {this._reader.ValueAsString}"), NotificationType.NotImplemented);
-						break;
-				}
+                switch(this._reader.ValueAsString)
+                {
+                    case DxfFileToken.HeaderSection:
+                        _document.Header = this.ReadHeader();
+                        this._builder.InitialHandSeed = _document.Header.HandleSeed;
+                        break;
+                    case DxfFileToken.ClassesSection:
+                        _document.Classes = this.readClasses();
+                        break;
+                    case DxfFileToken.TablesSection:
+                        this.readTables();
+                        break;
+                    case DxfFileToken.BlocksSection:
+                        this.readBlocks();
+                        break;
+                    case DxfFileToken.EntitiesSection:
+                        this.readEntities();
+                        break;
+                    case DxfFileToken.ObjectsSection:
+                        this.readObjects();
+                        break;
+                    default:
+                        this.triggerNotification(($"Section not implemented {this._reader.ValueAsString}"), NotificationType.NotImplemented);
+                        break;
+                }
 
-				this._reader.ReadNext();
-			}
+                this._reader.ReadNext();
+            }
 
-			if(_document.Header == null)
-			{
-				_document.Header = new CadHeader(_document);
-			}
+			_document.Header ??= new CadHeader(_document);
 
 			this._builder.BuildDocument();
 

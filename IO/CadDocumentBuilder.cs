@@ -56,15 +56,15 @@ namespace ACadSharp.IO
 
 		public virtual void BuildDocument()
 		{
-			foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)
-			{
-				template.Build(this);
-			}
+            foreach(ICadTableEntryTemplate template in this.tableEntryTemplates.Values)
+            {
+                template.Build(this);
+            }
 
-			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
-			{
-				template.Build(this);
-			}
+            foreach(CadTemplate template in this.cadObjectsTemplates.Values)
+            {
+                template.Build(this);
+            }
         }
 
 		public void AddTemplate(CadTemplate template)

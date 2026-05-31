@@ -229,26 +229,17 @@ namespace ACadSharp.Entities
 
 			this._style = this.updateTable(this.Style, doc.DimensionStyles);
 
-			doc.DimensionStyles.OnRemove += this.tableOnRemove;
+			//doc.DimensionStyles.OnRemove += this.tableOnRemove;
 		}
 
 		internal override void UnassignDocument()
 		{
-			this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+			//this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
 
 			base.UnassignDocument();
 
 			this.Style = (DimensionStyle)this.Style.Clone();
 		}
 
-		protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			base.tableOnRemove(sender, e);
-
-			if (e.Item.Equals(this.Style))
-			{
-				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
-			}
-		}
 	}
 }
