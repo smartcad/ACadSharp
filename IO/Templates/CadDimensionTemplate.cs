@@ -45,7 +45,7 @@ namespace ACadSharp.IO.Templates
 
         internal void SetDimensionObject(Dimension new_dim)
         {
-            CopyDimensionProperties(PlaceHolder, new_dim);
+            CopyDimensionProperties(this.CadObject as Dimension, new_dim);
             this.CadObject = new_dim;
         }
 
